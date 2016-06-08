@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("cellgame")]
-[assembly: AssemblyProduct("cellgame")]
+[assembly: AssemblyTitle("名前")]
+[assembly: AssemblyProduct("名前")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("説明")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("Copyright © KMC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("4e057cdf-7d02-4253-ae93-9b02871e00ec")]
+[assembly: Guid("d60c5598-54df-419e-b39d-d83106a0add6")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.5.0.140")]
-[assembly: AssemblyFileVersion("3.5.0.140")]
+
+//バージョンが変わるたびにここの値を増やしてください
+[assembly: AssemblyVersion("0.0.0.0")]
+//表示用バージョン
+[assembly: AssemblyInformationalVersion("ver 0")]
