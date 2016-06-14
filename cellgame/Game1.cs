@@ -22,8 +22,8 @@ namespace cellgame
         SpriteBatch spriteBatch;
         SceneManager scenem;
 
-        public const int WindowSizeX = 640;
-        public const int WindowSizeY = 480;
+        public const int WindowSizeX = 1280;
+        public const int WindowSizeY = 960;
         internal static readonly Vector WindowSize = new Vector(WindowSizeX, WindowSizeY);
 
         public static bool AvailbleSpeedup = true;
