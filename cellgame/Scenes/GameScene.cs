@@ -16,7 +16,7 @@ namespace cellgame {
 
         public override void SceneUpdate() {
             base.SceneUpdate();
-            // キャンセル(?)が押されると終了
+            // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
         }
     }

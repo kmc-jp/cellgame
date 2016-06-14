@@ -67,7 +67,7 @@ namespace cellgame {
             JoyPadManager.Update();
         }
         public override void SceneDraw(Drawing d) {
-            if(scenem.IsTopScene(this) && Settings.WindowSizeOld != Settings.WindowSize) d.DrawRate = Settings.WindowSize / 10f;
+            if(scenem.IsTopScene(this) && Settings.WindowStyleOld != Settings.WindowStyle) d.DrawStyle = Settings.WindowStyle;
 
             Vector2 basePos = new Vector2(218, 234);
             TalkWindow.DrawMessageBack(d, new Vector2(274, 28 + MaxIndex * 25), basePos, DepthID.Message);
