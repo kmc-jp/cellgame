@@ -9,7 +9,9 @@ namespace cellgame {
     /// ゲーム開始後の処理を書いたクラス
     /// </summary>
     class GameScene : Scene {
+        // ボックスウィンドウ（ユニットボックスとか）のリスト
         List<BoxWindow> bars;
+
         public GameScene(SceneManager s)
             : base(s) {
             bars = new List<BoxWindow>();
@@ -19,10 +21,8 @@ namespace cellgame {
         }
 
         public override void SceneDraw(Drawing d) {
-            for (int i = 0; i < DataBase.BarIndexNum; i++)
-            {
-                switch ((DataBase.BarIndex)i)
-                {
+            for (int i = 0; i < DataBase.BarIndexNum; i++) {
+                switch ((DataBase.BarIndex)i) {
                     case DataBase.BarIndex.Study:
                         bars[i].Draw(d);
                         break;

@@ -70,6 +70,9 @@
     <Compile Include="Scenes\TitleScene.cs" />
     <Compile Include="Scenes\UpdateScene.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="Workers\Map.cs" />
+    <Compile Include="Workers\Hex.cs" />
+    <Compile Include="Workers\Unit.cs" />
     <Compile Include="Workers\Worker.cs" />
     <Compile Include="Workers\WorkerManager.cs" />
     <Compile Include="XNA\Drawing.cs" />
