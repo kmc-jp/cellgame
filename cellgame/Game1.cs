@@ -22,8 +22,8 @@ namespace cellgame
         SpriteBatch spriteBatch;
         SceneManager scenem;
 
-        public const int WindowSizeX = 640;
-        public const int WindowSizeY = 480;
+        public const int WindowSizeX = 1280;
+        public const int WindowSizeY = 960;
         internal static readonly Vector WindowSize = new Vector(WindowSizeX, WindowSizeY);
 
         public static bool AvailbleSpeedup = true;
@@ -31,8 +31,7 @@ namespace cellgame
         //倍率込みのサイズ　ふつうは扱わなくてよい　staticなのは苦しまぎれ
         public static int _WindowSizeX;
         public static int _WindowSizeY;
-
-        public static float MaxWindowRate;
+        
 
         public Game1()
         {
@@ -41,7 +40,7 @@ namespace cellgame
 
             graphics = new GraphicsDeviceManager(this);
 
-            ChangeWindowSize(Settings.WindowSize / 10f);
+            ChangeWindowSize(Settings.WindowStyle);
 
             Content.RootDirectory = "Content";
         }
@@ -57,9 +56,8 @@ namespace cellgame
             // TODO: Add your initialization logic here
 
             base.Initialize();
-
-            MaxWindowRate = Math.Min((float)graphics.GraphicsDevice.DisplayMode.Height / WindowSizeY, (float)graphics.GraphicsDevice.DisplayMode.Width / WindowSizeX);
-            Settings.WindowSize = Math.Min((int)(Game1.MaxWindowRate * 2) * 5, Math.Max(10, Settings.WindowSize / 5 * 5));
+            
+            Settings.WindowStyle = 1;
 
             scenem = new SceneManager(new Drawing(spriteBatch, new Drawing3D(GraphicsDevice), this));
         }
@@ -122,10 +120,11 @@ namespace cellgame
             base.Draw(gameTime);
         }
 
-        public void ChangeWindowSize(float multiply)
+        public void ChangeWindowSize(int style)
         {
-            _WindowSizeX = (int)(WindowSizeX * multiply);
-            _WindowSizeY = (int)(WindowSizeY * multiply);
+            _WindowSizeX = WindowSizeX;
+            if (style == 1) _WindowSizeY = WindowSizeY;
+            else _WindowSizeY = WindowSizeY - 240;
 
             graphics.PreferredBackBufferWidth = _WindowSizeX;
             graphics.PreferredBackBufferHeight = _WindowSizeY;
