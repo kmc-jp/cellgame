@@ -70,6 +70,11 @@ namespace cellgame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            DataBase.hex1 = Content.Load<Texture2D>("hex1.png");
+            DataBase.box_flame = new List<Texture2D>();
+            for (int i = 0; i < 9; i++) {
+                DataBase.box_flame.Add(Content.Load<Texture2D>(string.Format("box_flame{0}.png", i)));
+            }
             // TODO: use this.Content to load your game content here
             TextureManager.Load(Content);
         }
