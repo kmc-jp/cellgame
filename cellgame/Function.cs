@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace cellgame {
+namespace CommonPart {
     /// <summary>
     /// 全体で使う関数などを扱うクラス
     /// </summary>

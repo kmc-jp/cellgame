@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
-namespace cellgame
+namespace CommonPart
 {
     /// <summary>
     /// This is the main type for your game
@@ -37,6 +37,8 @@ namespace cellgame
         {
             //タイトル
             this.Window.Title = "WAR in vivo";
+
+            this.IsMouseVisible = true;
 
             graphics = new GraphicsDeviceManager(this);
 
@@ -70,7 +72,12 @@ namespace cellgame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            DataBase.hex1 = Content.Load<Texture2D>("hex1.png");
+
+            // へクス画像の読み込み
+            DataBase.hex = new List<Texture2D>();
+            DataBase.hex.Add(Content.Load<Texture2D>("hex1.png"));
+
+            // ボックスの画像読み込み
             DataBase.box_flame = new List<Texture2D>();
             for (int i = 0; i < 9; i++) {
                 DataBase.box_flame.Add(Content.Load<Texture2D>(string.Format("box_flame{0}.png", i)));
@@ -127,9 +134,9 @@ namespace cellgame
 
         public void ChangeWindowSize(int style)
         {
-            _WindowSizeX = WindowSizeX;
-            if (style == 1) _WindowSizeY = WindowSizeY;
-            else _WindowSizeY = WindowSizeY - 240;
+            _WindowSizeX = DataBase.WindowDefaultSizeX;
+            if (style == 1) _WindowSizeY = DataBase.WindowDefaultSizeY;
+            else _WindowSizeY = DataBase.WindowSlimSizeY;
 
             graphics.PreferredBackBufferWidth = _WindowSizeX;
             graphics.PreferredBackBufferHeight = _WindowSizeY;

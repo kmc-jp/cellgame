@@ -7,7 +7,8 @@ using System.Diagnostics;
 using System.Reflection;
 using MyUpdaterLib;
 
-namespace cellgame {
+
+namespace CommonPart {
     class TitleScene: MenuScene {
         enum TitleIndex {
             Start, Load, Config, Save, Quit
@@ -46,7 +47,7 @@ namespace cellgame {
             if(!enabled[i]) return;
             switch((TitleIndex)i) {
                 case TitleIndex.Start:
-                    new GameScene(scenem);
+                    new MapScene(scenem);
                     break;
                 case TitleIndex.Load:
                     new SoundTest(scenem);

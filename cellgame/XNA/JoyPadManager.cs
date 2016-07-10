@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace cellgame {
+namespace CommonPart {
 #if MANAGED_DIRECTX_INPUT   //ManagedDirectX版　要：参照の追加、app.configの変更、コードが古いので若干変更
 using DInput = Microsoft.DirectX.DirectInput;
     class JoyPadManager {
