@@ -43,7 +43,13 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BoxWindow.cs" />
+    <Compile Include="Boxes\ArrangeBox.cs" />
+    <Compile Include="Boxes\MinimapBox.cs" />
+    <Compile Include="Boxes\StatusBox.cs" />
+    <Compile Include="Boxes\StringBox.cs" />
+    <Compile Include="Boxes\StudyBox.cs" />
+    <Compile Include="Boxes\UnitBox.cs" />
+    <Compile Include="Boxes\WindowBox.cs" />
     <Compile Include="Datas\DataBase.cs" />
     <Compile Include="Datas\HitShape.cs" />
     <Compile Include="Datas\MusicPlayer.cs" />
@@ -51,14 +57,17 @@
     <Compile Include="Datas\RandomXS.cs" />
     <Compile Include="Datas\SEPlayer.cs" />
     <Compile Include="Datas\TextureManager.cs" />
+    <Compile Include="Datas\TileType.cs" />
+    <Compile Include="Datas\UnitType.cs" />
     <Compile Include="Function.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="MessageManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Save.cs" />
-    <Compile Include="Scenes\GameScene.cs" />
     <Compile Include="Scenes\KeyConfig.cs" />
+    <Compile Include="Scenes\MapScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
     <Compile Include="Scenes\PadConfig.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
@@ -70,8 +79,6 @@
     <Compile Include="Scenes\TitleScene.cs" />
     <Compile Include="Scenes\UpdateScene.cs" />
     <Compile Include="Updater.cs" />
-    <Compile Include="Workers\Map.cs" />
-    <Compile Include="Workers\Hex.cs" />
     <Compile Include="Workers\Unit.cs" />
     <Compile Include="Workers\Worker.cs" />
     <Compile Include="Workers\WorkerManager.cs" />

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace cellgame {
+namespace CommonPart {
     /// <summary>
     /// 当たり判定を管理するクラス 境界を含みます
     /// </summary>
