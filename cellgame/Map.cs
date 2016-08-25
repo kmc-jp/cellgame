@@ -21,18 +21,18 @@ namespace CommonPart {
             for (int i = 0; i < DataBase.MAP_MAX; i++)
                 mapData.Add(tmp);
         }
-        public void Draw(Drawing d, Vector camera) {
-            for (int i = 0; i < DataBase.MAP_MAX; i++) {
-                double drawx = DataBase.HexWidth * i - camera.X;
-                for (int j = 0; j < DataBase.MAP_MAX; j++) {
-                    double drawy = DataBase.HexHeight * 3 / 4 * j - camera.Y;
-                    if (drawy < Game1._WindowSizeY && drawy >= -DataBase.HexHeight
-                        && drawx < Game1._WindowSizeX && drawx >= -DataBase.HexWidth * 3 / 2) {
+        public void Draw(Drawing d, Vector camera, int Scale) {
+            for (int i = Math.Max(0, (int)(camera.X-DataBase.HexWidth*3/2*DataBase.MapScale[Scale])/DataBase.HexWidth); i < DataBase.MAP_MAX; i++) {
+                double drawx = (DataBase.HexWidth * i - camera.X) * DataBase.MapScale[Scale];
+                for (int j = Math.Max(0, (int)(camera.Y - DataBase.HexHeight*DataBase.MapScale[Scale]) / (DataBase.HexHeight*3/4)); j < DataBase.MAP_MAX; j++) {
+                    double drawy = (DataBase.HexHeight * 3 / 4 * j - camera.Y) * DataBase.MapScale[Scale];
+                    if (drawy < Game1._WindowSizeY && drawy >= -DataBase.HexHeight*DataBase.MapScale[Scale]
+                        && drawx < Game1._WindowSizeX && drawx >= -DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale]) {
                         if (j % 2 == 1) {
-                            d.Draw(new Vector(drawx + DataBase.HexWidth / 2, drawy), DataBase.hex[mapData[i][j]], DepthID.BackGroundFloor);
+                            d.Draw(new Vector(drawx + DataBase.HexWidth / 2 * DataBase.MapScale[Scale], drawy), DataBase.hex[mapData[i][j]], DepthID.BackGroundFloor, (float)DataBase.MapScale[Scale]);
                         }
                         else {
-                            d.Draw(new Vector(drawx, drawy), DataBase.hex[mapData[i][j]], DepthID.BackGroundFloor);
+                            d.Draw(new Vector(drawx, drawy), DataBase.hex[mapData[i][j]], DepthID.BackGroundFloor, (float)DataBase.MapScale[Scale]);
                         }
                     }
                     else if(drawy > Game1._WindowSizeY)
@@ -40,7 +40,7 @@ namespace CommonPart {
                         break;
                     }
                 }
-                if (drawx - DataBase.HexWidth * 3 / 2 > Game1._WindowSizeX)
+                if (drawx - DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale] > Game1._WindowSizeX)
                 {
                     break;
                 }
