@@ -75,11 +75,15 @@ namespace CommonPart
 
             // へクス画像の読み込み
             DataBase.hex = new List<Texture2D>();
-            DataBase.hex.Add(Content.Load<Texture2D>("hex1.png"));
+            for (int i = 0; i < 4; i++)
+            {
+                DataBase.hex.Add(Content.Load<Texture2D>(string.Format("hex{0}.png", i)));
+            }
 
             // ボックスの画像読み込み
             DataBase.box_flame = new List<Texture2D>();
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 9; i++)
+            {
                 DataBase.box_flame.Add(Content.Load<Texture2D>(string.Format("box_flame{0}.png", i)));
             }
             // TODO: use this.Content to load your game content here

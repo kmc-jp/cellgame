@@ -28,7 +28,7 @@ namespace CommonPart {
         }
 
         public void Draw(Drawing d) {
-            // ボックスの背景を表示している
+            // ボックスの背景を表示
             // 左上と右上
             d.Draw(windowPosition,DataBase.box_flame[0],DepthID.Message);
             d.Draw(windowPosition + new Vector((width - 1) * 16d, 0d), DataBase.box_flame[2], DepthID.Message);
@@ -51,6 +51,11 @@ namespace CommonPart {
                     d.Draw(windowPosition + new Vector(i * 16d, j * 16d), DataBase.box_flame[4], DepthID.Message);
                 }
             }
+        }
+
+        // 位置がこの WindowBox の上にあるかどうか
+        public bool IsOn(int x, int y) {
+            return x >= windowPosition.X && x <= (windowPosition.X + width * 16) && y >= windowPosition.Y && y <= (windowPosition.Y + height * 16);
         }
 
         #endregion
