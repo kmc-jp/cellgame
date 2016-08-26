@@ -12,8 +12,14 @@ namespace CommonPart {
     /// </summary>
     class MapScene : Scene {
         #region Variable
-        // ボックスウィンドウ（ユニットボックスとか）のリスト
-        List<WindowBox> bars;
+        // ボックスウィンドウ（ユニットボックスとか）
+        ArrangeBar arrangeBar;
+        MinimapBox minimapBox;
+        ProductBox productBox;
+        StatusBar statusBar;
+        StudyBar studyBar;
+        UnitBox unitBox;
+        // カメラ
         Vector Camera { get { return _camera; } }
         double CameraX {
             get { return _camera.X; }
@@ -60,18 +66,23 @@ namespace CommonPart {
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
-            bars = new List<WindowBox>();
-            for(int i = 0; i < DataBase.BarIndexNum; i++) {
-                bars.Add(new WindowBox(DataBase.BarPos[i],DataBase.BarWidth[i],DataBase.BarHeight[i]));
-            }
+            studyBar = new StudyBar();
+            unitBox = new UnitBox();
+            minimapBox = new MinimapBox();
+            statusBar = new StatusBar();
+            arrangeBar = new ArrangeBar();
+            productBox = new ProductBox();
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
         public PAIR WhichHex(int x, int y)
         {
-            foreach (WindowBox bar in bars)
-                if (bar.IsOn(x, y))
-                    return new PAIR(-1, 0);
+            if(studyBar.IsOn(x,y) || 
+                unitBox.IsOn(x, y) ||
+                minimapBox.IsOn(x, y) ||
+                statusBar.IsOn(x, y) ||
+                arrangeBar.IsOn(x, y) ||
+                productBox.IsOn(x, y)) return new PAIR(-1, 0);
 
             double X = CameraX + x / DataBase.MapScale[Scale], Y = CameraY + y / DataBase.MapScale[Scale];
             for (int i = 0; i < DataBase.MAP_MAX; i++)
@@ -144,29 +155,12 @@ namespace CommonPart {
             // マップの描画
             nMap.Draw(d, Camera, Scale);
             // それぞれのバーの描画
-            for (int i = 0; i < DataBase.BarIndexNum; i++) {
-                switch ((DataBase.BarIndex)i) {
-                    case DataBase.BarIndex.Study:
-                        bars[i].Draw(d);
-                        break;
-                    case DataBase.BarIndex.Unit:
-                        bars[i].Draw(d);
-                        break;
-                    case DataBase.BarIndex.Minimap:
-                        if (Settings.WindowStyle == 1 && bars[i].windowPosition.Y != DataBase.BarPos[i].Y)
-                            bars[i].windowPosition = DataBase.BarPos[i];
-                        else if(Settings.WindowStyle == 0 && bars[i].windowPosition.Y == DataBase.BarPos[i].Y)
-                            bars[i].windowPosition = new Vector(DataBase.BarPos[i].X, DataBase.BarPos[i].Y - (DataBase.WindowDefaultSizeY - DataBase.WindowSlimSizeY));
-                        bars[i].Draw(d);
-                        break;
-                    case DataBase.BarIndex.Status:
-                        bars[i].Draw(d);
-                        break;
-                    case DataBase.BarIndex.Arrange:
-                        bars[i].Draw(d);
-                        break;
-                }
-            }
+            studyBar.Draw(d);
+            unitBox.Draw(d);
+            minimapBox.Draw(d);
+            statusBar.Draw(d);
+            arrangeBar.Draw(d);
+            productBox.Draw(d);
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
@@ -195,6 +189,14 @@ namespace CommonPart {
                 PAIR p = WhichHex(state.X, state.Y);
                 if (p.i >= 0 && p.j >= 0)　nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + DataBase.hex.Count - 1) % DataBase.hex.Count);
             }
+
+            // バー・ボックスのアップデート
+            studyBar.Update();
+            unitBox.Update();
+            minimapBox.Update();
+            statusBar.Update();
+            arrangeBar.Update();
+            productBox.Update();
 
             pstate = state;
             // Sキーが押されるとマップデータの保存

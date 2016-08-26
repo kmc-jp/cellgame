@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonPart {
-    class StudyBox : WindowBox {
+namespace CommonPart
+{
+    class StatusBar : WindowBar
+    {
         #region Variable
         #endregion
         #region Method
-        public StudyBox(Vector _pos, int _w, int _h)
-            : base(_pos, _w, _h) { }
+        public StatusBar()
+            : base(DataBase.BarPos[3], DataBase.BarWidth[3], DataBase.BarHeight[3]) { }
         #endregion
     }// class end
 }// namespace end

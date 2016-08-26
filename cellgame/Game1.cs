@@ -80,9 +80,15 @@ namespace CommonPart
                 DataBase.hex.Add(Content.Load<Texture2D>(string.Format("hex{0}.png", i)));
             }
 
+            // バーの画像読み込み
+            DataBase.bar_flame = new List<Texture2D>();
+            for (int i = 0; i < 9; i++)
+            {
+                DataBase.bar_flame.Add(Content.Load<Texture2D>(string.Format("bar_flame{0}.png", i)));
+            }
             // ボックスの画像読み込み
             DataBase.box_flame = new List<Texture2D>();
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 10; i++)
             {
                 DataBase.box_flame.Add(Content.Load<Texture2D>(string.Format("box_flame{0}.png", i)));
             }
@@ -129,7 +135,7 @@ namespace CommonPart
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(255,175,157));
             // TODO: Add your drawing code here
             scenem.Draw();
 

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace CommonPart
 {
-    class StatusBox : WindowBox
+    class ArrangeBar : WindowBar
     {
         #region Variable
         #endregion
         #region Method
-        public StatusBox(Vector _pos, int _w, int _h)
-            : base(_pos, _w, _h) { }
+        public ArrangeBar()
+            : base(DataBase.BarPos[4], DataBase.BarWidth[4], DataBase.BarHeight[4]) { }
         #endregion
     }// class end
 }// namespace end
