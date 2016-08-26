@@ -171,6 +171,21 @@ namespace CommonPart
             else return x >= (windowPosition.X + (width - 1) * 16) && x <= (windowPosition.X + width * 16) && y >= windowPosition.Y && y <= (windowPosition.Y + height * 16);
         }
 
+        // 位置がこのWindowBar 上のボタンの上にあるかどうか
+        public bool IsOnButton(int x, int y)
+        {
+            if (leftHide)
+            {
+                if (x >= windowPosition.X && x <= (windowPosition.X + 16) && y >= windowPosition.Y && y <= (windowPosition.Y + height * 16)) return true;
+            }
+            else
+            {
+                if (x >= (windowPosition.X + (width - 1) * 16) && x <= (windowPosition.X + width * 16) && y >= windowPosition.Y && y <= (windowPosition.Y + height * 16)) return true;
+            }
+            // ここにほかのボタンの判定を書く
+            return false;
+        }
+
         #endregion
     }// class end
 }// namespace end

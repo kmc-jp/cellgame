@@ -198,6 +198,12 @@ namespace CommonPart {
             arrangeBar.Update();
             productBox.Update();
 
+            // ボタンの上にカーソルがあるときに、カーソルの形状を手の形に変化
+            if (unitBox.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
+            else
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
+
             pstate = state;
             // Sキーが押されるとマップデータの保存
             if (Keyboard.GetState().IsKeyDown(Keys.S))　SaveMap();
