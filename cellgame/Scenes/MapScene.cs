@@ -39,7 +39,7 @@ namespace CommonPart {
         int Scale {
             get { return _scale; }
             set {
-                if (value < 0) _scale = 0;
+                if (value < 1) _scale = 1;
                 else if (value >= DataBase.MapScale.Length) _scale = DataBase.MapScale.Length - 1;
                 else _scale = value;
             }
@@ -153,11 +153,11 @@ namespace CommonPart {
         /// <param name="d"></param>
         public override void SceneDraw(Drawing d) {
             // マップの描画
-            nMap.Draw(d, Camera, Scale);
+            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0,0));
             // それぞれのバーの描画
             studyBar.Draw(d);
             unitBox.Draw(d);
-            minimapBox.Draw(d);
+            minimapBox.Draw(d, nMap, Camera, Scale);
             statusBar.Draw(d);
             arrangeBar.Draw(d);
             productBox.Draw(d);

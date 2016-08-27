@@ -23,7 +23,7 @@ namespace CommonPart {
         public static readonly int[] BarWidth = new[] { 22, 22, 22, 40, 18, 18 };
         public static readonly int[] BarHeight = new[] { 6, 23, 16, 4, 6, 23 };
         // マップの倍率の配列
-        public static readonly double[] MapScale = new[] { 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d, 1.2d, 1.5d, 2.0d, 3.0d, 4.0d };
+        public static readonly double[] MapScale = new[] { 0.15d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d, 1.2d, 1.5d, 2.0d, 3.0d, 4.0d };
         // デフォルトのマップの倍率
         public static readonly int DefaultMapScale = 7;
         // へクス画像の横幅と縦幅
