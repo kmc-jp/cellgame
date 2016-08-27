@@ -172,9 +172,12 @@ namespace CommonPart {
             if (state.Y >= Game1._WindowSizeY)  CameraY += defcameraVel / DataBase.MapScale[Scale];
 
             // マウススクロールするとマップの描画倍率が変化
+            int ps = Scale;
             if (state.ScrollWheelValue > pstate.ScrollWheelValue)       Scale++;
             else if (state.ScrollWheelValue < pstate.ScrollWheelValue)  Scale--;
-            
+            CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
+            CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
+
             // バー・ボックスのアップデート
             studyBar.Update();
             unitBox.Update();

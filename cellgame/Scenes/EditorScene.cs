@@ -37,7 +37,7 @@ namespace CommonPart
             get { return _scale; }
             set
             {
-                if (value < 0) _scale = 0;
+                if (value < 1) _scale = 1;
                 else if (value >= DataBase.MapScale.Length) _scale = DataBase.MapScale.Length - 1;
                 else _scale = value;
             }
@@ -148,8 +148,12 @@ namespace CommonPart
             if (state.Y >= Game1._WindowSizeY)  CameraY += defcameraVel / DataBase.MapScale[Scale];
 
             // マウススクロールするとマップの描画倍率が変化
+            int ps = Scale;
             if (state.ScrollWheelValue > pstate.ScrollWheelValue)       Scale++;
             else if (state.ScrollWheelValue < pstate.ScrollWheelValue)  Scale--;
+            CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
+            CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
+
 
             // 左クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値をインクリメント
             if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed &&
