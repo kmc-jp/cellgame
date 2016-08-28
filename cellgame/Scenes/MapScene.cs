@@ -47,10 +47,10 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        int studypoint = 0;
-        int productpoint = 0;
-        int leftunit = 0;
-        decimal bodytemp = 36;
+        int studyPoint = 0;
+        int productPoint = 0;
+        int leftUnit = 0;
+        decimal bodyTemp = 36;
 
         // WhichHexの返り値用の構造体
         public struct PAIR　{
@@ -69,7 +69,7 @@ namespace CommonPart {
             studyBar = new StudyBar();
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
-            statusBar = new StatusBar();
+            statusBar = new StatusBar(studyPoint, productPoint, leftUnit, bodyTemp);
             arrangeBar = new ArrangeBar();
             productBox = new ProductBox();
         }
@@ -182,7 +182,7 @@ namespace CommonPart {
             studyBar.Update();
             unitBox.Update();
             minimapBox.Update();
-            statusBar.Update();
+            statusBar.Update(studyPoint, productPoint, leftUnit, bodyTemp);
             arrangeBar.Update();
             productBox.Update();
 

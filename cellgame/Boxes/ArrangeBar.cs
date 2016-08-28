@@ -13,6 +13,11 @@ namespace CommonPart
         #region Method
         public ArrangeBar()
             : base(DataBase.BarPos[4], DataBase.BarWidth[4], DataBase.BarHeight[4]) { }
+        public override void Draw(Drawing d)
+        {
+            base.Draw(d);
+
+        }
         #endregion
     }// class end
 }// namespace end

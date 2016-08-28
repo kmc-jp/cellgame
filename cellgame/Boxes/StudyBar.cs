@@ -11,6 +11,11 @@ namespace CommonPart {
         #region Method
         public StudyBar()
             : base(DataBase.BarPos[0], DataBase.BarWidth[0], DataBase.BarHeight[0]) { }
+        public override void Draw(Drawing d)
+        {
+            base.Draw(d);
+
+        }
         #endregion
     }// class end
 }// namespace end

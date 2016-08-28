@@ -24,15 +24,15 @@ namespace CommonPart {
             }
         }
         // へクスの取得
-        public int GetState(int x, int y)
+        public int GetState(int x_index, int y_index)
         {
-            if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX) return Data[x,y];
+            if (x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX) return Data[x_index, y_index];
             else return 0;
         }
         // へクスの変更
-        public void ChangeState(int x, int y, int state)
+        public void ChangeState(int x_index, int y_index, int state)
         {
-            if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX && state >= 0 && state < DataBase.hex.Count) Data[x,y] = state;
+            if (x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX && state >= 0 && state < DataBase.hex.Count) Data[x_index, y_index] = state;
         }
         // 描画
         public void Draw(Drawing d, Vector camera, int Scale, Depth depth, int sizeX, int sizeY, Vector position) {

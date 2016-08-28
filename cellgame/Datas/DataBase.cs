@@ -32,9 +32,9 @@ namespace CommonPart {
         // へクス画像のリスト
         public static List<Texture2D> hex;
         // バー画像のリスト
-        public static List<Texture2D> bar_flame;
+        public static List<Texture2D> bar_frame;
         // ボックス画像のリスト
-        public static List<Texture2D> box_flame;
+        public static List<Texture2D> box_frame;
 
         public enum BarIndex
         {
