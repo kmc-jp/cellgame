@@ -160,14 +160,14 @@ namespace CommonPart
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + 1) % DataBase.hex.Count);
+                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + 1) % DataBase.hex_tex.Count);
             }
             // 右クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値をデクリメント
             if (pstate.RightButton != ButtonState.Pressed && state.RightButton == ButtonState.Pressed &&
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0)　nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + DataBase.hex.Count - 1) % DataBase.hex.Count);
+                if (p.i >= 0 && p.j >= 0)　nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + DataBase.hex_tex.Count - 1) % DataBase.hex_tex.Count);
             }
             
             pstate = state;

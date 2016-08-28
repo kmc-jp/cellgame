@@ -31,7 +31,10 @@ namespace CommonPart {
             set { _camera.Y = Math.Max(-Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], value)); }
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
+        // 現在のマップ
         Map nMap;
+        // ユニットマネージャ
+        UnitManager um;
         // カメラの移動速度
         int defcameraVel = 15;
         // カメラの倍率
@@ -66,6 +69,7 @@ namespace CommonPart {
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
+            um = new UnitManager();
             studyBar = new StudyBar();
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
@@ -83,26 +87,12 @@ namespace CommonPart {
                 statusBar.IsOn(x, y) ||
                 arrangeBar.IsOn(x, y) ||
                 productBox.IsOn(x, y)) return new PAIR(-1, 0);
-
-            double X = CameraX + x / DataBase.MapScale[Scale], Y = CameraY + y / DataBase.MapScale[Scale];
+            
             for (int i = 0; i < DataBase.MAP_MAX; i++)
-            {
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
-                {
-                    double dx = X - DataBase.HexWidth * i, dy = Y - DataBase.HexHeight * 3 / 4 * j;
-                    if (j % 2 == 1)
-                        dx -= DataBase.HexWidth / 2;
-
-                    if (dx >= 0 && dx <= DataBase.HexWidth &&
-                        dy + dx * DataBase.HexHeight / DataBase.HexWidth / 2 >= DataBase.HexHeight / 4 &&
-                        dy + dx * DataBase.HexHeight / DataBase.HexWidth / 2 <= DataBase.HexHeight / 4 * 5 &&
-                        dy + DataBase.HexHeight / 4 >= dx * DataBase.HexHeight / DataBase.HexWidth / 2 &&
-                        dy <= DataBase.HexHeight / 4 * 3 + dx * DataBase.HexHeight / DataBase.HexWidth / 2)
-                    {
+                    if (DataBase.IsOnHex(i, j, x, y, Camera, Scale))
                         return new PAIR(i, j);
-                    }
-                }
-            }
+
             return new PAIR(0, -1);
         }
 
@@ -154,6 +144,8 @@ namespace CommonPart {
         public override void SceneDraw(Drawing d) {
             // マップの描画
             nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0,0));
+            // ユニットの描画
+            um.Draw(d, Camera, Scale);
             // それぞれのバーの描画
             studyBar.Draw(d);
             unitBox.Draw(d);
@@ -178,7 +170,10 @@ namespace CommonPart {
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
-            // バー・ボックスのアップデート
+            // ユニットの更新
+            um.Update();
+
+            // バー・ボックスの更新
             studyBar.Update();
             unitBox.Update();
             minimapBox.Update();

@@ -10,8 +10,8 @@ namespace CommonPart
     class Unit
     {
         #region Variable
-        private int x_index;
-        private int y_index;
+        public int x_index { get; private set; }
+        public int y_index { get; private set; }
         protected int HP;
         protected int LP;
         protected int EXP;
@@ -19,20 +19,17 @@ namespace CommonPart
         protected readonly int MAX_LP;
         protected readonly int MAX_EXP;
         #endregion
-        /*
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Unit(int x_index, int y_index,int hp)
+        public Unit(int _x_index, int _y_index, int _MAX_HP, int _MAX_LP, int _MAX_EXP)
         {
-            this.x_index = x_index;
-            this.y_index = y_index;
-            this.unit_type = unit_type;
-            this.hp = hp;
+            x_index = _x_index;
+            y_index = _y_index;
+            HP = MAX_HP = _MAX_HP;
+            LP = MAX_LP = _MAX_LP;
+            EXP = MAX_EXP = _MAX_EXP;
         }
-        public Unit(int x_index, int y_index, UnitType unit_type) :this(x_index, y_index,unit_type, unit_type.maxhp)
-        {        }
-        */
         #region Method
         public void MoveTo(int x_index2,int y_index2)
         {
