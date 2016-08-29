@@ -8,7 +8,7 @@ namespace CommonPart {
     /// <summary>
     /// 文字列を表示するバーのクラス
     /// </summary>
-    class StringBox : WindowBox {
+    class StringBox : WindowBar {
         #region Variable
         // 表示する文字列とその位置のリスト
         List<RichText> texts;
