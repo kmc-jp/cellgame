@@ -11,12 +11,12 @@ using MyUpdaterLib;
 namespace CommonPart {
     class TitleScene: MenuScene {
         enum TitleIndex {
-            Start, Load, Config, Save, Quit
+            Start, Editor, Load, Config, Save, Quit
         }
-        static readonly string[] choiceDefault = new[] { "ニューゲーム", "ロード", "オプション", "記録", "ゲーム終了" };
+        static readonly string[] choiceDefault = new[] { "ニューゲーム", "マップエディター", "ロード", "オプション", "記録", "ゲーム終了" };
         readonly string[] choice = (string[])choiceDefault.Clone();
-        bool[] enabled = new bool[] { true, false, true, false, true };
-        Color[] defaultColor = new Color[] { Color.White, Color.White, Color.White, Color.Gold, Color.White };
+        bool[] enabled = new bool[] { true, true, false, true, false, true };
+        Color[] defaultColor = new Color[] { Color.White, Color.White, Color.White, Color.White, Color.Gold, Color.White };
         Animation cursor = TalkWindow.GetCursorAnimation();
         string version;
 
@@ -48,6 +48,9 @@ namespace CommonPart {
             switch((TitleIndex)i) {
                 case TitleIndex.Start:
                     new MapScene(scenem);
+                    break;
+                case TitleIndex.Editor:
+                    new EditorScene(scenem);
                     break;
                 case TitleIndex.Load:
                     new SoundTest(scenem);

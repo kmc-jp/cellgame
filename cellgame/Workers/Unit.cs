@@ -9,60 +9,34 @@ namespace CommonPart
 {
     class Unit
     {
-        #region public
-        public int x_index;
-        public int y_index;
-        public int w;
-        public int h;
-        public int real_w;
-        public int real_h;
-        public double zoom_rate;
-        public int hp;
-        public UnitType unit_type;
-        public int[] skills;
-        public int[] effects;
+        #region Variable
+        public int x_index { get; private set; }
+        public int y_index { get; private set; }
+        protected int HP;
+        protected int LP;
+        protected int EXP;
+        protected readonly int MAX_HP;
+        protected readonly int MAX_LP;
+        protected readonly int MAX_EXP;
         #endregion
-
-        #region private
-        private int frame_now;
-        #endregion
-
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public Unit(int x_index, int y_index, UnitType unit_type,int hp)
+        public Unit(int _x_index, int _y_index, int _MAX_HP, int _MAX_LP, int _MAX_EXP)
         {
-            this.x_index = x_index;
-            this.y_index = y_index;
-            this.unit_type = unit_type;
-            this.hp = hp;
+            x_index = _x_index;
+            y_index = _y_index;
+            HP = MAX_HP = _MAX_HP;
+            LP = MAX_LP = _MAX_LP;
+            EXP = MAX_EXP = _MAX_EXP;
         }
-        public Unit(int x_index, int y_index, UnitType unit_type) :this(x_index, y_index,unit_type, unit_type.maxhp)
-        {        }
-
-        #region method
-        public  void add_skill()
-        {
-
-        }
-        
-        public void chage_unit_type(UnitType unit_type2)
-        {
-            unit_type = unit_type2;
-        }
-
-        public void moveto_now(int x_index2,int y_index2)
+        #region Method
+        public void MoveTo(int x_index2,int y_index2)
         {
             x_index = x_index2;
             y_index = y_index2;
 
         }
-
-        public UnitType getUnitype()
-        {
-            return unit_type;
-        }
         #endregion
-
     }// Unit end
 }// namespace CommonPart End

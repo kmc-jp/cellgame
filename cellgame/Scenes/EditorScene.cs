@@ -6,22 +6,18 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 
-namespace CommonPart {
+namespace CommonPart
+{
     /// <summary>
-    /// ゲーム開始後の処理を書いたクラス
+    /// マップエディターの処理を書いたクラス
     /// </summary>
-    class MapScene : Scene {
+    class EditorScene : Scene
+    {
         #region Variable
-        // ボックスウィンドウ（ユニットボックスとか）
-        ArrangeBar arrangeBar;
-        MinimapBox minimapBox;
-        ProductBox productBox;
-        StatusBar statusBar;
-        StudyBar studyBar;
-        UnitBox unitBox;
         // カメラ
         Vector Camera { get { return _camera; } }
-        double CameraX {
+        double CameraX
+        {
             get { return _camera.X; }
             set { _camera.X = Math.Max(-Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], value)); }
         }
@@ -31,17 +27,16 @@ namespace CommonPart {
             set { _camera.Y = Math.Max(-Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], value)); }
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
-        // 現在のマップ
         Map nMap;
-        // ユニットマネージャ
-        UnitManager um;
         // カメラの移動速度
         int defcameraVel = 15;
         // カメラの倍率
         int _scale = DataBase.DefaultMapScale;
-        int Scale {
+        int Scale
+        {
             get { return _scale; }
-            set {
+            set
+            {
                 if (value < 1) _scale = 1;
                 else if (value >= DataBase.MapScale.Length) _scale = DataBase.MapScale.Length - 1;
                 else _scale = value;
@@ -49,50 +44,47 @@ namespace CommonPart {
         }
         // 直前のマウスの状態
         MouseState pstate;
-        // ゲーム内変数
-        int studyPoint = 0;
-        int productPoint = 0;
-        int leftUnit = 0;
-        decimal bodyTemp = 36;
 
         // WhichHexの返り値用の構造体
-        public struct PAIR　{
+        public struct PAIR
+        {
             public int i, j;
             public PAIR(int _i, int _j) { i = _i; j = _j; }
         }
-        
+
+
         #endregion
 
         #region Method
         // コンストラクタ
-        public MapScene(SceneManager s)
-            : base(s) {
+        public EditorScene(SceneManager s)
+            :base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
-            um = new UnitManager();
-            studyBar = new StudyBar();
-            unitBox = new UnitBox();
-            minimapBox = new MinimapBox();
-            statusBar = new StatusBar(studyPoint, productPoint, leftUnit, bodyTemp);
-            arrangeBar = new ArrangeBar();
-            productBox = new ProductBox();
         }
 
-        // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
+        // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す
         public PAIR WhichHex(int x, int y)
         {
-            if(studyBar.IsOn(x,y) || 
-                unitBox.IsOn(x, y) ||
-                minimapBox.IsOn(x, y) ||
-                statusBar.IsOn(x, y) ||
-                arrangeBar.IsOn(x, y) ||
-                productBox.IsOn(x, y)) return new PAIR(-1, 0);
-            
+            double X = CameraX + x / DataBase.MapScale[Scale], Y = CameraY + y / DataBase.MapScale[Scale];
             for (int i = 0; i < DataBase.MAP_MAX; i++)
+            {
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
-                    if (DataBase.IsOnHex(i, j, x, y, Camera, Scale))
-                        return new PAIR(i, j);
+                {
+                    double dx = X - DataBase.HexWidth * i, dy = Y - DataBase.HexHeight * 3 / 4 * j;
+                    if (j % 2 == 1)
+                        dx -= DataBase.HexWidth / 2;
 
+                    if (dx >= 0 && dx <= DataBase.HexWidth &&
+                        dy + dx * DataBase.HexHeight / DataBase.HexWidth / 2 >= DataBase.HexHeight / 4 &&
+                        dy + dx * DataBase.HexHeight / DataBase.HexWidth / 2 <= DataBase.HexHeight / 4 * 5 &&
+                        dy + DataBase.HexHeight / 4 >= dx * DataBase.HexHeight / DataBase.HexWidth / 2 &&
+                        dy <= DataBase.HexHeight / 4 * 3 + dx * DataBase.HexHeight / DataBase.HexWidth / 2)
+                    {
+                        return new PAIR(i, j);
+                    }
+                }
+            }
             return new PAIR(0, -1);
         }
 
@@ -141,18 +133,10 @@ namespace CommonPart {
         /// ゲーム画面の描画メソッド
         /// </summary>
         /// <param name="d"></param>
-        public override void SceneDraw(Drawing d) {
+        public override void SceneDraw(Drawing d)
+        {
             // マップの描画
-            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0,0));
-            // ユニットの描画
-            um.Draw(d, Camera, Scale);
-            // それぞれのバーの描画
-            studyBar.Draw(d);
-            unitBox.Draw(d);
-            minimapBox.Draw(d, nMap, Camera, Scale);
-            statusBar.Draw(d);
-            arrangeBar.Draw(d);
-            productBox.Draw(d);
+            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0, 0));
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
@@ -170,24 +154,25 @@ namespace CommonPart {
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
-            // ユニットの更新
-            um.Update();
 
-            // バー・ボックスの更新
-            studyBar.Update();
-            unitBox.Update();
-            minimapBox.Update();
-            statusBar.Update(studyPoint, productPoint, leftUnit, bodyTemp);
-            arrangeBar.Update();
-            productBox.Update();
-
-            // ボタンの上にカーソルがあるときに、カーソルの形状を手の形に変化
-            if (unitBox.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
-            else
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
-
+            // 左クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値をインクリメント
+            if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed &&
+                state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
+            {
+                PAIR p = WhichHex(state.X, state.Y);
+                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + 1) % DataBase.hex_tex.Count);
+            }
+            // 右クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値をデクリメント
+            if (pstate.RightButton != ButtonState.Pressed && state.RightButton == ButtonState.Pressed &&
+                state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
+            {
+                PAIR p = WhichHex(state.X, state.Y);
+                if (p.i >= 0 && p.j >= 0)　nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + DataBase.hex_tex.Count - 1) % DataBase.hex_tex.Count);
+            }
+            
             pstate = state;
+            // Sキーが押されるとマップデータの保存
+            if (Keyboard.GetState().IsKeyDown(Keys.S))　SaveMap();
 
             // Rキーが押されるとマップデータの読み込み
             if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();

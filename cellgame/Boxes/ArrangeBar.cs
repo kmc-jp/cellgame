@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace CommonPart
 {
-    class UnitBox : WindowBox
+    class ArrangeBar : WindowBar
     {
         #region Variable
         #endregion
         #region Method
-        public UnitBox()
-            : base(DataBase.BarPos[1], DataBase.BarWidth[1], DataBase.BarHeight[1]) { }
+        public ArrangeBar()
+            : base(DataBase.BarPos[4], DataBase.BarWidth[4], DataBase.BarHeight[4]) { }
+        public override void Draw(Drawing d)
+        {
+            base.Draw(d);
+
+        }
         #endregion
     }// class end
 }// namespace end
