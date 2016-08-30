@@ -29,7 +29,7 @@ namespace CommonPart
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
         Map nMap;
         // カメラの移動速度
-        int defcameraVel = 15;
+        int defcameraVel = DataBase.cameraV;
         // カメラの倍率
         int _scale = DataBase.DefaultMapScale;
         int Scale

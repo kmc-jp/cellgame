@@ -36,7 +36,7 @@ namespace CommonPart {
         // ユニットマネージャ
         UnitManager um;
         // カメラの移動速度
-        int defcameraVel = 15;
+        int defcameraVel = DataBase.cameraV;
         // カメラの倍率
         int _scale = DataBase.DefaultMapScale;
         int Scale {

@@ -25,12 +25,14 @@ namespace CommonPart {
         // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
-        public static readonly double[] MapScale = new[] { 0.15d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d, 1.2d, 1.5d, 2.0d, 3.0d };
+        public static readonly double[] MapScale = new[] { 0.15d, 0.5d, 0.75d, 1.0d };
         // デフォルトのマップの倍率
-        public static readonly int DefaultMapScale = 8;
+        public static readonly int DefaultMapScale = 3;
         // へクス画像の横幅と縦幅
         public static readonly int HexWidth = 180;
         public static readonly int HexHeight = 200;
+        // カメラの移動速度
+        public static readonly int cameraV = 12;
         #endregion
 
         #region Bar&Box
@@ -56,14 +58,14 @@ namespace CommonPart {
         // ユニット画像のリスト
         public static List<Texture2D> myUnit_tex;
         public static List<Texture2D> enemyUnit_tex;
-        // ユニットの名前　※要らないけど名前と番号のメモ用に
+        // ユニットの名前
         public enum MyUnitName
         {
             Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma
         }
         public enum EnemyUnitName
         {
-            Kin, Kabi, Virus, Gan, Kiseichu
+            Kin = -5, Kabi, Virus, Gan, Kiseichu
         }
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };

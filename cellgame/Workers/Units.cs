@@ -10,161 +10,114 @@ namespace CommonPart
     class KochuUnit : Unit
     {
         public KochuUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[0], DataBase.MyUnitMAX_LP[0], DataBase.MyUnitMAX_EXP[0]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Kochu)
         {
-            d.Draw(new Vector(),DataBase.myUnit_tex[0],DepthID.Player);
+
         }
     }
     class MacroUnit : Unit
     {
         public MacroUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[1], DataBase.MyUnitMAX_LP[1], DataBase.MyUnitMAX_EXP[1]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Macro)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[1], DepthID.Player);
+
         }
     }
     class JujoUnit : Unit
     {
         public JujoUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[2], DataBase.MyUnitMAX_LP[2], DataBase.MyUnitMAX_EXP[2]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Jujo)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[2], DepthID.Player);
+
         }
     }
     class KosanUnit : Unit
     {
         public KosanUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[3], DataBase.MyUnitMAX_LP[3], DataBase.MyUnitMAX_EXP[3]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Kosan)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[3], DepthID.Player);
+
         }
     }
     class NKUnit : Unit
     {
         public NKUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[4], DataBase.MyUnitMAX_LP[4], DataBase.MyUnitMAX_EXP[4]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.NK)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[4], DepthID.Player);
+
         }
     }
     class HelperTUnit : Unit
     {
         public HelperTUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[5], DataBase.MyUnitMAX_LP[5], DataBase.MyUnitMAX_EXP[5]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.HelperT)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[5], DepthID.Player);
+
         }
     }
     class KillerTUnit : Unit
     {
         public KillerTUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[6], DataBase.MyUnitMAX_LP[6], DataBase.MyUnitMAX_EXP[6]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.KillerT)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[6], DepthID.Player);
+
         }
     }
     class BUnit : Unit
     {
         public BUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[7], DataBase.MyUnitMAX_LP[7], DataBase.MyUnitMAX_EXP[7]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.B)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[7], DepthID.Player);
+
         }
     }
     class PlasmaUnit : Unit
     {
         public PlasmaUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.MyUnitMAX_HP[8], DataBase.MyUnitMAX_LP[8], DataBase.MyUnitMAX_EXP[8]) {
-
-        }
-        public void Draw(Drawing d)
+            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Plasma)
         {
-            d.Draw(new Vector(), DataBase.myUnit_tex[8], DepthID.Player);
+
         }
     }
     // 敵ユニット
     class KinUnit : Unit
     {
         public KinUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[0], DataBase.EnemyUnitMAX_LP[0], DataBase.EnemyUnitMAX_EXP[0])
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Kin)
         {
 
-        }
-        public void Draw(Drawing d)
-        {
-            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
         }
     }
     class KabiUnit : Unit
     {
         public KabiUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[1], DataBase.EnemyUnitMAX_LP[1], DataBase.EnemyUnitMAX_EXP[1])
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Kabi)
         {
 
-        }
-        public void Draw(Drawing d)
-        {
-            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
         }
     }
     class VirusUnit : Unit
     {
         public VirusUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[2], DataBase.EnemyUnitMAX_LP[2], DataBase.EnemyUnitMAX_EXP[2])
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Virus)
         {
 
-        }
-        public void Draw(Drawing d)
-        {
-            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
         }
     }
     class GanUnit : Unit
     {
         public GanUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[3], DataBase.EnemyUnitMAX_LP[3], DataBase.EnemyUnitMAX_EXP[3])
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Gan)
         {
 
-        }
-        public void Draw(Drawing d)
-        {
-            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
         }
     }
     class KiseichuUnit : Unit
     {
         public KiseichuUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[4], DataBase.EnemyUnitMAX_LP[4], DataBase.EnemyUnitMAX_EXP[4])
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Kiseichu)
         {
 
-        }
-        public void Draw(Drawing d)
-        {
-            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
         }
     }
 }

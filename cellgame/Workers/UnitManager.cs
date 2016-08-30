@@ -32,6 +32,7 @@ namespace CommonPart
         // コンストラクタ
         public UnitManager()
         {
+            // 味方ユニット
             kochuUnits = new List<KochuUnit>();
             macroUnits = new List<MacroUnit>();
             jujoUnits = new List<JujoUnit>();
@@ -42,11 +43,13 @@ namespace CommonPart
             bUnits = new List<BUnit>();
             plasmaUnits = new List<PlasmaUnit>();
 
+            // 敵ユニット
             kinUnits = new List<KinUnit>();
             kabiUnits = new List<KabiUnit>();
             virusUnits = new List<VirusUnit>();
             ganUnits = new List<GanUnit>();
             kiseichuUnits = new List<KiseichuUnit>();
+
         }
         // 描画
         public void Draw(Drawing d, Vector camera, int scale)
@@ -54,72 +57,72 @@ namespace CommonPart
             foreach(KochuUnit u in kochuUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(MacroUnit u in macroUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(JujoUnit u in jujoUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(KosanUnit u in kosanUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(NKUnit u in nkUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(HelperTUnit u in helperTUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(KillerTUnit u in killerTUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(BUnit u in bUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach(PlasmaUnit u in plasmaUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach (KinUnit u in kinUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach (KabiUnit u in kabiUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach (VirusUnit u in virusUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach (GanUnit u in ganUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
             foreach (KiseichuUnit u in kiseichuUnits)
             {
                 if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
-                    u.Draw(d);
+                    u.Draw(d, camera, scale);
             }
         }
         // 更新
