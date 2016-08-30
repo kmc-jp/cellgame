@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace cellgame {
+namespace CommonPart {
     /// <summary>
     /// 効果音を再生するクラス
     /// </summary>

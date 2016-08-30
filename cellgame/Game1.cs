@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
-namespace cellgame
+namespace CommonPart
 {
     /// <summary>
     /// This is the main type for your game
@@ -37,6 +37,8 @@ namespace cellgame
         {
             //タイトル
             this.Window.Title = "WAR in vivo";
+
+            this.IsMouseVisible = true;
 
             graphics = new GraphicsDeviceManager(this);
 
@@ -70,11 +72,32 @@ namespace cellgame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            DataBase.hex1 = Content.Load<Texture2D>("hex1.png");
-            DataBase.box_flame = new List<Texture2D>();
-            for (int i = 0; i < 9; i++) {
-                DataBase.box_flame.Add(Content.Load<Texture2D>(string.Format("box_flame{0}.png", i)));
+
+            // へクス画像の読み込み
+            DataBase.hex_tex = new List<Texture2D>();
+            for (int i = 0; i < 5; i++)
+            {
+                DataBase.hex_tex.Add(Content.Load<Texture2D>(string.Format("hex{0}.png", i)));
             }
+
+            // バーの画像読み込み
+            DataBase.bar_frame_tex = new List<Texture2D>();
+            for (int i = 0; i < 9; i++)
+            {
+                DataBase.bar_frame_tex.Add(Content.Load<Texture2D>(string.Format("bar_frame{0}.png", i)));
+            }
+            // ボックスの画像読み込み
+            DataBase.box_frame_tex = new List<Texture2D>();
+            for (int i = 0; i < 10; i++)
+            {
+                DataBase.box_frame_tex.Add(Content.Load<Texture2D>(string.Format("box_frame{0}.png", i)));
+            }
+            // ユニットの画像読み込み
+            /* DataBase.unit_tex = new List<Texture2D>();
+            for (int i = 0; i < __; i++)
+            {
+                DataBase.unit_tex.Add(Content.Load<Texture2D>(string.Format("unit{0}.png", i)));
+            }*/
             // TODO: use this.Content to load your game content here
             TextureManager.Load(Content);
         }
@@ -118,7 +141,7 @@ namespace cellgame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(new Color(255,175,157));
             // TODO: Add your drawing code here
             scenem.Draw();
 
@@ -127,9 +150,9 @@ namespace cellgame
 
         public void ChangeWindowSize(int style)
         {
-            _WindowSizeX = WindowSizeX;
-            if (style == 1) _WindowSizeY = WindowSizeY;
-            else _WindowSizeY = WindowSizeY - 240;
+            _WindowSizeX = DataBase.WindowDefaultSizeX;
+            if (style == 1) _WindowSizeY = DataBase.WindowDefaultSizeY;
+            else _WindowSizeY = DataBase.WindowSlimSizeY;
 
             graphics.PreferredBackBufferWidth = _WindowSizeX;
             graphics.PreferredBackBufferHeight = _WindowSizeY;
