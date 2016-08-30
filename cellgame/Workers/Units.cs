@@ -15,7 +15,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(),DataBase.hex_tex[0],DepthID.Player);
+            d.Draw(new Vector(),DataBase.myUnit_tex[0],DepthID.Player);
         }
     }
     class MacroUnit : Unit
@@ -26,7 +26,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[1], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[1], DepthID.Player);
         }
     }
     class JujoUnit : Unit
@@ -37,7 +37,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[2], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[2], DepthID.Player);
         }
     }
     class KosanUnit : Unit
@@ -48,7 +48,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[3], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[3], DepthID.Player);
         }
     }
     class NKUnit : Unit
@@ -59,7 +59,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[4], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[4], DepthID.Player);
         }
     }
     class HelperTUnit : Unit
@@ -70,7 +70,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[5], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[5], DepthID.Player);
         }
     }
     class KillerTUnit : Unit
@@ -81,7 +81,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[6], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[6], DepthID.Player);
         }
     }
     class BUnit : Unit
@@ -92,7 +92,7 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[7], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[7], DepthID.Player);
         }
     }
     class PlasmaUnit : Unit
@@ -103,9 +103,68 @@ namespace CommonPart
         }
         public void Draw(Drawing d)
         {
-            d.Draw(new Vector(), DataBase.hex_tex[8], DepthID.Player);
+            d.Draw(new Vector(), DataBase.myUnit_tex[8], DepthID.Player);
         }
     }
     // 敵ユニット
+    class KinUnit : Unit
+    {
+        public KinUnit(int _x_index, int _y_index)
+            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[0], DataBase.EnemyUnitMAX_LP[0], DataBase.EnemyUnitMAX_EXP[0])
+        {
 
+        }
+        public void Draw(Drawing d)
+        {
+            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
+        }
+    }
+    class KabiUnit : Unit
+    {
+        public KabiUnit(int _x_index, int _y_index)
+            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[1], DataBase.EnemyUnitMAX_LP[1], DataBase.EnemyUnitMAX_EXP[1])
+        {
+
+        }
+        public void Draw(Drawing d)
+        {
+            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
+        }
+    }
+    class VirusUnit : Unit
+    {
+        public VirusUnit(int _x_index, int _y_index)
+            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[2], DataBase.EnemyUnitMAX_LP[2], DataBase.EnemyUnitMAX_EXP[2])
+        {
+
+        }
+        public void Draw(Drawing d)
+        {
+            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
+        }
+    }
+    class GanUnit : Unit
+    {
+        public GanUnit(int _x_index, int _y_index)
+            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[3], DataBase.EnemyUnitMAX_LP[3], DataBase.EnemyUnitMAX_EXP[3])
+        {
+
+        }
+        public void Draw(Drawing d)
+        {
+            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
+        }
+    }
+    class KiseichuUnit : Unit
+    {
+        public KiseichuUnit(int _x_index, int _y_index)
+            : base(_x_index, _y_index, DataBase.EnemyUnitMAX_HP[4], DataBase.EnemyUnitMAX_LP[4], DataBase.EnemyUnitMAX_EXP[4])
+        {
+
+        }
+        public void Draw(Drawing d)
+        {
+            d.Draw(new Vector(), DataBase.enemyUnit_tex[8], DepthID.Player);
+        }
+    }
 }

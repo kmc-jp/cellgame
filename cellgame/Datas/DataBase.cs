@@ -13,8 +13,8 @@ namespace CommonPart {
 
         #region Window
         // ウィンドウの元のサイズ(4：3)
-        public static readonly int WindowDefaultSizeX = Game1.WindowSizeX;
-        public static readonly int WindowDefaultSizeY = Game1.WindowSizeY;
+        public static readonly int WindowDefaultSizeX = Game1.WindowSizeX; // 1280
+        public static readonly int WindowDefaultSizeY = Game1.WindowSizeY; // 960
         // 16：9にした時のウィンドウの縦のサイズ
         public static readonly int WindowSlimSizeY = 720;
         #endregion
@@ -22,7 +22,7 @@ namespace CommonPart {
         #region Map
         // へクス画像のリスト
         public static List<Texture2D> hex_tex;
-        // マップのサイズは MAP_MAX×MAP_MAX
+        // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
         public static readonly double[] MapScale = new[] { 0.15d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d, 1.2d, 1.5d, 2.0d, 3.0d };
@@ -54,7 +54,8 @@ namespace CommonPart {
 
         #region Unit
         // ユニット画像のリスト
-        public static List<Texture2D> unit_tex;
+        public static List<Texture2D> myUnit_tex;
+        public static List<Texture2D> enemyUnit_tex;
         // ユニットの名前　※要らないけど名前と番号のメモ用に
         public enum MyUnitName
         {
@@ -62,14 +63,18 @@ namespace CommonPart {
         }
         public enum EnemyUnitName
         {
-            
+            Kin, Kabi, Virus, Gan, Kiseichu
         }
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
         public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitMAX_LP = new[] { 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
 
         #endregion
+
 
         #region Method
         // マップ上の位置から現在の画面上の座標を求める

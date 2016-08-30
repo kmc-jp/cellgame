@@ -16,12 +16,8 @@ namespace CommonPart {
         // コンストラクタ
         public Map() {
             for(int i = 0; i < DataBase.MAP_MAX; i++)
-            {
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
-                {
                     Data[i,j] = 1;
-                }
-            }
         }
         // へクスの取得
         public int GetState(int x_index, int y_index)

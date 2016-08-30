@@ -20,6 +20,11 @@ namespace CommonPart
         List<BUnit> bUnits;
         List<PlasmaUnit> plasmaUnits;
         // 敵ユニット
+        List<KinUnit> kinUnits;
+        List<KabiUnit> kabiUnits;
+        List<VirusUnit> virusUnits;
+        List<GanUnit> ganUnits;
+        List<KiseichuUnit> kiseichuUnits;
 
         #endregion
 
@@ -36,53 +41,84 @@ namespace CommonPart
             killerTUnits = new List<KillerTUnit>();
             bUnits = new List<BUnit>();
             plasmaUnits = new List<PlasmaUnit>();
+
+            kinUnits = new List<KinUnit>();
+            kabiUnits = new List<KabiUnit>();
+            virusUnits = new List<VirusUnit>();
+            ganUnits = new List<GanUnit>();
+            kiseichuUnits = new List<KiseichuUnit>();
         }
         // 描画
         public void Draw(Drawing d, Vector camera, int scale)
         {
-            foreach(KochuUnit u in kochuUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(KochuUnit u in kochuUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(MacroUnit u in macroUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(MacroUnit u in macroUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(JujoUnit u in jujoUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(JujoUnit u in jujoUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(KosanUnit u in kosanUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(KosanUnit u in kosanUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(NKUnit u in nkUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(NKUnit u in nkUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(HelperTUnit u in helperTUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(HelperTUnit u in helperTUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(KillerTUnit u in killerTUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(KillerTUnit u in killerTUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(BUnit u in bUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(BUnit u in bUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
-            foreach(PlasmaUnit u in plasmaUnits){
-                Vector pos = DataBase.WhereDisp(u.x_index, u.y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale))
+            foreach(PlasmaUnit u in plasmaUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
+                    u.Draw(d);
+            }
+            foreach (KinUnit u in kinUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
+                    u.Draw(d);
+            }
+            foreach (KabiUnit u in kabiUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
+                    u.Draw(d);
+            }
+            foreach (VirusUnit u in virusUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
+                    u.Draw(d);
+            }
+            foreach (GanUnit u in ganUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
+                    u.Draw(d);
+            }
+            foreach (KiseichuUnit u in kiseichuUnits)
+            {
+                if (DataBase.IsInDisp(DataBase.WhereDisp(u.x_index, u.y_index, camera, scale), scale))
                     u.Draw(d);
             }
         }
