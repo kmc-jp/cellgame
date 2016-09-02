@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CommonPart
 {
-    class UnitBox : WindowBox
+    class UnitBox : WindowBar
     {
         #region Variable
         #endregion

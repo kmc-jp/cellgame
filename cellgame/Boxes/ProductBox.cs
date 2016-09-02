@@ -6,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace CommonPart
 {
-    class ProductBox : WindowBox
+    class ProductBox : WindowBar
     {
         #region Variable
         #endregion
         #region Method
         public ProductBox()
             : base(DataBase.BarPos[5], DataBase.BarWidth[5], DataBase.BarHeight[5]) {
-            leftHide = false;
-            showing = false;
         }
         #endregion
     }// class end

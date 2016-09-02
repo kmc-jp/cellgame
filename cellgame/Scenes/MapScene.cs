@@ -155,11 +155,9 @@ namespace CommonPart {
             um.Draw(d, Camera, Scale);
             // それぞれのバーの描画
             studyBar.Draw(d);
-            unitBox.Draw(d);
             minimapBox.Draw(d, nMap, Camera, Scale);
             statusBar.Draw(d);
             arrangeBar.Draw(d);
-            productBox.Draw(d);
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
