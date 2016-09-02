@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using System.IO;
 
 namespace CommonPart {
@@ -149,7 +150,7 @@ namespace CommonPart {
         /// <param name="d"></param>
         public override void SceneDraw(Drawing d) {
             // マップの描画
-            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0,0));
+            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor);
             // ユニットの描画
             um.Draw(d, Camera, Scale);
             // それぞれのバーの描画

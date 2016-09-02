@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace CommonPart
 {
@@ -17,15 +18,18 @@ namespace CommonPart
         {
             // ボックスの背景の表示
             base.Draw(d);
-
+            
             // ボックスの中身の表示
             if (showing)
             {
-                int sizeX = width * 16 - 92, sizeY = height * 16 - 62;
-                Vector dposition = new Vector(windowPosition.X + 50, windowPosition.Y + 30);
+                int sizeX = width * 16 - 19, sizeY = height * 16 - 4;
+                Vector dposition = new Vector(windowPosition.X + 17, windowPosition.Y + 2);
                 Vector dcamera = new Vector(Camera.X + Game1._WindowSizeX / DataBase.MapScale[Scale] / 2 - sizeX / DataBase.MapScale[0] / 2,
                                          Camera.Y + Game1._WindowSizeY / DataBase.MapScale[Scale] / 2 - sizeY / DataBase.MapScale[0] / 2);
-                nMap.Draw(d, dcamera, 0, DepthID.StateFront, sizeX, sizeY, dposition);
+                nMap.DrawMinimap(d, dcamera, 0, DepthID.StateFront, sizeX, sizeY, dposition);
+
+                BoxFrame bf = new BoxFrame(new Vector(Game1._WindowSizeX / DataBase.MapScale[Scale] * DataBase.MapScale[0], Game1._WindowSizeY / DataBase.MapScale[Scale] * DataBase.MapScale[0]), Color.Black);
+                bf.Draw(d, dposition + new Vector((Camera.X - dcamera.X) * DataBase.MapScale[0], (Camera.Y - dcamera.Y) * DataBase.MapScale[0]), DepthID.Message);
             }
         }
         public override void Update()

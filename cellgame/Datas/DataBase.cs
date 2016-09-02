@@ -25,7 +25,7 @@ namespace CommonPart {
         // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
-        public static readonly double[] MapScale = new[] { 0.15d, 0.5d, 0.75d, 1.0d };
+        public static readonly double[] MapScale = new[] { 0.1d, 0.5d, 0.75d, 1.0d };
         // デフォルトのマップの倍率
         public static readonly int DefaultMapScale = 3;
         // へクス画像の横幅と縦幅

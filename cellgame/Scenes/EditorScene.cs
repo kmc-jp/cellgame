@@ -136,7 +136,7 @@ namespace CommonPart
         public override void SceneDraw(Drawing d)
         {
             // マップの描画
-            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0, 0));
+            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor);
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
