@@ -9,24 +9,23 @@ namespace CommonPart
     class StatusBar : WindowBar
     {
         #region Variable
-        int studyPoint;
-        int productPoint;
-        int leftUnit;
-        decimal bodyTemp;
+        private int studyPoint;
+        private int PP;
+        private int maxPP;
+        private int leftUnit;
+        private decimal bodyTemp;
         #endregion
         #region Method
-        public StatusBar(int _studyPoint, int _productPoint, int _leftUnit, decimal _bodyTemp)
+        public StatusBar(int _studyPoint, int _PP, int _maxPP, int _leftUnit, decimal _bodyTemp)
             : base(DataBase.BarPos[3], DataBase.BarWidth[3], DataBase.BarHeight[3]) {
-            studyPoint = _studyPoint;
-            productPoint = _productPoint;
-            leftUnit = _leftUnit;
-            bodyTemp = _bodyTemp;
+            Update(_studyPoint, _PP, _maxPP, _leftUnit, _bodyTemp);
         }
-        public void Update(int _studyPoint, int _productPoint, int _leftUnit, decimal _bodyTemp)
+        public void Update(int _studyPoint, int _PP, int _maxPP, int _leftUnit, decimal _bodyTemp)
         {
             base.Update();
             studyPoint = _studyPoint;
-            productPoint = _productPoint;
+            PP = _PP;
+            maxPP = _maxPP;
             leftUnit = _leftUnit;
             bodyTemp = _bodyTemp;
         }

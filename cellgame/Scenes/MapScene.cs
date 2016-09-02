@@ -21,7 +21,8 @@ namespace CommonPart {
         UnitBox unitBox;
         // カメラ
         Vector Camera { get { return _camera; } }
-        double CameraX {
+        double CameraX
+        {
             get { return _camera.X; }
             set { _camera.X = Math.Max(-Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], value)); }
         }
@@ -50,10 +51,15 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        int studyPoint = 0;
-        int productPoint = 0;
-        int leftUnit = 0;
-        decimal bodyTemp = 36;
+        int pturn = 0;
+        int turn = 0;
+        int studyPower = 36;
+        int studyPoint = 364;
+        int maxStudyPoint = 514;
+        int PP = 25;
+        int maxPP = 25;
+        int leftUnit = 19;
+        decimal bodyTemp = 36.0m;
 
         // WhichHexの返り値用の構造体
         public struct PAIR　{
@@ -70,10 +76,10 @@ namespace CommonPart {
             pstate = Mouse.GetState();
             nMap = new Map();
             um = new UnitManager();
-            studyBar = new StudyBar();
+            studyBar = new StudyBar(maxStudyPoint, studyPoint, studyPower, "親和性成熟");
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
-            statusBar = new StatusBar(studyPoint, productPoint, leftUnit, bodyTemp);
+            statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
             arrangeBar = new ArrangeBar();
             productBox = new ProductBox();
         }
@@ -171,13 +177,13 @@ namespace CommonPart {
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
             // ユニットの更新
-            um.Update();
+            um.Update(pturn < turn);
 
             // バー・ボックスの更新
             studyBar.Update();
             unitBox.Update();
             minimapBox.Update();
-            statusBar.Update(studyPoint, productPoint, leftUnit, bodyTemp);
+            statusBar.Update(studyPoint, PP, maxPP, leftUnit, bodyTemp);
             arrangeBar.Update();
             productBox.Update();
 
@@ -188,6 +194,7 @@ namespace CommonPart {
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
 
             pstate = state;
+            pturn = turn;
 
             // Rキーが押されるとマップデータの読み込み
             if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();

@@ -7,18 +7,19 @@ using CommonPart;
 
 namespace CommonPart
 {
-    class Unit
+    abstract class Unit
     {
         #region Variable
         public int x_index { get; private set; }
         public int y_index { get; private set; }
         protected readonly int type;
-        protected int HP;
-        protected int LP;
-        protected int EXP;
+        public int HP { get; protected set; }
+        public int LP { get; protected set; }
+        public int EXP { get; protected set; }
         protected readonly int MAX_HP;
         protected readonly int MAX_LP;
         protected readonly int MAX_EXP;
+        protected readonly string unitName;
         #endregion
         /// <summary>
         /// コンストラクタ
@@ -33,12 +34,14 @@ namespace CommonPart
                 HP = MAX_HP = DataBase.MyUnitMAX_HP[type];
                 LP = MAX_LP = DataBase.MyUnitMAX_LP[type];
                 EXP = MAX_EXP = DataBase.MyUnitMAX_EXP[type];
+                unitName = DataBase.MyUnitName[type];
             }
             else
             {
                 HP = MAX_HP = DataBase.EnemyUnitMAX_HP[type + 5];
                 LP = MAX_LP = DataBase.EnemyUnitMAX_LP[type + 5];
                 EXP = MAX_EXP = DataBase.EnemyUnitMAX_EXP[type + 5];
+                unitName = DataBase.EnemyUnitName[type];
             }
         }
         #region Method

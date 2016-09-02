@@ -10,7 +10,7 @@ namespace CommonPart
     class KochuUnit : Unit
     {
         public KochuUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Kochu)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.Kochu)
         {
 
         }
@@ -18,7 +18,7 @@ namespace CommonPart
     class MacroUnit : Unit
     {
         public MacroUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Macro)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.Macro)
         {
 
         }
@@ -26,7 +26,7 @@ namespace CommonPart
     class JujoUnit : Unit
     {
         public JujoUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Jujo)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.Jujo)
         {
 
         }
@@ -34,7 +34,7 @@ namespace CommonPart
     class KosanUnit : Unit
     {
         public KosanUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Kosan)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.Kosan)
         {
 
         }
@@ -42,7 +42,7 @@ namespace CommonPart
     class NKUnit : Unit
     {
         public NKUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.NK)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.NK)
         {
 
         }
@@ -50,7 +50,7 @@ namespace CommonPart
     class HelperTUnit : Unit
     {
         public HelperTUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.HelperT)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.HelperT)
         {
 
         }
@@ -58,7 +58,7 @@ namespace CommonPart
     class KillerTUnit : Unit
     {
         public KillerTUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.KillerT)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.KillerT)
         {
 
         }
@@ -66,7 +66,7 @@ namespace CommonPart
     class BUnit : Unit
     {
         public BUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.B)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.B)
         {
 
         }
@@ -74,7 +74,7 @@ namespace CommonPart
     class PlasmaUnit : Unit
     {
         public PlasmaUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.MyUnitName.Plasma)
+            : base(_x_index, _y_index, (int)DataBase.MyUnit.Plasma)
         {
 
         }
@@ -83,7 +83,7 @@ namespace CommonPart
     class KinUnit : Unit
     {
         public KinUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Kin)
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnit.Kin)
         {
 
         }
@@ -91,7 +91,7 @@ namespace CommonPart
     class KabiUnit : Unit
     {
         public KabiUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Kabi)
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnit.Kabi)
         {
 
         }
@@ -99,7 +99,7 @@ namespace CommonPart
     class VirusUnit : Unit
     {
         public VirusUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Virus)
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnit.Virus)
         {
 
         }
@@ -107,7 +107,7 @@ namespace CommonPart
     class GanUnit : Unit
     {
         public GanUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Gan)
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnit.Gan)
         {
 
         }
@@ -115,7 +115,7 @@ namespace CommonPart
     class KiseichuUnit : Unit
     {
         public KiseichuUnit(int _x_index, int _y_index)
-            : base(_x_index, _y_index, (int)DataBase.EnemyUnitName.Kiseichu)
+            : base(_x_index, _y_index, (int)DataBase.EnemyUnit.Kiseichu)
         {
 
         }

@@ -59,14 +59,22 @@ namespace CommonPart {
         public static List<Texture2D> myUnit_tex;
         public static List<Texture2D> enemyUnit_tex;
         // ユニットの名前
-        public enum MyUnitName
+        public enum MyUnit
         {
             Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma
         }
-        public enum EnemyUnitName
+        public static readonly string[] MyUnitName = new[]
+        {
+            "好中球", "マクロファージ", "樹状細胞", "好酸球", "NK細胞", "ヘルパーT細胞", "キラーT細胞", "B細胞", "プラズマ細胞"
+        };
+        public enum EnemyUnit
         {
             Kin = -5, Kabi, Virus, Gan, Kiseichu
         }
+        public static readonly string[] EnemyUnitName = new[]
+        {
+            "菌", "カビ", "ウイルス", "ガン", "寄生虫"
+        };
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };

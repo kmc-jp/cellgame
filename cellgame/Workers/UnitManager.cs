@@ -126,9 +126,31 @@ namespace CommonPart
             }
         }
         // 更新
-        public void Update()
+        public void Update(bool changeTurn = false)
         {
+            if (changeTurn)
+                TurnUpdate();
 
+            // HP か LP が 0 以下になったユニットを削除
+            kochuUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            macroUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            jujoUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            kosanUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            nkUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            helperTUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            killerTUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            bUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            plasmaUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            kinUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            kabiUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            virusUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            ganUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            kiseichuUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+        }
+        // ターンの更新
+        public void TurnUpdate()
+        {
+            
         }
         #endregion
     }// class end
