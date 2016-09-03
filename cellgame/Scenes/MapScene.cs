@@ -158,6 +158,8 @@ namespace CommonPart {
             minimapBox.Draw(d, nMap, Camera, Scale);
             statusBar.Draw(d);
             arrangeBar.Draw(d);
+            unitBox.Draw(d);
+            productBox.Draw(d);
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
@@ -180,7 +182,7 @@ namespace CommonPart {
 
             // バー・ボックスの更新
             studyBar.Update();
-            unitBox.Update();
+            unitBox.Update(um);
             minimapBox.Update();
             statusBar.Update(studyPoint, PP, maxPP, leftUnit, bodyTemp);
             arrangeBar.Update();

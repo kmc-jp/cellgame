@@ -45,17 +45,6 @@ namespace CommonPart
             }
         }
         #region Method
-        protected Vector DrawPos(Vector camera, int scale)
-        {
-            return DataBase.WhereDisp(x_index, y_index, camera, scale) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
-        }
-        public void Draw(Drawing d, Vector camera, int scale)
-        {
-            if(type >= 0)
-                d.Draw(DrawPos(camera, scale), DataBase.myUnit_tex[type], DepthID.Player, (float)DataBase.MapScale[scale]);
-            else
-                d.Draw(DrawPos(camera, scale), DataBase.enemyUnit_tex[type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
-        }
         public void MoveTo(int x_index2,int y_index2)
         {
             x_index = x_index2;

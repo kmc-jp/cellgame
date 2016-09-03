@@ -107,106 +107,121 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bar_frame0.png">
+    <Content Include="Content\bar\bar_frame0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame1.png">
+    <Content Include="Content\bar\bar_frame1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame2.png">
+    <Content Include="Content\bar\bar_frame2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame3.png">
+    <Content Include="Content\bar\bar_frame3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame4.png">
+    <Content Include="Content\bar\bar_frame4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame5.png">
+    <Content Include="Content\bar\bar_frame5.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame6.png">
+    <Content Include="Content\bar\bar_frame6.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame7.png">
+    <Content Include="Content\bar\bar_frame7.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\bar_frame8.png">
+    <Content Include="Content\bar\bar_frame8.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame0.png">
+    <Content Include="Content\box\box_frame0.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame1.png">
+    <Content Include="Content\box\box_frame1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame2.png">
+    <Content Include="Content\box\box_frame2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame3.png">
+    <Content Include="Content\box\box_frame3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame4.png">
+    <Content Include="Content\box\box_frame4.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame5.png">
+    <Content Include="Content\box\box_frame5.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame6.png">
+    <Content Include="Content\box\box_frame6.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame7.png">
+    <Content Include="Content\box\box_frame7.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame8.png">
+    <Content Include="Content\box\box_frame8.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\box_frame9.png">
+    <Content Include="Content\box\box_frame9.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\hex0.png">
+    <Content Include="Content\enemy_unit\enemyUnit0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\hex1.png">
+    <Content Include="Content\enemy_unit\enemyUnit1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\hex2.png">
+    <Content Include="Content\enemy_unit\enemyUnit2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\hex3.png">
+    <Content Include="Content\enemy_unit\enemyUnit3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\hex4.png">
+    <Content Include="Content\enemy_unit\enemyUnit4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\hex\hex0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\hex\hex1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\hex\hex2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\hex\hex3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\hex\hex4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\KMC.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit0.png">
+    <Content Include="Content\my_unit\myUnit0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit1.png">
+    <Content Include="Content\my_unit\myUnit1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit2.png">
+    <Content Include="Content\my_unit\myUnit2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit3.png">
+    <Content Include="Content\my_unit\myUnit3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit4.png">
+    <Content Include="Content\my_unit\myUnit4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit5.png">
+    <Content Include="Content\my_unit\myUnit5.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit6.png">
+    <Content Include="Content\my_unit\myUnit6.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit7.png">
+    <Content Include="Content\my_unit\myUnit7.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\myUnit8.png">
+    <Content Include="Content\my_unit\myUnit8.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\scroll.png">
