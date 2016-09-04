@@ -46,6 +46,9 @@ namespace CommonPart
                 new RichText(string.Format("{0}/{1}", u.MAX_HP, u.HP)).Draw(d, windowPosition + new Vector(180, 160), DepthID.Message);
                 new RichText(string.Format("{0}/{1}", u.MAX_LP, u.LP)).Draw(d, windowPosition + new Vector(180, 180), DepthID.Message);
                 new RichText(string.Format("{0}/{1}", u.MAX_EXP, u.EXP)).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
+
+
+                new RichText(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange)).Draw(d, windowPosition + new Vector(240, 180), DepthID.Message);
             }
         }
         // クリックされた位置を入力としてコマンドを実行

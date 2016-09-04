@@ -161,68 +161,70 @@ namespace CommonPart
             myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
             unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(unitType);
         }
+        // 移動可能な位置を求める深さ優先探索関数
+        public void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
+        {
+            int[] sx = { 1, 1, 0, -1, -1, 0 };
+            int[] sy = { 0, 1, 1, 0, -1, -1 };
+            for (int i = 0; i < 6; i++)
+            {
+                int x = now.i + sx[i] - (now.j + sy[i] + 1) / 2, y = now.j + sy[i];
+                if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
+                    nMap.Data[x, y] != 0 && unitMap[now.i + sx[i], now.j + sy[i]].type == UnitType.NULL)
+                {
+                    if(nMap.Data[now.i - (now.j + 1) / 2, now.j] == 2 && nMap.Data[x, y] == 2)
+                    {
+                        if(pow_2 >= 1)
+                        {
+                            PAIR next = new PAIR(now.i + sx[i], now.j + sy[i]);
+                            res.Add(next);
+                            if (map[next.i, next.j] < pow_2 - 1)
+                                map[next.i, next.j] = pow_2 - 1;
+                            dfs(ref map, pow_2 - 1, next, ref res, nMap);
+                        }
+                    }
+                    else
+                    {
+                        if (pow_2 >= 2)
+                        {
+                            PAIR next = new PAIR(now.i + sx[i], now.j + sy[i]);
+                            res.Add(next);
+                            if (map[next.i, next.j] < pow_2 - 2)
+                                map[next.i, next.j] = pow_2 - 2;
+                            dfs(ref map, pow_2 - 2, next, ref res, nMap);
+                        }
+                    }
+                }
+            }
+        }
         // 移動のコマンドが実行されるための前処理
         public void StartMoving(Map nMap)
         {
             moving = true;
             movable.Clear();
             moveCost.Clear();
-            int[,] bfs = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
-            List<PAIR> que = new List<PAIR>();
+            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+            List<PAIR> res = new List<PAIR>();
             for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
             {
                 for(int j = 0; j < DataBase.MAP_MAX; j++)
                 {
-                    bfs[i, j] = -1;
+                    map[i, j] = -1;
                 }
             }
-            que.Add(new PAIR(select_i, select_j));
-            bfs[select_i, select_j] = unitMap[select_i, select_j].movePower * 2;
-            int[] sx = { 1, 1, 0, -1, -1, 0 };
-            int[] sy = { 0, 1, 1, 0, -1, -1 };
-            while (que.Count != 0)
-            {
-                int cap = que.Count;
-                for(int i = 0; i < cap; i++)
-                {
-                    for (int j = 0; j < 6; j++)
-                    {
-                        int x = que[i].i + sx[j] - (que[i].j + sy[j] + 1) / 2, y = que[i].j + sy[j];
-                        if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
-                            unitMap[que[i].i + sx[j], que[i].j + sy[j]].type == UnitType.NULL &&
-                            nMap.Data[x, y] != 0 && bfs[que[i].i + sx[j], que[i].j + sy[j]] == -1 && bfs[que[i].i, que[i].j] >= 1)
-                        {
-                            if (nMap.Data[que[i].i - (que[i].j + 1) / 2, que[i].j] == 2 && nMap.Data[x, y] == 2)
-                            {
-                                que.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
-                                movable.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
-                                bfs[que[i].i + sx[j], que[i].j + sy[j]] = bfs[que[i].i, que[i].j] - 1;
-                                moveCost.Add(unitMap[select_i, select_j].movePower - bfs[que[i].i + sx[j], que[i].j + sy[j]] / 2);
-                            }
-                        }
-                    }
-                    for (int j = 0; j < 6; j++)
-                    {
-                        int x = que[i].i + sx[j] - (que[i].j + sy[j] + 1) / 2, y = que[i].j + sy[j];
-                        if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
-                            unitMap[que[i].i + sx[j], que[i].j + sy[j]].type == UnitType.NULL &&
-                            nMap.Data[x, y] != 0 && bfs[que[i].i + sx[j], que[i].j + sy[j]] == -1 && bfs[que[i].i, que[i].j] >= 2)
-                        {
-                            if (nMap.Data[que[i].i - (que[i].j + 1) / 2, que[i].j] != 2 || nMap.Data[x, y] != 2)
-                            {
-                                que.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
-                                movable.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
-                                bfs[que[i].i + sx[j], que[i].j + sy[j]] = bfs[que[i].i, que[i].j] - 2;
-                                moveCost.Add(unitMap[select_i, select_j].movePower - bfs[que[i].i + sx[j], que[i].j + sy[j]] / 2);
-                            }
-                        }
-                    }
-                }
-                que.RemoveRange(0, cap);
-            }
-            if(movable.Count == 0)
+            dfs(ref map, unitMap[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref res, nMap);
+            if(res.Count == 0)
             {
                 moving = false;
+            }
+            else
+            {
+                res.Distinct();
+                for (int i = 0; i < res.Count; i++)
+                {
+                    movable.Add(new PAIR(res[i].i, res[i].j));
+                    moveCost.Add(unitMap[select_i, select_j].movePower - map[res[i].i, res[i].j] / 2);
+                }
             }
         }
         // 選択中のユニットの移動
