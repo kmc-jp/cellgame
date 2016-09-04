@@ -22,6 +22,7 @@ namespace CommonPart {
         #region Map
         // へクス画像のリスト
         public static List<Texture2D> hex_tex;
+        public static Texture2D select_tex;
         // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
@@ -59,32 +60,32 @@ namespace CommonPart {
         public static List<Texture2D> myUnit_tex;
         public static List<Texture2D> enemyUnit_tex;
         // ユニットの名前
-        public enum MyUnit
+        /*public enum UnitType
         {
-            Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma
-        }
+            NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
+        }*/
         public static readonly string[] MyUnitName = new[]
         {
             "好中球", "マクロファージ", "樹状細胞", "好酸球", "NK細胞", "ヘルパーT細胞", "キラーT細胞", "B細胞", "プラズマ細胞"
         };
-        public enum EnemyUnit
-        {
-            Kin = -5, Kabi, Virus, Gan, Kiseichu
-        }
         public static readonly string[] EnemyUnitName = new[]
         {
             "菌", "カビ", "ウイルス", "ガン", "寄生虫"
         };
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
-        public static readonly int[] MyUnitMAX_LP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
+        public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10 };
         public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
-        public static readonly int[] EnemyUnitMAX_LP = new[] { 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
         public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
 
         #endregion
 
+        #region Button
+        // ユニットボックスのコマンドボタン画像のリスト
+        public static List<Texture2D> command_tex;
+        #endregion
 
         #region Method
         // マップ上の位置から現在の画面上の座標を求める
@@ -116,4 +117,17 @@ namespace CommonPart {
         #endregion
 
     }// DataBase end
+
+    // ユニットの名前
+    public enum UnitType
+    {
+        NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
+    }
+    // x_index と y_index のペアの構造体
+    public struct PAIR
+    {
+        public int i, j;
+        public PAIR(int _i, int _j) { i = _i; j = _j; }
+    }
+
 }// namespace end

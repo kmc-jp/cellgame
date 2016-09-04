@@ -23,7 +23,11 @@ namespace CommonPart
         {
             showing = false;
         }
-        public void Draw(Drawing d)
+        public bool IsOn(int x, int y)
+        {
+            return showing  && base.IsOn(x, y);
+        }
+        public override void Draw(Drawing d)
         {
             if (showing)
             {

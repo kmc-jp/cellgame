@@ -11,7 +11,7 @@ namespace CommonPart {
     /// </summary>
     class Map {
         #region Variable
-        int[,] Data = new int[DataBase.MAP_MAX, DataBase.MAP_MAX];
+        public int[,] Data = new int[DataBase.MAP_MAX, DataBase.MAP_MAX];
         #endregion
         #region Method
         // コンストラクタ

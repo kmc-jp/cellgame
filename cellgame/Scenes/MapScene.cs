@@ -62,11 +62,6 @@ namespace CommonPart {
         int leftUnit = 19;
         decimal bodyTemp = 36.0m;
 
-        // WhichHexの返り値用の構造体
-        public struct PAIR　{
-            public int i, j;
-            public PAIR(int _i, int _j) { i = _i; j = _j; }
-        }
         
         #endregion
 
@@ -177,6 +172,40 @@ namespace CommonPart {
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
+            // 左クリックされたときに移動コマンド中でありその座標が移動可能な位置であればその位置へ選択中のユニットを移動
+            if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed &&
+                state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
+            {
+                PAIR p = WhichHex(state.X, state.Y);
+                if (p.i >= 0 && p.j >= 0)
+                {
+                    if (um.moving)
+                    {
+                        foreach (PAIR pos in um.movable)
+                        {
+                            if (p.i == pos.i - (pos.j + 1) / 2 && p.j == pos.j)
+                            {
+                                um.Move(pos.i - (pos.j + 1) / 2, pos.j, unitBox);
+                                break;
+                            }
+                        }
+                    }
+                    else if (!um.IsExist(p.i, p.j))
+                    {
+                        um.Produce(p.i, p.j, UnitType.Jujo);
+                        turn++;
+                    }
+                    um.Select(p.i, p.j, unitBox);
+                }
+            }
+
+            // 左クリックされたときにその座標がユニットボックスのコマンドボタンであれば、コマンドを実行
+            if(pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed && unitBox.IsOnButton(state.X, state.Y))
+            {
+                unitBox.Command(state.X, state.Y, um, nMap);
+            }
+
+
             // ユニットの更新
             um.Update(pturn < turn);
 
@@ -189,7 +218,7 @@ namespace CommonPart {
             productBox.Update();
 
             // ボタンの上にカーソルがあるときに、カーソルの形状を手の形に変化
-            if (unitBox.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
+            if (unitBox.IsOnButton(state.X, state.Y) || arrangeBar.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
             else
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;

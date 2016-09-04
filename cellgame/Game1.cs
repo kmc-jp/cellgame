@@ -78,6 +78,14 @@ namespace CommonPart
             for (int i = 0; i < 5; i++)
                 DataBase.hex_tex.Add(Content.Load<Texture2D>(string.Format("hex/hex{0}.png", i)));
 
+            // 選択されたへクスの画像の読み込み
+            DataBase.select_tex = Content.Load<Texture2D>("hex/select.png");
+
+            // ユニットボックスのコマンドボタン画像の読み込み
+            DataBase.command_tex = new List<Texture2D>();
+            //for (int i = 0; i < 4; i++)
+            //    DataBase.hex_tex.Add(Content.Load<Texture2D>(string.Format("button/command{0}.png", i)));
+
             // バーの画像読み込み
             DataBase.bar_frame_tex = new List<Texture2D>();
             for (int i = 0; i < 9; i++)

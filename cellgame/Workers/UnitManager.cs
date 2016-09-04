@@ -10,28 +10,18 @@ namespace CommonPart
     {
         #region Variable
         // 味方ユニット
-        List<KochuUnit> kochuUnits;
-        List<MacroUnit> macroUnits;
-        List<JujoUnit> jujoUnits;
-        List<KosanUnit> kosanUnits;
-        List<NKUnit> nkUnits;
-        List<HelperTUnit> helperTUnits;
-        List<KillerTUnit> killerTUnits;
-        List<BUnit> bUnits;
-        List<PlasmaUnit> plasmaUnits;
+        List<PAIR> myUnits;
         // 敵ユニット
-        List<KinUnit> kinUnits;
-        List<KabiUnit> kabiUnits;
-        List<VirusUnit> virusUnits;
-        List<GanUnit> ganUnits;
-        List<KiseichuUnit> kiseichuUnits;
+        List<PAIR> enemyUnits;
+        // 現在選択中のユニット
+        int select_i = -1, select_j = 0;
+        // 現在移動コマンドの入力中であるかどうか
+        public bool moving = false;
+        // 現在移動可能な位置のリスト
+        public List<PAIR> movable = new List<PAIR>();
+        public List<int> moveCost = new List<int>();
 
-        public enum UnitType
-        {
-            NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
-        }
-
-        UnitType[,] unitMap;
+        Unit[,] unitMap;
 
         #endregion
 
@@ -40,30 +30,18 @@ namespace CommonPart
         public UnitManager()
         {
             // 味方ユニット
-            kochuUnits = new List<KochuUnit>();
-            macroUnits = new List<MacroUnit>();
-            jujoUnits = new List<JujoUnit>();
-            kosanUnits = new List<KosanUnit>();
-            nkUnits = new List<NKUnit>();
-            helperTUnits = new List<HelperTUnit>();
-            killerTUnits = new List<KillerTUnit>();
-            bUnits = new List<BUnit>();
-            plasmaUnits = new List<PlasmaUnit>();
+            myUnits = new List<PAIR>();
 
             // 敵ユニット
-            kinUnits = new List<KinUnit>();
-            kabiUnits = new List<KabiUnit>();
-            virusUnits = new List<VirusUnit>();
-            ganUnits = new List<GanUnit>();
-            kiseichuUnits = new List<KiseichuUnit>();
+            enemyUnits = new List<PAIR>();
 
             // ユニットのマップ情報の初期化
-            unitMap = new UnitType[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+            unitMap = new Unit[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
             for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
             {
                 for(int j = 0; j < DataBase.MAP_MAX; j++)
                 {
-                    unitMap[i, j] = UnitType.NULL;
+                    unitMap[i, j] = new Unit(UnitType.NULL);
                 }
             }
         }
@@ -72,56 +50,204 @@ namespace CommonPart
         // 描画
         public void Draw(Drawing d, Vector camera, int scale)
         {
-            for (int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
+            foreach (PAIR p in myUnits)
             {
-                for (int j = 0; j < DataBase.MAP_MAX; j++)
+                int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
+                Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
+                if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
                 {
-                    if(unitMap[i, j] != UnitType.NULL)
+                    pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
+                    if(unitMap[p.i, p.j].type > 0)
                     {
-                        int i_ = i - (j + 1) / 2, j_ = j;
-                        Vector pos = DataBase.WhereDisp(i_, j_, camera, scale);
-                        if (DataBase.IsInDisp(pos, scale) && i_ >= 0 && i_ < DataBase.MAP_MAX && j_ >= 0 && j_ < DataBase.MAP_MAX)
-                        {
-                            pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
-                            if(unitMap[i, j] > 0)
-                            {
-                                d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[i, j] - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
-                            }
-                            else
-                            {
-                                d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[i, j] + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
-                            }
-                        }
+                        d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
+                    }
+                    else
+                    {
+                        d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
                     }
                 }
+            }
+            foreach (PAIR p in enemyUnits)
+            {
+                int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
+                Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
+                if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
+                {
+                    pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
+                    if (unitMap[p.i, p.j].type > 0)
+                    {
+                        d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
+                    }
+                    else
+                    {
+                        d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                    }
+                }
+            }
+            if (moving)
+            {
+                foreach (PAIR p in movable)
+                {
+                    d.Draw(DataBase.WhereDisp(p.i - (p.j + 1) / 2, p.j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+            }
+            else if(select_i != -1)
+            {
+                d.Draw(DataBase.WhereDisp(select_i - (select_j + 1) / 2, select_j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
             }
         }
         // 更新
         public void Update(bool changeTurn = false)
         {
             if (changeTurn)
-                TurnUpdate();
+                UpdateTurn();
 
             // HP か LP が 0 以下になったユニットを削除
-            kochuUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            macroUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            jujoUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            kosanUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            nkUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            helperTUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            killerTUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            bUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            plasmaUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            kinUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            kabiUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            virusUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            ganUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
-            kiseichuUnits.RemoveAll(u => u.HP <= 0 || u.LP <= 0);
+            for (int i = 0; i < myUnits.Count;i++)
+            {
+                Unit u = unitMap[myUnits[i].i, myUnits[i].j];
+                if(u.HP <= 0 || u.LP <= 0)
+                {
+                    unitMap[myUnits[i].i, myUnits[i].j] = new Unit(UnitType.NULL);
+                    myUnits.RemoveAt(i);
+                    i--;
+                }
+            }
+            for (int i = 0; i < enemyUnits.Count; i++)
+            {
+                Unit u = unitMap[myUnits[i].i, myUnits[i].j];
+                if (u.HP <= 0 || u.LP <= 0)
+                {
+                    unitMap[enemyUnits[i].i, enemyUnits[i].j] = new Unit(UnitType.NULL);
+                    enemyUnits.RemoveAt(i);
+                    i--;
+                }
+            }
         }
         // ターンの更新
-        public void TurnUpdate()
+        public void UpdateTurn()
         {
-            
+            foreach(PAIR p in myUnits)
+            {
+                unitMap[p.i, p.j].UpdateTurn();
+            }
+            foreach (PAIR p in enemyUnits)
+            {
+                unitMap[p.i, p.j].UpdateTurn();
+            }
+        }
+        // ユニットの選択
+        public void Select(int x_index, int y_index, UnitBox ub)
+        {
+            if (IsExist(x_index, y_index))
+            {
+                ub.Select(x_index, y_index, Find(x_index, y_index));
+                select_i = x_index + (y_index + 1) / 2;
+                select_j = y_index;
+            }
+            else
+            {
+                ub.Select(-1, 0, Find(x_index, y_index));
+                select_i = -1;
+                select_j = 0;
+            }
+            moving = false;
+        }
+        // ユニットの生産
+        public void Produce(int x_index, int y_index, UnitType unitType)
+        {
+            if (IsExist(x_index, y_index) || unitType <= 0 || (int)unitType > 9) return;
+
+            myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
+            unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(unitType);
+        }
+        // 移動のコマンドが実行されるための前処理
+        public void StartMoving(Map nMap)
+        {
+            moving = true;
+            movable.Clear();
+            moveCost.Clear();
+            int[,] bfs = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+            List<PAIR> que = new List<PAIR>();
+            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
+            {
+                for(int j = 0; j < DataBase.MAP_MAX; j++)
+                {
+                    bfs[i, j] = -1;
+                }
+            }
+            que.Add(new PAIR(select_i, select_j));
+            bfs[select_i, select_j] = unitMap[select_i, select_j].movePower * 2;
+            int[] sx = { 1, 1, 0, -1, -1, 0 };
+            int[] sy = { 0, 1, 1, 0, -1, -1 };
+            while (que.Count != 0)
+            {
+                PAIR p = que.Last();
+                que.RemoveAt(que.Count - 1);
+                for(int j = 0; j < 6; j++)
+                {
+                    int x = p.i + sx[j] - (p.j + sy[j] + 1) / 2, y = p.j + sy[j];
+                    if(x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
+                        unitMap[p.i + sx[j], p.j + sy[j]].type == UnitType.NULL &&
+                        nMap.Data[x, y] != 0 && bfs[p.i + sx[j], p.j + sy[j]] == -1 && bfs[p.i, p.j] > 0)
+                    {
+                        if(nMap.Data[p.i - (p.j + 1) / 2, p.j] == 2 && nMap.Data[x, y] == 2)
+                        {
+                            que.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
+                            movable.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
+                            bfs[p.i + sx[j], p.j + sy[j]] = bfs[p.i, p.j] - 1;
+                            moveCost.Add(unitMap[select_i, select_j].movePower - bfs[p.i + sx[j], p.j + sy[j]] / 2);
+                        }
+                        else if(bfs[p.i, p.j] >= 2)
+                        {
+                            que.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
+                            movable.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
+                            bfs[p.i + sx[j], p.j + sy[j]] = bfs[p.i, p.j] - 2;
+                            moveCost.Add(unitMap[select_i, select_j].movePower - bfs[p.i + sx[j], p.j + sy[j]] / 2);
+                        }
+                    }
+                }
+            }
+            if(movable.Count == 0)
+            {
+                moving = false;
+            }
+        }
+        // 選択中のユニットの移動
+        public void Move(int x_index, int y_index, UnitBox ub)
+        {
+            int n = 0;
+            for(int k = 0; k < movable.Count; k++)
+            {
+                if (movable[k].i == x_index + (y_index + 1) / 2 && movable[k].j == y_index)
+                {
+                    n = k;
+                    break;
+                }
+            }
+
+            for (int i = 0; i < myUnits.Count;i++)
+            {
+                if(myUnits[i].i == select_i && myUnits[i].j == select_j)
+                {
+                    myUnits[i] = new PAIR(x_index + (y_index + 1) / 2, y_index);
+                }
+            }
+
+            unitMap[x_index + (y_index + 1) / 2,y_index] = unitMap[select_i, select_j];
+            unitMap[select_i, select_j] = new Unit(UnitType.NULL);
+            unitMap[x_index + (y_index + 1) / 2, y_index].movePower -= moveCost[n];
+            Select(x_index, y_index, ub);
+        }
+        // マップの座標(x_index, y_index)にユニットが存在するかどうか
+        public bool IsExist(int x_index, int y_index)
+        {
+            return unitMap[x_index + (y_index + 1) / 2, y_index].type != UnitType.NULL;
+        }
+        // マップの座標(i,j)のユニット
+        public Unit Find(int x_index, int y_index)
+        {
+            return unitMap[x_index + (y_index + 1) / 2, y_index];
         }
         #endregion
     }// class end
