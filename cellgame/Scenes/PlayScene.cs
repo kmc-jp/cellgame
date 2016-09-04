@@ -11,7 +11,7 @@ namespace CommonPart {
     /// <summary>
     /// ゲーム開始後の処理を書いたクラス
     /// </summary>
-    class MapScene : Scene {
+    class PlayScene : Scene {
         #region Variable
         // ボックスウィンドウ（ユニットボックスとか）
         ArrangeBar arrangeBar;
@@ -67,7 +67,7 @@ namespace CommonPart {
 
         #region Method
         // コンストラクタ
-        public MapScene(SceneManager s)
+        public PlayScene(SceneManager s)
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();

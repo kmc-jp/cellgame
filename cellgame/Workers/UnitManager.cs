@@ -162,7 +162,7 @@ namespace CommonPart
             unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(unitType);
         }
         // 移動可能な位置を求める深さ優先探索関数
-        public void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
+        void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
         {
             int[] sx = { 1, 1, 0, -1, -1, 0 };
             int[] sy = { 0, 1, 1, 0, -1, -1 };

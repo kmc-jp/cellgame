@@ -69,7 +69,8 @@
     <Compile Include="Save.cs" />
     <Compile Include="Scenes\EditorScene.cs" />
     <Compile Include="Scenes\KeyConfig.cs" />
-    <Compile Include="Scenes\MapScene.cs" />
+    <Compile Include="Scenes\NewGameScene.cs" />
+    <Compile Include="Scenes\PlayScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
     <Compile Include="Scenes\PadConfig.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
