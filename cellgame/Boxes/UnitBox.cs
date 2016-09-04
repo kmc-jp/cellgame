@@ -30,11 +30,11 @@ namespace CommonPart
                 {
                     d.Draw(windowPosition + new Vector(20, 20), DataBase.enemyUnit_tex[(int)u.type + 5], DepthID.Message);
                 }
-                new RichText(u.unitName).Draw(d, windowPosition + new Vector(150, 100), DepthID.Message);
+                new TextAndFont(u.unitName, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(150, 100), DepthID.Message);
 
-                new RichText("HP").Draw(d, windowPosition + new Vector(20, 160), DepthID.Message);
-                new RichText("LP").Draw(d, windowPosition + new Vector(20, 180), DepthID.Message);
-                new RichText("EXP").Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                new TextAndFont("HP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 160), DepthID.Message);
+                new TextAndFont("LP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 180), DepthID.Message);
+                new TextAndFont("EXP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
 
                 new Gauge(new Vector2(100, 10), Color.Red, 0, u.MAX_HP, u.HP, new Color(255, 128, 128)).Draw(
                     d, windowPosition + new Vector(60, 165), DepthID.Message);
@@ -43,12 +43,12 @@ namespace CommonPart
                 new Gauge(new Vector2(100, 10), Color.Blue, 0, u.MAX_EXP, u.EXP, new Color(128, 128, 255)).Draw(
                     d, windowPosition + new Vector(60, 205), DepthID.Message);
 
-                new RichText(string.Format("{0}/{1}", u.MAX_HP, u.HP)).Draw(d, windowPosition + new Vector(180, 160), DepthID.Message);
-                new RichText(string.Format("{0}/{1}", u.MAX_LP, u.LP)).Draw(d, windowPosition + new Vector(180, 180), DepthID.Message);
-                new RichText(string.Format("{0}/{1}", u.MAX_EXP, u.EXP)).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
+                new TextAndFont(string.Format("{0}/{1}", u.HP, u.MAX_HP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 160), DepthID.Message);
+                new TextAndFont(string.Format("{0}/{1}", u.LP, u.MAX_LP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 180), DepthID.Message);
+                new TextAndFont(string.Format("{0}/{1}", u.EXP, u.MAX_EXP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
 
 
-                new RichText(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange)).Draw(d, windowPosition + new Vector(240, 180), DepthID.Message);
+                new TextAndFont(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(240, 180), DepthID.Message);
             }
         }
         // クリックされた位置を入力としてコマンドを実行

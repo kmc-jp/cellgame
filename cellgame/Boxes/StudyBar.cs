@@ -17,7 +17,7 @@ namespace CommonPart {
         Gauge gauge;
         // 研究名
         string studying;
-        RichText st;
+        TextAndFont st;
 
         #endregion
         #region Method
@@ -28,14 +28,14 @@ namespace CommonPart {
             studyPoint = _studyPoint;
             gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, maxStudyPoint, studyPoint, Color.AliceBlue);
             studying = _studying;
-            st = new RichText(studying);
+            st = new TextAndFont(studying, FontID.Medium, Color.Black);
         }
         public override void Draw(Drawing d)
         {
             base.Draw(d);
             gauge.Draw(d, windowPosition + new Vector(6, 35),DepthID.Status);
             st.Draw(d, windowPosition + new Vector(2, 0), DepthID.Status);
-            new RichText(string.Format("{0}/{1}　　{2}ターン",studyPoint ,maxStudyPoint, (maxStudyPoint - studyPoint + studyPower - 1) / studyPower)).Draw(d, windowPosition + new Vector(120, 56), DepthID.Status);
+            new TextAndFont(string.Format("{0}/{1}　　{2}ターン",studyPoint ,maxStudyPoint, (maxStudyPoint - studyPoint + studyPower - 1) / studyPower), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(120, 56), DepthID.Status);
         }
         #endregion
     }// class end

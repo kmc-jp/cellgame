@@ -213,7 +213,7 @@ namespace CommonPart {
             studyBar.Update();
             unitBox.Update(um);
             minimapBox.Update();
-            statusBar.Update(studyPoint, PP, maxPP, leftUnit, bodyTemp);
+            statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
             arrangeBar.Update();
             productBox.Update();
 
