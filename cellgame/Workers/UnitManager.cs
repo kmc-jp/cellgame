@@ -182,31 +182,43 @@ namespace CommonPart
             int[] sy = { 0, 1, 1, 0, -1, -1 };
             while (que.Count != 0)
             {
-                PAIR p = que.Last();
-                que.RemoveAt(que.Count - 1);
-                for(int j = 0; j < 6; j++)
+                int cap = que.Count;
+                for(int i = 0; i < cap; i++)
                 {
-                    int x = p.i + sx[j] - (p.j + sy[j] + 1) / 2, y = p.j + sy[j];
-                    if(x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
-                        unitMap[p.i + sx[j], p.j + sy[j]].type == UnitType.NULL &&
-                        nMap.Data[x, y] != 0 && bfs[p.i + sx[j], p.j + sy[j]] == -1 && bfs[p.i, p.j] > 0)
+                    for (int j = 0; j < 6; j++)
                     {
-                        if(nMap.Data[p.i - (p.j + 1) / 2, p.j] == 2 && nMap.Data[x, y] == 2)
+                        int x = que[i].i + sx[j] - (que[i].j + sy[j] + 1) / 2, y = que[i].j + sy[j];
+                        if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
+                            unitMap[que[i].i + sx[j], que[i].j + sy[j]].type == UnitType.NULL &&
+                            nMap.Data[x, y] != 0 && bfs[que[i].i + sx[j], que[i].j + sy[j]] == -1 && bfs[que[i].i, que[i].j] >= 1)
                         {
-                            que.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
-                            movable.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
-                            bfs[p.i + sx[j], p.j + sy[j]] = bfs[p.i, p.j] - 1;
-                            moveCost.Add(unitMap[select_i, select_j].movePower - bfs[p.i + sx[j], p.j + sy[j]] / 2);
+                            if (nMap.Data[que[i].i - (que[i].j + 1) / 2, que[i].j] == 2 && nMap.Data[x, y] == 2)
+                            {
+                                que.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
+                                movable.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
+                                bfs[que[i].i + sx[j], que[i].j + sy[j]] = bfs[que[i].i, que[i].j] - 1;
+                                moveCost.Add(unitMap[select_i, select_j].movePower - bfs[que[i].i + sx[j], que[i].j + sy[j]] / 2);
+                            }
                         }
-                        else if(bfs[p.i, p.j] >= 2)
+                    }
+                    for (int j = 0; j < 6; j++)
+                    {
+                        int x = que[i].i + sx[j] - (que[i].j + sy[j] + 1) / 2, y = que[i].j + sy[j];
+                        if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
+                            unitMap[que[i].i + sx[j], que[i].j + sy[j]].type == UnitType.NULL &&
+                            nMap.Data[x, y] != 0 && bfs[que[i].i + sx[j], que[i].j + sy[j]] == -1 && bfs[que[i].i, que[i].j] >= 2)
                         {
-                            que.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
-                            movable.Add(new PAIR(p.i + sx[j], p.j + sy[j]));
-                            bfs[p.i + sx[j], p.j + sy[j]] = bfs[p.i, p.j] - 2;
-                            moveCost.Add(unitMap[select_i, select_j].movePower - bfs[p.i + sx[j], p.j + sy[j]] / 2);
+                            if (nMap.Data[que[i].i - (que[i].j + 1) / 2, que[i].j] != 2 || nMap.Data[x, y] != 2)
+                            {
+                                que.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
+                                movable.Add(new PAIR(que[i].i + sx[j], que[i].j + sy[j]));
+                                bfs[que[i].i + sx[j], que[i].j + sy[j]] = bfs[que[i].i, que[i].j] - 2;
+                                moveCost.Add(unitMap[select_i, select_j].movePower - bfs[que[i].i + sx[j], que[i].j + sy[j]] / 2);
+                            }
                         }
                     }
                 }
+                que.RemoveRange(0, cap);
             }
             if(movable.Count == 0)
             {
