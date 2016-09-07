@@ -20,6 +20,9 @@ namespace CommonPart
         // 現在移動可能な位置のリスト
         public List<PAIR> movable = new List<PAIR>();
         public List<int> moveCost = new List<int>();
+        // 現在のターン
+        int pturn = 0;
+        int turn = 0;
 
         Unit[,] unitMap;
 
@@ -97,10 +100,10 @@ namespace CommonPart
             }
         }
         // 更新
-        public void Update(bool changeTurn = false)
+        public void Update(UnitBox ub)
         {
-            if (changeTurn)
-                UpdateTurn();
+            if (pturn < turn)
+                UpdateTurn(ub);
 
             // HP か LP が 0 以下になったユニットを削除
             for (int i = 0; i < myUnits.Count;i++)
@@ -123,9 +126,14 @@ namespace CommonPart
                     i--;
                 }
             }
+            // 選択中のユニットが死滅すると選択解除
+            if (select_i != -1 && unitMap[select_i, select_j].type == UnitType.NULL)
+            {
+                Unselect(ub);
+            }
         }
         // ターンの更新
-        public void UpdateTurn()
+        public void UpdateTurn(UnitBox ub)
         {
             foreach(PAIR p in myUnits)
             {
@@ -135,6 +143,8 @@ namespace CommonPart
             {
                 unitMap[p.i, p.j].UpdateTurn();
             }
+            pturn = turn;
+            NextUnit(ub);
         }
         // ユニットの選択
         public void Select(int x_index, int y_index, UnitBox ub)
@@ -144,13 +154,19 @@ namespace CommonPart
                 ub.Select(x_index, y_index, Find(x_index, y_index));
                 select_i = x_index + (y_index + 1) / 2;
                 select_j = y_index;
+                moving = false;
             }
             else
             {
-                ub.Select(-1, 0, Find(x_index, y_index));
-                select_i = -1;
-                select_j = 0;
+                Unselect(ub);
             }
+        }
+        // ユニットの選択解除
+        public void Unselect(UnitBox ub)
+        {
+            ub.Unselect();
+            select_i = -1;
+            select_j = 0;
             moving = false;
         }
         // ユニットの生産
@@ -160,6 +176,44 @@ namespace CommonPart
 
             myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
             unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(unitType);
+        }
+        // コマンドが実行されていない次のユニットを選択
+        public void NextUnit(UnitBox ub)
+        {
+            bool flag = true;
+            foreach(PAIR p in myUnits)
+            {
+                if(unitMap[p.i, p.j].command)
+                {
+                    ub.Select(p.i - (p.j + 1) / 2, p.j, unitMap[p.i, p.j]);
+                    select_i = p.i;
+                    select_j = p.j;
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag)
+            {
+                Unselect(ub);
+                if (myUnits.Count != 0) turn++;
+            }
+        }
+        // 攻撃コマンド
+        public void Attack(Map nMap)
+        {
+
+        }
+        // スキップコマンド
+        public void Skip(UnitBox ub)
+        {
+            unitMap[select_i, select_j].command = false;
+            NextUnit(ub);
+        }
+        // 休眠コマンド
+        public void Sleep(UnitBox ub)
+        {
+            unitMap[select_i, select_j].defcommand = unitMap[select_i, select_j].command = false;
+            NextUnit(ub);
         }
         // 移動可能な位置を求める深さ優先探索関数
         void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
@@ -227,7 +281,7 @@ namespace CommonPart
                 }
             }
         }
-        // 選択中のユニットの移動
+        // 移動コマンド
         public void Move(int x_index, int y_index, UnitBox ub)
         {
             int n = 0;

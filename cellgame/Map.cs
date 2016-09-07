@@ -31,8 +31,8 @@ namespace CommonPart {
         {
             if (x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX && state >= 0 && state < DataBase.hex_tex.Count) Data[x_index, y_index] = state;
         }
-        // 描画
-        public void Draw(Drawing d, Vector camera, int Scale, Depth depth)
+        // マップの描画
+        public void Draw(Drawing d, Vector camera, int Scale)
         {
             for (int i = Math.Max(0, (int)(camera.X - DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale]) / DataBase.HexWidth); i < DataBase.MAP_MAX && ((DataBase.HexWidth * i - camera.X) * DataBase.MapScale[Scale] - DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale] <= Game1._WindowSizeX); i++)
             {
@@ -42,11 +42,12 @@ namespace CommonPart {
                     if (drawp.Y <= Game1._WindowSizeY && drawp.Y >= -DataBase.HexHeight * DataBase.MapScale[Scale]
                         && drawp.X <= Game1._WindowSizeX && drawp.X >= -DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale])
                     {
-                        d.Draw(new Vector(drawp.X, drawp.Y), DataBase.hex_tex[Data[i, j]], depth, (float)DataBase.MapScale[Scale]);
+                        d.Draw(new Vector(drawp.X, drawp.Y), DataBase.hex_tex[Data[i, j]], DepthID.BackGroundFloor, (float)DataBase.MapScale[Scale]);
                     }
                 }
             }
         }
+        // ミニマップの描画
         public void DrawMinimap(Drawing d, Vector camera, int Scale, Depth depth, int sizeX, int sizeY, Vector position)
         {
             for (int i = Math.Max(0, (int)(camera.X - DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale]) / DataBase.HexWidth); i < DataBase.MAP_MAX && ((DataBase.HexWidth * i - camera.X) * DataBase.MapScale[Scale] - DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale] <= sizeX); i++)

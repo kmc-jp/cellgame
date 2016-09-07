@@ -20,7 +20,8 @@ namespace CommonPart
         public readonly string unitName;
         public int moveRange = 2;
         public int movePower = 2;
-        public bool sleeping = false;
+        public bool defcommand = true;
+        public bool command = true;
         #endregion
         /// <summary>
         /// コンストラクタ
@@ -42,11 +43,16 @@ namespace CommonPart
                 EXP = MAX_EXP = DataBase.EnemyUnitMAX_EXP[(int)type + 5];
                 unitName = DataBase.EnemyUnitName[(int)type + 5];
             }
+            else
+            {
+                command = defcommand = false;
+            }
         }
         public void UpdateTurn()
         {
             LP--;
             movePower = moveRange;
+            command = defcommand;
         }
         #region Method
         #endregion

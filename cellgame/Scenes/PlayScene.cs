@@ -52,8 +52,6 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        int pturn = 0;
-        int turn = 0;
         int studyPower = 36;
         int studyPoint = 364;
         int maxStudyPoint = 514;
@@ -145,7 +143,7 @@ namespace CommonPart {
         /// <param name="d"></param>
         public override void SceneDraw(Drawing d) {
             // マップの描画
-            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor);
+            nMap.Draw(d, Camera, Scale);
             // ユニットの描画
             um.Draw(d, Camera, Scale);
             // それぞれのバーの描画
@@ -157,7 +155,7 @@ namespace CommonPart {
             productBox.Draw(d);
         }
         public override void SceneUpdate() {
-            base.SceneUpdate();
+            // 現在のマウスの状態を取得
             MouseState state = Mouse.GetState();
             // マウスカーソルがウィンドウの外に出たときにカメラがその方向へ移動
             if (state.X <= 0)                   CameraX -= defcameraVel / DataBase.MapScale[Scale];
@@ -172,65 +170,33 @@ namespace CommonPart {
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
-            // 左クリックされたときに移動コマンド中でありその座標が移動可能な位置であればその位置へ選択中のユニットを移動
-            if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed &&
-                state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
-            {
-                PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0)
-                {
-                    if (um.moving)
-                    {
-                        foreach (PAIR pos in um.movable)
-                        {
-                            if (p.i == pos.i - (pos.j + 1) / 2 && p.j == pos.j)
-                            {
-                                um.Move(pos.i - (pos.j + 1) / 2, pos.j, unitBox);
-                                break;
-                            }
-                        }
-                    }
-                    else if (!um.IsExist(p.i, p.j))
-                    {
-                        um.Produce(p.i, p.j, UnitType.Jujo);
-                        turn++;
-                    }
-                    um.Select(p.i, p.j, unitBox);
-                }
-            }
-
-            // 左クリックされたときにその座標がユニットボックスのコマンドボタンであれば、コマンドを実行
-            if(pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed && unitBox.IsOnButton(state.X, state.Y))
-            {
-                unitBox.Command(state.X, state.Y, um, nMap);
-            }
-
-
-            // ユニットの更新
-            um.Update(pturn < turn);
-
+            
             // バー・ボックスの更新
             studyBar.Update();
-            unitBox.Update(um);
+            unitBox.Update(um, nMap, this, pstate, state);
             minimapBox.Update();
             statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
             arrangeBar.Update();
             productBox.Update();
 
-            // ボタンの上にカーソルがあるときに、カーソルの形状を手の形に変化
+            // ユニットの更新
+            um.Update(unitBox);
+
+            // カーソルの形状を変化
             if (unitBox.IsOnButton(state.X, state.Y) || arrangeBar.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
             else
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
 
-            pstate = state;
-            pturn = turn;
 
             // Rキーが押されるとマップデータの読み込み
             if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
+
+            pstate = state;
+            base.SceneUpdate();
         }
         #endregion
     }// class end
