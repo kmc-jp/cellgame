@@ -201,17 +201,23 @@ namespace CommonPart
         // 攻撃コマンド
         public void Attack(Map nMap)
         {
+            if (moving) return;
+
 
         }
         // スキップコマンド
         public void Skip(UnitBox ub)
         {
+            if (moving) return;
+
             unitMap[select_i, select_j].command = false;
             NextUnit(ub);
         }
         // 休眠コマンド
         public void Sleep(UnitBox ub)
         {
+            if (moving) return;
+
             unitMap[select_i, select_j].defcommand = unitMap[select_i, select_j].command = false;
             NextUnit(ub);
         }
@@ -284,6 +290,8 @@ namespace CommonPart
         // 移動コマンド
         public void Move(int x_index, int y_index, UnitBox ub)
         {
+            if (!moving) return;
+
             int n = 0;
             for(int k = 0; k < movable.Count; k++)
             {

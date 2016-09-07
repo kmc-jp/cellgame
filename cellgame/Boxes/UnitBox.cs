@@ -24,11 +24,14 @@ namespace CommonPart
             {
                 base.Draw(d);
                 // コマンドボタン表示
-                d.Draw(windowPosition + new Vector(10, 240), DataBase.command_tex[0], DepthID.Message);
-                d.Draw(windowPosition + new Vector(60, 240), DataBase.command_tex[1], DepthID.Message);
-                d.Draw(windowPosition + new Vector(110, 240), DataBase.command_tex[2], DepthID.Message);
-                d.Draw(windowPosition + new Vector(160, 240), DataBase.command_tex[3], DepthID.Message);
-                d.Draw(windowPosition + new Vector(210, 240), DataBase.command_tex[4], DepthID.Message);
+                if(u.type > 0)
+                {
+                    d.Draw(windowPosition + new Vector(10, 240), DataBase.command_tex[0], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(60, 240), DataBase.command_tex[1], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(110, 240), DataBase.command_tex[2], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(160, 240), DataBase.command_tex[3], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(210, 240), DataBase.command_tex[4], DepthID.Message);
+                }
 
                 if (u.type > 0)
                 {
@@ -62,6 +65,8 @@ namespace CommonPart
         // クリックされた位置を入力としてコマンドを実行
         public void Command(int x, int y, UnitManager um, Map nMap)
         {
+            if (u.type <= 0) return;
+
             if(x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
                 um.StartMoving(nMap);
@@ -101,7 +106,7 @@ namespace CommonPart
         }
         public bool IsOnButton(int x, int y)
         {
-            return x_index != -1 && (
+            return x_index != -1 && u.type > 0 && (
                     (x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
                     (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
                     (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||

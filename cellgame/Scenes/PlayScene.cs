@@ -55,7 +55,7 @@ namespace CommonPart {
         int studyPower = 36;
         int studyPoint = 364;
         int maxStudyPoint = 514;
-        int PP = 25;
+        int PP = 0;
         int maxPP = 25;
         int leftUnit = 19;
         decimal bodyTemp = 36.0m;
