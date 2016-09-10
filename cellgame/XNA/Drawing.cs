@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace cellgame {
+namespace CommonPart {
     /// <summary>
     /// 描画を任せるクラス（基準点はすべて中心）
     /// </summary>
@@ -35,14 +35,14 @@ namespace cellgame {
         /// <summary>
         /// 描画倍率　値を変更するとウィンドウのサイズを変えることが可能
         /// </summary>
-        public float DrawRate {
-            get { return drawRate; }
+        public int DrawStyle {
+            get { return drawStyle; }
             set {
-                drawRate = value;
-                game.ChangeWindowSize(drawRate);
+                drawStyle = value;
+                game.ChangeWindowSize(drawStyle);
             }
         }
-        float drawRate = 1f;
+        int drawStyle = 1;
         /// <summary>
         /// 反転フラグ
         /// </summary>
@@ -93,10 +93,10 @@ namespace cellgame {
         /// <param name="depth">画像の表示優先度（小さいほうが優先される）</param>
         /// <param name="angle">画像の回転角度</param>
         public void Draw(Vector2 pos, Texture2D tex, Depth depth, float size = 1, float angle = 0) {
-            sb.Draw(tex, GetDrawPos(pos), null, Color, angle, CenterBased ? new Vector2(tex.Width, tex.Height) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.Draw(tex, GetDrawPos(pos), null, Color, angle, CenterBased ? new Vector2(tex.Width, tex.Height) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         public void Draw(Vector2 pos, Texture2D tex, Depth depth, Vector origin, float size = 1, float angle = 0) {
-            sb.Draw(tex, GetDrawPos(pos), null, Color, angle, origin, size * DrawRate, Flip, depth.Value);
+            sb.Draw(tex, GetDrawPos(pos), null, Color, angle, origin, size, Flip, depth.Value);
         }
         /// <summary>
         /// 画像を描画
@@ -107,7 +107,7 @@ namespace cellgame {
         /// <param name="depth">画像の表示優先度（小さいほうが優先される）</param>
         /// <param name="angle">画像の回転角度</param>
         public void Draw(Vector2 pos, Texture2D tex, Rectangle rect, Depth depth, float size = 1, float angle = 0) {
-            sb.Draw(tex, GetDrawPos(pos), rect, Color, angle, CenterBased ? new Vector2(rect.Width, rect.Height) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.Draw(tex, GetDrawPos(pos), rect, Color, angle, CenterBased ? new Vector2(rect.Width, rect.Height) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         /// <summary>
         /// 画像を描画 倍率ベクトル版
@@ -118,10 +118,10 @@ namespace cellgame {
         /// <param name="depth">画像の表示優先度（小さいほうが優先される）</param>
         /// <param name="angle">画像の回転角度</param>
         public void Draw(Vector2 pos, Texture2D tex, Depth depth, Vector2 size, float angle = 0) {
-            sb.Draw(tex, GetDrawPos(pos), null, Color, angle, CenterBased ? new Vector2(tex.Height, tex.Width) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.Draw(tex, GetDrawPos(pos), null, Color, angle, CenterBased ? new Vector2(tex.Height, tex.Width) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         public void Draw(Vector2 pos, Texture2D tex, Rectangle rect, Depth depth, Vector2 size, float angle = 0) {
-            sb.Draw(tex, GetDrawPos(pos), rect, Color, angle, CenterBased ? new Vector2(rect.Height, rect.Width) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.Draw(tex, GetDrawPos(pos), rect, Color, angle, CenterBased ? new Vector2(rect.Height, rect.Width) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         /// <summary>
         /// 文字を描画
@@ -133,7 +133,7 @@ namespace cellgame {
         /// <param name="size">文字の拡大倍率</param>
         /// <param name="depth">文字の表示優先度（小さいほうが優先される）</param>
         public void DrawText(Vector2 pos, SpriteFont font, string text, Color color, Depth depth, float size = 1, float angle = 0) {
-            sb.DrawString(font, text, GetDrawPos(pos), color, angle, CenterBased ? font.MeasureString(text) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.DrawString(font, text, GetDrawPos(pos), color, angle, CenterBased ? font.MeasureString(text) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         /// <summary>
         /// 文字を描画
@@ -145,7 +145,7 @@ namespace cellgame {
         /// <param name="size">文字の拡大ベクトル</param>
         /// <param name="depth">文字の表示優先度（小さいほうが優先される）</param>
         public void DrawText(Vector2 pos, SpriteFont font, string text, Color color, Depth depth, Vector2 size, float angle = 0) {
-            sb.DrawString(font, text, GetDrawPos(pos), color, angle, CenterBased ? font.MeasureString(text) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.DrawString(font, text, GetDrawPos(pos), color, angle, CenterBased ? font.MeasureString(text) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         /// <summary>
         /// 中が塗りつぶされた長方形を描画
@@ -155,7 +155,7 @@ namespace cellgame {
         /// <param name="color">色</param>
         /// <param name="depth">表示優先度（小さいほうが優先される）</param>
         public void DrawBox(Vector2 pos, Vector2 size, Color color, Depth depth, float angle = 0) {
-            sb.Draw(TextureManager.GetTexture(TextureID.White), GetDrawPos(pos), null, color, angle, CenterBased ? new Vector2(1, 1) / 2 : Vector2.Zero, size * DrawRate, Flip, depth.Value);
+            sb.Draw(TextureManager.GetTexture(TextureID.White), GetDrawPos(pos), null, color, angle, CenterBased ? new Vector2(1, 1) / 2 : Vector2.Zero, size, Flip, depth.Value);
         }
         /// <summary>
         /// pos1とpos2をつなぐ中が塗りつぶされた直線を描画
@@ -166,7 +166,7 @@ namespace cellgame {
         /// <param name="color">色</param>
         /// <param name="depth">表示優先度（小さいほうが優先される）</param>
         public void DrawLine(Vector2 pos1, Vector2 pos2, float width, Color color, Depth depth) {
-            sb.Draw(TextureManager.GetTexture(TextureID.White), GetDrawPos(pos1), null, color, (float)Math.Atan2(pos2.Y - pos1.Y, pos2.X - pos1.X), Vector2.Zero, new Vector2((pos2 - pos1).Length(), width) * DrawRate, Flip, depth.Value);
+            sb.Draw(TextureManager.GetTexture(TextureID.White), GetDrawPos(pos1), null, color, (float)Math.Atan2(pos2.Y - pos1.Y, pos2.X - pos1.X), Vector2.Zero, new Vector2((pos2 - pos1).Length(), width), Flip, depth.Value);
         }
         /// <summary>
         /// pos中心の粗末な疑似円を描画
@@ -249,7 +249,7 @@ namespace cellgame {
             //実際に2Dが描かれるのはここ
             sb.End();
         }
-        Vector2 GetDrawPos(Vector2 v) { return new Vector2((int)((v.X - Camera.X) * DrawRate), (int)((v.Y - Camera.Y) * DrawRate)); }
+        Vector2 GetDrawPos(Vector2 v) { return new Vector2((int)((v.X - Camera.X)), (int)((v.Y - Camera.Y))); }
     }
 
     /// <summary>

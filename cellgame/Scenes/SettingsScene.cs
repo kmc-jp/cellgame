@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace cellgame {
+namespace CommonPart {
     static class Settings {
         public static int BGMVolume { get { return SoundManager.Music.Volume / 10; } set { SoundManager.Music.Volume = value * 10; } }
         public static int SEVolume { get { return SoundManager.SE.Volume; } set { SoundManager.SE.Volume = value; } }
@@ -19,9 +19,9 @@ namespace cellgame {
             WindowA = 224;
         }
 
-        public static int WindowSize = 10;
+        public static int WindowStyle = 1;
         //これは保存しなくてよい
-        public static int WindowSizeOld = 10;
+        public static int WindowStyleOld = 1;
 
 
         public static ExplainType Explain = ExplainType.Keyboard;
@@ -44,7 +44,7 @@ namespace cellgame {
         }
         Animation cursor = TalkWindow.GetCursorAnimation();
         bool _delete;
-        public SettingsScene(SceneManager s) : base(s, length) { s.BackSceneNumber++; Settings.WindowSizeOld = Settings.WindowSize; }
+        public SettingsScene(SceneManager s) : base(s, length) { s.BackSceneNumber++; Settings.WindowStyleOld = Settings.WindowStyle; }
         public override void SceneUpdate() {
             cursor.Update();
             base.SceneUpdate();
@@ -58,9 +58,8 @@ namespace cellgame {
                     else if(Input.IsPressedForMenu(KeyID.Right, 15, 2)) Settings.SEVolume++;
                     break;
                 case SettingID.WindowSize:
-                    if(Input.IsPressedForMenu(KeyID.Left, 30, 15)) Settings.WindowSize -= 5;
-                    else if(Input.IsPressedForMenu(KeyID.Right, 30, 15)) Settings.WindowSize += 5;
-                    Settings.WindowSize = Math.Min((int)(Game1.MaxWindowRate * 2) * 5, Math.Max(10, Settings.WindowSize));
+                    if(Input.IsPressedForMenu(KeyID.Left, 30, 15) || Input.IsPressedForMenu(KeyID.Right, 30, 15))
+                        Settings.WindowStyle = 1 - Settings.WindowStyle;
                     break;
                 case SettingID.Explain:
                     if(Input.IsPressedForMenu(KeyID.Left, 40, 20)) Settings.Explain--;
@@ -86,7 +85,7 @@ namespace cellgame {
             }
         }
         public override void SceneDraw(Drawing d) {
-            if(_delete) { Delete = true; if(Settings.WindowSize != Settings.WindowSizeOld) d.DrawRate = Settings.WindowSize / 10f; }
+            if(_delete) { Delete = true; if (Settings.WindowStyle != Settings.WindowStyleOld) { d.DrawStyle = Settings.WindowStyle; Settings.WindowStyleOld = Settings.WindowStyle; } }
             TalkWindow.DrawMessageBack(d, new Vector2(500, 24 + length * 26), new Vector2(20, 20), DepthID.Message);
             for(int i = 0; i < length; i++) {
                 Vector2 pos = new Vector2(52, 30 + 26 * i);
@@ -102,7 +101,13 @@ namespace cellgame {
                 case Settings.ExplainType.Pad: str = "パッド"; break;
             }
             new RichText(str).Draw(d, new Vector2(240, 30 + 26 * (int)SettingID.Explain), DepthID.Message);
-            new RichText(String.Format("{0}x{1}({2}倍)", Game1.WindowSizeX * Settings.WindowSize / 10, Game1.WindowSizeY * Settings.WindowSize / 10, Settings.WindowSize / 10f)).Draw(d, new Vector2(240, 30 + 26 * (int)SettingID.WindowSize), DepthID.Message);
+
+            string show;
+            if(Settings.WindowStyle == 1)
+                show = String.Format("{0}x{1} (4 : 3)", DataBase.WindowDefaultSizeX, DataBase.WindowDefaultSizeY);
+            else
+                show = String.Format("{0}x{1} (16 : 9)", DataBase.WindowDefaultSizeX, DataBase.WindowSlimSizeY);
+            new RichText(show).Draw(d, new Vector2(240, 30 + 26 * (int)SettingID.WindowSize), DepthID.Message);
         }
         public static void DrawMeter(Drawing d, Vector2 pos, int value, string str, int min, int max) {
             //new SimpleTexture(TextureID.ConfigMeterBack).Draw(d, pos + new Vector2(0, 4), DepthID.Message);

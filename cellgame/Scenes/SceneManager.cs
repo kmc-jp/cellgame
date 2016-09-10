@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace cellgame {
+namespace CommonPart {
     /// <summary>
     /// Sceneを管理するクラス
     /// </summary>

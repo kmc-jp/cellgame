@@ -7,15 +7,16 @@ using System.Diagnostics;
 using System.Reflection;
 using MyUpdaterLib;
 
-namespace cellgame {
+
+namespace CommonPart {
     class TitleScene: MenuScene {
         enum TitleIndex {
-            Start, Config, Jukebox, Update, Quit
+            Start, Editor, Load, Config, Save, Quit
         }
-        static readonly string[] choiceDefault = new[] { "----", "設定を変更する", "サウンドテストをする", "ゲームを更新する", "ゲームを終了する" };
+        static readonly string[] choiceDefault = new[] { "ニューゲーム", "マップエディター", "ロード", "オプション", "記録", "ゲーム終了" };
         readonly string[] choice = (string[])choiceDefault.Clone();
-        bool[] enabled = new bool[] { false, true, false, false, true };
-        Color[] defaultColor = new Color[] { Color.White, Color.White, Color.White, Color.Gold, Color.White };
+        bool[] enabled = new bool[] { true, true, false, true, false, true };
+        Color[] defaultColor = new Color[] { Color.White, Color.White, Color.White, Color.White, Color.Gold, Color.White };
         Animation cursor = TalkWindow.GetCursorAnimation();
         string version;
 
@@ -29,14 +30,14 @@ namespace cellgame {
             updater = new Updater("あどれす", Assembly.GetExecutingAssembly());
             updater.CheckUpdate();
 
-            enabled[(int)TitleIndex.Jukebox] = Function.GetEnumLength<BGMID>() > 1;
+            enabled[(int)TitleIndex.Load] = Function.GetEnumLength<BGMID>() > 1;
         }
         public override void Deleted() {
             if(updater != null) updater.Dispose();
         }
         public override void SceneUpdate() {
-            if(!enabled[(int)TitleIndex.Update] && updater.CanUpdate) {
-                enabled[(int)TitleIndex.Update] = true;
+            if(!enabled[(int)TitleIndex.Save] && updater.CanUpdate) {
+                enabled[(int)TitleIndex.Save] = true;
             }
             cursor.Update();
             SoundManager.Music.PlayBGM(BGMID.None, true);
@@ -46,14 +47,18 @@ namespace cellgame {
             if(!enabled[i]) return;
             switch((TitleIndex)i) {
                 case TitleIndex.Start:
+                    new MapScene(scenem);
+                    break;
+                case TitleIndex.Editor:
+                    new EditorScene(scenem);
+                    break;
+                case TitleIndex.Load:
+                    new SoundTest(scenem);
                     break;
                 case TitleIndex.Config:
                     new SettingsScene(scenem);
                     break;
-                case TitleIndex.Jukebox:
-                    new SoundTest(scenem);
-                    break;
-                case TitleIndex.Update:
+                case TitleIndex.Save:
                     new UpdateScene(scenem, updater);
                     break;
                 case TitleIndex.Quit:
@@ -66,7 +71,7 @@ namespace cellgame {
             JoyPadManager.Update();
         }
         public override void SceneDraw(Drawing d) {
-            if(scenem.IsTopScene(this) && Settings.WindowSizeOld != Settings.WindowSize) d.DrawRate = Settings.WindowSize / 10f;
+            if(scenem.IsTopScene(this) && Settings.WindowStyleOld != Settings.WindowStyle) d.DrawStyle = Settings.WindowStyle;
 
             Vector2 basePos = new Vector2(218, 234);
             TalkWindow.DrawMessageBack(d, new Vector2(274, 28 + MaxIndex * 25), basePos, DepthID.Message);
