@@ -14,9 +14,8 @@ namespace CommonPart {
     class PlayScene : Scene {
         #region Variable
         // ボックスウィンドウ（ユニットボックスとか）
-        ArrangeBar arrangeBar;
+        ProductArrangeBar proarrBar;
         MinimapBox minimapBox;
-        ProductBox productBox;
         StatusBar statusBar;
         StudyBar studyBar;
         UnitBox unitBox;
@@ -74,8 +73,7 @@ namespace CommonPart {
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
             statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
-            arrangeBar = new ArrangeBar();
-            productBox = new ProductBox();
+            proarrBar = new ProductArrangeBar();
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -85,8 +83,7 @@ namespace CommonPart {
                 unitBox.IsOn(x, y) ||
                 minimapBox.IsOn(x, y) ||
                 statusBar.IsOn(x, y) ||
-                arrangeBar.IsOn(x, y) ||
-                productBox.IsOn(x, y)) return new PAIR(-1, 0);
+                proarrBar.IsOn(x, y)) return new PAIR(-1, 0);
             
             for (int i = 0; i < DataBase.MAP_MAX; i++)
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
@@ -148,11 +145,10 @@ namespace CommonPart {
             um.Draw(d, Camera, Scale);
             // それぞれのバーの描画
             studyBar.Draw(d);
-            minimapBox.Draw(d, nMap, Camera, Scale);
+            minimapBox.Draw(d, um, nMap, Camera, Scale);
             statusBar.Draw(d);
-            arrangeBar.Draw(d);
+            proarrBar.Draw(d);
             unitBox.Draw(d);
-            productBox.Draw(d);
         }
         public override void SceneUpdate() {
             // 現在のマウスの状態を取得
@@ -176,14 +172,13 @@ namespace CommonPart {
             unitBox.Update(um, nMap, this, pstate, state);
             minimapBox.Update();
             statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
-            arrangeBar.Update();
-            productBox.Update();
+            proarrBar.Update(pstate, state);
 
             // ユニットの更新
             um.Update(unitBox);
 
             // カーソルの形状を変化
-            if (unitBox.IsOnButton(state.X, state.Y) || arrangeBar.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
+            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
             else
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;

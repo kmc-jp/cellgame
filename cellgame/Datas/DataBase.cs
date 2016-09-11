@@ -21,6 +21,7 @@ namespace CommonPart {
 
         #region Map
         // へクス画像のリスト
+        public static List<Texture2D> mini_hex_tex;
         public static List<Texture2D> hex_tex;
         public static Texture2D select_tex;
         // マップのサイズは MAP_MAX × MAP_MAX
@@ -57,6 +58,7 @@ namespace CommonPart {
 
         #region Unit
         // ユニット画像のリスト
+        public static List<Texture2D> miniUnit_tex;
         public static List<Texture2D> myUnit_tex;
         public static List<Texture2D> enemyUnit_tex;
         // ユニットの名前

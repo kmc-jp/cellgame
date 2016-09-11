@@ -325,6 +325,11 @@ namespace CommonPart
         {
             return unitMap[x_index + (y_index + 1) / 2, y_index];
         }
+        // マップの座標(i,j)のユニットの種類
+        public UnitType FindType(int x_index, int y_index)
+        {
+            return unitMap[x_index + (y_index + 1) / 2, y_index].type;
+        }
         #endregion
     }// class end
 }// namespace end

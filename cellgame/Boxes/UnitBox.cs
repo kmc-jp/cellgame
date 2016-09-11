@@ -17,6 +17,7 @@ namespace CommonPart
         #region Method
         public UnitBox()
             : base(DataBase.BarPos[1], DataBase.BarWidth[1], DataBase.BarHeight[1]) {
+            u = new Unit(UnitType.NULL);
         }
         public override void Draw(Drawing d)
         {

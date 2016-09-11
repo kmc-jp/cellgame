@@ -16,7 +16,7 @@ namespace CommonPart {
         // 描画する位置（左上）の座標
         public Vector windowPosition;
         // 横と縦のマス目(16x16)の数
-        int width, height;
+        protected int width, height;
         
         #endregion
 
