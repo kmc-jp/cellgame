@@ -68,12 +68,12 @@ namespace CommonPart {
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
-            um = new UnitManager();
             studyBar = new StudyBar(maxStudyPoint, studyPoint, studyPower, "親和性成熟");
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
             statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
             proarrBar = new ProductArrangeBar();
+            um = new UnitManager(ref unitBox);
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -172,10 +172,10 @@ namespace CommonPart {
             unitBox.Update(um, nMap, this, pstate, state);
             minimapBox.Update();
             statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
-            proarrBar.Update(pstate, state);
+            proarrBar.Update(pstate, state, um, this, nMap);
 
             // ユニットの更新
-            um.Update(unitBox);
+            um.Update();
 
             // カーソルの形状を変化
             if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y))

@@ -15,14 +15,19 @@ namespace CommonPart
         List<PAIR> enemyUnits;
         // 現在選択中のユニット
         int select_i = -1, select_j = 0;
-        // 現在移動コマンドの入力中であるかどうか
+        // 現在コマンドの入力中であるかどうか
         public bool moving = false;
+        public bool attacking = false;
+        public UnitType producing = UnitType.NULL;
         // 現在移動可能な位置のリスト
-        public List<PAIR> movable = new List<PAIR>();
+        public List<PAIR> range = new List<PAIR>();
         public List<int> moveCost = new List<int>();
         // 現在のターン
         int pturn = 0;
         int turn = 0;
+
+        // ユニットボックス
+        UnitBox ub;
 
         Unit[,] unitMap;
 
@@ -30,13 +35,15 @@ namespace CommonPart
 
         #region Method
         // コンストラクタ
-        public UnitManager()
+        public UnitManager(ref UnitBox _ub)
         {
             // 味方ユニット
             myUnits = new List<PAIR>();
 
             // 敵ユニット
             enemyUnits = new List<PAIR>();
+
+            ub = _ub;
 
             // ユニットのマップ情報の初期化
             unitMap = new Unit[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
@@ -87,9 +94,9 @@ namespace CommonPart
                     }
                 }
             }
-            if (moving)
+            if (moving || attacking || producing != UnitType.NULL)
             {
-                foreach (PAIR p in movable)
+                foreach (PAIR p in range)
                 {
                     d.Draw(DataBase.WhereDisp(p.i - (p.j + 1) / 2, p.j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
                 }
@@ -100,10 +107,10 @@ namespace CommonPart
             }
         }
         // 更新
-        public void Update(UnitBox ub)
+        public void Update()
         {
             if (pturn < turn)
-                UpdateTurn(ub);
+                UpdateTurn();
 
             // HP か LP が 0 以下になったユニットを削除
             for (int i = 0; i < myUnits.Count;i++)
@@ -118,7 +125,7 @@ namespace CommonPart
             }
             for (int i = 0; i < enemyUnits.Count; i++)
             {
-                Unit u = unitMap[myUnits[i].i, myUnits[i].j];
+                Unit u = unitMap[enemyUnits[i].i, enemyUnits[i].j];
                 if (u.HP <= 0 || u.LP <= 0)
                 {
                     unitMap[enemyUnits[i].i, enemyUnits[i].j] = new Unit(UnitType.NULL);
@@ -129,11 +136,11 @@ namespace CommonPart
             // 選択中のユニットが死滅すると選択解除
             if (select_i != -1 && unitMap[select_i, select_j].type == UnitType.NULL)
             {
-                Unselect(ub);
+                Unselect();
             }
         }
         // ターンの更新
-        public void UpdateTurn(UnitBox ub)
+        public void UpdateTurn()
         {
             foreach(PAIR p in myUnits)
             {
@@ -144,10 +151,10 @@ namespace CommonPart
                 unitMap[p.i, p.j].UpdateTurn();
             }
             pturn = turn;
-            NextUnit(ub);
+            NextUnit();
         }
         // ユニットの選択
-        public void Select(int x_index, int y_index, UnitBox ub)
+        public void Select(int x_index, int y_index)
         {
             if (IsExist(x_index, y_index))
             {
@@ -158,27 +165,19 @@ namespace CommonPart
             }
             else
             {
-                Unselect(ub);
+                Unselect();
             }
         }
         // ユニットの選択解除
-        public void Unselect(UnitBox ub)
+        public void Unselect()
         {
             ub.Unselect();
             select_i = -1;
             select_j = 0;
             moving = false;
         }
-        // ユニットの生産
-        public void Produce(int x_index, int y_index, UnitType unitType)
-        {
-            if (IsExist(x_index, y_index) || unitType <= 0 || (int)unitType > 9) return;
-
-            myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
-            unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(unitType);
-        }
         // コマンドが実行されていない次のユニットを選択
-        public void NextUnit(UnitBox ub)
+        public void NextUnit()
         {
             bool flag = true;
             foreach(PAIR p in myUnits)
@@ -194,32 +193,131 @@ namespace CommonPart
             }
             if (flag)
             {
-                Unselect(ub);
+                Unselect();
                 if (myUnits.Count != 0) turn++;
             }
         }
-        // 攻撃コマンド
-        public void Attack(Map nMap)
-        {
-            if (moving) return;
-
-
-        }
         // スキップコマンド
-        public void Skip(UnitBox ub)
+        public void Skip()
         {
-            if (moving) return;
+            if (moving || attacking) return;
 
             unitMap[select_i, select_j].command = false;
-            NextUnit(ub);
+            NextUnit();
         }
         // 休眠コマンド
-        public void Sleep(UnitBox ub)
+        public void Sleep()
         {
-            if (moving) return;
+            if (moving || attacking) return;
 
             unitMap[select_i, select_j].defcommand = unitMap[select_i, select_j].command = false;
-            NextUnit(ub);
+            NextUnit();
+        }
+        // 生産コマンドが実行されるための前処理
+        public void StartProducing(UnitType ut, Map nMap)
+        {
+            producing = ut;
+            moving = false;
+            attacking = false;
+            range.Clear();
+            moveCost.Clear();
+            for (int x = 0; x < DataBase.MAP_MAX; x++)
+            {
+                for (int y = 0; y < DataBase.MAP_MAX; y++)
+                {
+                    if(unitMap[x + (y + 1) / 2, y].type == UnitType.NULL &&
+                        nMap.Data[x, y] != 0)
+                    {
+                        range.Add(new PAIR(x + (y + 1) / 2, y));
+                    }
+                }
+            }
+        }
+        // 生産コマンド
+        public bool Produce(int x_index, int y_index)
+        {
+            if (IsExist(x_index, y_index)) return false;
+
+            if(producing > 0) myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
+            else enemyUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
+            unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(producing);
+
+            producing = UnitType.NULL;
+
+            Select(x_index, y_index);
+
+            return true;
+        }
+        // 攻撃コマンドが実行されるための前処理
+        public void StartAttacking()
+        {
+            if (unitMap[select_i, select_j].ATK < 0) return;
+
+            moving = false;
+            attacking = true;
+            producing = UnitType.NULL;
+            range.Clear();
+            moveCost.Clear();
+
+            List<PAIR> bfs = new List<PAIR>();
+            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
+            {
+                for(int j = 0; j < DataBase.MAP_MAX; j++)
+                {
+                    map[i, j] = -1;
+                }
+            }
+            map[select_i, select_j] = 0;
+            bfs.Add(new PAIR(select_i, select_j));
+            int[] di = { 1, 1, 0, -1, -1, 0 };
+            int[] dj = { 0, 1, 1, 0, -1, -1 };
+            while (bfs.Count != 0)
+            {
+                PAIR p = bfs.Last(); bfs.RemoveAt(bfs.Count - 1);
+                for(int k = 0; k < 6; k++)
+                {
+                    if (p.i + di[k] - (p.j + dj[k] + 1) / 2 >= 0 && p.i + di[k] - (p.j + dj[k] + 1) / 2 < DataBase.MAP_MAX &&
+                        p.j + dj[k] >= 0 && p.j + dj[k] < DataBase.MAP_MAX &&
+                        map[p.i, p.j] < unitMap[select_i, select_j].ATK_range &&
+                        map[p.i + di[k], p.j + dj[k]] == -1)
+                    {
+                        bfs.Add(new PAIR(p.i + di[k], p.j + dj[k]));
+                        map[p.i + di[k], p.j + dj[k]] = map[p.i, p.j] + 1;
+                        if(unitMap[p.i + di[k], p.j + dj[k]].type < 0)
+                        {
+                            range.Add(new PAIR(p.i + di[k], p.j + dj[k]));
+                        }
+                    }
+                }
+            }
+            if(range.Count == 0)
+            {
+                attacking = false;
+            }
+        }
+        // 攻撃コマンド
+        public void Attack(int x_index, int y_index)
+        {
+            bool flag = true;
+            foreach (PAIR pos in range)
+            {
+                if (x_index == pos.i - (pos.j + 1) / 2 && y_index == pos.j)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) return;
+
+            if(unitMap[select_i, select_j].ATK > 0)
+                unitMap[x_index + (y_index + 1) / 2, y_index].HP -= unitMap[select_i, select_j].ATK;
+
+            unitMap[select_i, select_j].ATK *= -1;
+            attacking = false;
+            unitMap[select_i, select_j].defcommand = true;
+            unitMap[select_i, select_j].command = false;
+            NextUnit();
         }
         // 移動可能な位置を求める深さ優先探索関数
         void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
@@ -260,8 +358,10 @@ namespace CommonPart
         // 移動のコマンドが実行されるための前処理
         public void StartMoving(Map nMap)
         {
+            attacking = false;
             moving = true;
-            movable.Clear();
+            producing = UnitType.NULL;
+            range.Clear();
             moveCost.Clear();
             int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
             List<PAIR> res = new List<PAIR>();
@@ -282,20 +382,29 @@ namespace CommonPart
                 res.Distinct();
                 for (int i = 0; i < res.Count; i++)
                 {
-                    movable.Add(new PAIR(res[i].i, res[i].j));
+                    range.Add(new PAIR(res[i].i, res[i].j));
                     moveCost.Add(unitMap[select_i, select_j].movePower - map[res[i].i, res[i].j] / 2);
                 }
             }
         }
         // 移動コマンド
-        public void Move(int x_index, int y_index, UnitBox ub)
+        public void Move(int x_index, int y_index)
         {
-            if (!moving) return;
+            bool flag = true;
+            foreach (PAIR pos in range)
+            {
+                if (x_index == pos.i - (pos.j + 1) / 2 && y_index == pos.j)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) return;
 
             int n = 0;
-            for(int k = 0; k < movable.Count; k++)
+            for(int k = 0; k < range.Count; k++)
             {
-                if (movable[k].i == x_index + (y_index + 1) / 2 && movable[k].j == y_index)
+                if (range[k].i == x_index + (y_index + 1) / 2 && range[k].j == y_index)
                 {
                     n = k;
                     break;
@@ -313,7 +422,9 @@ namespace CommonPart
             unitMap[x_index + (y_index + 1) / 2,y_index] = unitMap[select_i, select_j];
             unitMap[select_i, select_j] = new Unit(UnitType.NULL);
             unitMap[x_index + (y_index + 1) / 2, y_index].movePower -= moveCost[n];
-            Select(x_index, y_index, ub);
+            Select(x_index, y_index);
+            
+            unitMap[select_i, select_j].defcommand = true;
         }
         // マップの座標(x_index, y_index)にユニットが存在するかどうか
         public bool IsExist(int x_index, int y_index)

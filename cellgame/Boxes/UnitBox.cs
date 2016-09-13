@@ -74,15 +74,15 @@ namespace CommonPart
             }
             else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
-                um.Attack(nMap);
+                um.StartAttacking();
             }
             else if (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
-                um.Skip(this);
+                um.Skip();
             }
             else if (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
-                um.Sleep(this);
+                um.Sleep();
             }
             else if (x >= windowPosition.X + 210 && x <= windowPosition.X + 250 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
@@ -126,21 +126,16 @@ namespace CommonPart
                     {
                         if (um.moving)
                         {
-                            foreach (PAIR pos in um.movable)
-                            {
-                                if (p.i == pos.i - (pos.j + 1) / 2 && p.j == pos.j)
-                                {
-                                    um.Move(pos.i - (pos.j + 1) / 2, pos.j, this);
-                                    break;
-                                }
-                            }
+                            um.Move(p.i, p.j);
                         }
-                        // もしユニットが存在しなければ樹状細胞を生産
-                        else if (!um.IsExist(p.i, p.j))
+                        else if (um.attacking)
                         {
-                            um.Produce(p.i, p.j, UnitType.Jujo);
+                            um.Attack(p.i, p.j);
                         }
-                        um.Select(p.i, p.j, this);
+                        else if(um.producing == UnitType.NULL && um.FindType(p.i, p.j) != UnitType.NULL)
+                        {
+                            um.Select(p.i, p.j);
+                        }
                     }
                 }
 

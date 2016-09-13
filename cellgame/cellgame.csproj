@@ -46,7 +46,6 @@
     <Compile Include="Boxes\ProductArrangeBar.cs" />
     <Compile Include="Boxes\Button.cs" />
     <Compile Include="Boxes\MinimapBox.cs" />
-    <Compile Include="Boxes\ProductBox.cs" />
     <Compile Include="Boxes\StatusBar.cs" />
     <Compile Include="Boxes\StringBox.cs" />
     <Compile Include="Boxes\StudyBar.cs" />

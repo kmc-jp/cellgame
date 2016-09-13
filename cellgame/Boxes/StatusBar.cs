@@ -39,10 +39,10 @@ namespace CommonPart
             d.Draw(windowPosition + new Vector(320, 10), DataBase.status_tex[2], DepthID.Message);
             d.Draw(windowPosition + new Vector(470, 10), DataBase.status_tex[3], DepthID.Message);
             */
-            new TextAndFont(string.Format("{0}",studyPower), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(80, 20), DepthID.Message);
-            new TextAndFont(string.Format("{0}/{1}", PP, maxPP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(230, 20), DepthID.Message);
-            new TextAndFont(string.Format("{0}(+0)", leftUnit), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(380, 20), DepthID.Message);
-            new TextAndFont(string.Format("{0}", bodyTemp), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(530, 20), DepthID.Message);
+            new TextAndFont(string.Format("{0}",studyPower), Color.Black).Draw(d, windowPosition + new Vector(80, 20), DepthID.Message);
+            new TextAndFont(string.Format("{0}/{1}", PP, maxPP), Color.Black).Draw(d, windowPosition + new Vector(230, 20), DepthID.Message);
+            new TextAndFont(string.Format("{0}(+0)", leftUnit), Color.Black).Draw(d, windowPosition + new Vector(380, 20), DepthID.Message);
+            new TextAndFont(string.Format("{0}", bodyTemp), Color.Black).Draw(d, windowPosition + new Vector(530, 20), DepthID.Message);
         }
         #endregion
     }// class end

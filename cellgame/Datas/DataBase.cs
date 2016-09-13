@@ -75,12 +75,16 @@ namespace CommonPart {
             "菌", "カビ", "ウイルス", "ガン", "寄生虫"
         };
         // ユニット各種類ごとの固有値
-        public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
-        public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10 };
-        public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
+        public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
+        public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+        public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+        public static readonly int[] MyUnitATK = new[] { 5, 10, 10, 10, 10, 10, 10, 10, 1000 };
+        public static readonly int[] MyUnitATK_range = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 };
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
         public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitATK = new[] { 5, 10, 10, 10, 10 };
+        public static readonly int[] EnemyUnitATK_range = new[] { 2, 2, 2, 2, 2 };
 
         #endregion
 

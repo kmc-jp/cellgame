@@ -31,25 +31,25 @@ namespace CommonPart {
         public virtual void Draw(Drawing d) {
             // バーの背景を表示
             // 左上と右上
-            d.Draw(windowPosition,DataBase.bar_frame_tex[0],DepthID.Message);
-            d.Draw(windowPosition + new Vector((width - 1) * 16d, 0d), DataBase.bar_frame_tex[2], DepthID.Message);
+            d.Draw(windowPosition,DataBase.bar_frame_tex[0],DepthID.StateFront);
+            d.Draw(windowPosition + new Vector((width - 1) * 16d, 0d), DataBase.bar_frame_tex[2], DepthID.StateFront);
             // 上下の中央
             for (int i = 1; i < width - 1;i++) {
-                d.Draw(windowPosition + new Vector(i * 16d, 0d), DataBase.bar_frame_tex[1], DepthID.Message);
-                d.Draw(windowPosition + new Vector(i * 16d, (height - 1) * 16d), DataBase.bar_frame_tex[7], DepthID.Message);
+                d.Draw(windowPosition + new Vector(i * 16d, 0d), DataBase.bar_frame_tex[1], DepthID.StateFront);
+                d.Draw(windowPosition + new Vector(i * 16d, (height - 1) * 16d), DataBase.bar_frame_tex[7], DepthID.StateFront);
             }
             // 左下と右下
-            d.Draw(windowPosition + new Vector(0d, (height - 1) * 16d), DataBase.bar_frame_tex[6], DepthID.Message);
-            d.Draw(windowPosition + new Vector((width - 1) * 16d, (height - 1) * 16d), DataBase.bar_frame_tex[8], DepthID.Message);
+            d.Draw(windowPosition + new Vector(0d, (height - 1) * 16d), DataBase.bar_frame_tex[6], DepthID.StateFront);
+            d.Draw(windowPosition + new Vector((width - 1) * 16d, (height - 1) * 16d), DataBase.bar_frame_tex[8], DepthID.StateFront);
             // 左右の中央
             for (int i = 1; i < height - 1; i++) {
-                d.Draw(windowPosition + new Vector(0, i * 16), DataBase.bar_frame_tex[3], DepthID.Message);
-                d.Draw(windowPosition + new Vector((width - 1) * 16d, i * 16d), DataBase.bar_frame_tex[5], DepthID.Message);
+                d.Draw(windowPosition + new Vector(0, i * 16), DataBase.bar_frame_tex[3], DepthID.StateFront);
+                d.Draw(windowPosition + new Vector((width - 1) * 16d, i * 16d), DataBase.bar_frame_tex[5], DepthID.StateFront);
             }
             // 真ん中
             for (int i = 1; i < width - 1; i++) {
                 for (int j = 1; j < height - 1; j++) {
-                    d.Draw(windowPosition + new Vector(i * 16d, j * 16d), DataBase.bar_frame_tex[4], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(i * 16d, j * 16d), DataBase.bar_frame_tex[4], DepthID.StateFront);
                 }
             }
         }
