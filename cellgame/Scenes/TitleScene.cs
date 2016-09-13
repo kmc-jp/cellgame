@@ -18,27 +18,16 @@ namespace CommonPart {
         bool[] enabled = new bool[] { true, true, false, true, false, true };
         Color[] defaultColor = new Color[] { Color.White, Color.White, Color.White, Color.White, Color.Gold, Color.White };
         Animation cursor = TalkWindow.GetCursorAnimation();
-        string version;
-
-        Updater updater;
+        
         public TitleScene(SceneManager s) : base(s, choiceDefault.Length) {
 
             Focused();
             
-            version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-
-            updater = new Updater("あどれす", Assembly.GetExecutingAssembly());
-            updater.CheckUpdate();
-
             enabled[(int)TitleIndex.Load] = Function.GetEnumLength<BGMID>() > 1;
         }
         public override void Deleted() {
-            if(updater != null) updater.Dispose();
         }
         public override void SceneUpdate() {
-            if(!enabled[(int)TitleIndex.Save] && updater.CanUpdate) {
-                enabled[(int)TitleIndex.Save] = true;
-            }
             cursor.Update();
             SoundManager.Music.PlayBGM(BGMID.None, true);
             base.SceneUpdate();
@@ -59,7 +48,6 @@ namespace CommonPart {
                     new SettingsScene(scenem);
                     break;
                 case TitleIndex.Save:
-                    new UpdateScene(scenem, updater);
                     break;
                 case TitleIndex.Quit:
                     Delete = true;
@@ -79,19 +67,6 @@ namespace CommonPart {
                 new RichText(choice[i], FontID.Medium, enabled[i] ? defaultColor[i] : Color.Gray).Draw(d, basePos + new Vector(34, 10 + i * 26), DepthID.Message);
             }
             cursor.Draw(d, basePos + new Vector2(12, 16 + Index * 26), DepthID.Message);
-
-            new RichText(version, FontID.Medium).Draw(d, new Vector(20, 10), DepthID.Message, 0.7f);
-            string str = "更新情報：";
-            switch(updater.Progress_Data) {
-                case Updater.UpdateState.Downloading: str += "取得中…"; break;
-                case Updater.UpdateState.Error: str += "失敗"; break;
-                case Updater.UpdateState.ErrorParse: str += "サーバ上のファイルに異常"; break;
-                case Updater.UpdateState.Success:
-                    if(updater.CanUpdate) str += "更新可能：";
-                    str += updater.NewestVersion;
-                    break;
-            }
-            new RichText(str, FontID.Medium).Draw(d, new Vector(20, 30), DepthID.Message, 0.7f);
             
         }
     }

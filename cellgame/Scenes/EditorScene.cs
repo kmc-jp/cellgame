@@ -19,14 +19,15 @@ namespace CommonPart
         double CameraX
         {
             get { return _camera.X; }
-            set { _camera.X = Math.Max(-Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], value)); }
+            set { _camera.X = Math.Max(-DataBase.HexWidth * 2, Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / DataBase.MapScale[Scale] + DataBase.HexWidth * 2, value)); }
         }
         double CameraY
         {
             get { return _camera.Y; }
-            set { _camera.Y = Math.Max(-Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], value)); }
+            set { _camera.Y = Math.Max(-DataBase.HexHeight * 3 / 2, Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / DataBase.MapScale[Scale] + DataBase.HexHeight * 3 / 2, value)); }
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
+        // 現在のマップ
         Map nMap;
         // カメラの移動速度
         int defcameraVel = DataBase.cameraV;
@@ -107,11 +108,10 @@ namespace CommonPart
             }
         }
 
-        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（/MapData ディレクトリがなければ何もしない）
-        // ※ /MapData ディレクトリが存在して /MapData/MapData.csv ファイルが存在しなければ実行時にエラーが出るので注意
+        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
         public void ReadMap()
         {
-            if (Directory.Exists("MapData"))
+            if (File.Exists(@"MapData\MapData.csv"))
             {
 
                 using (StreamReader r = new StreamReader(@"MapData\MapData.csv"))
