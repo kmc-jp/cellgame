@@ -384,7 +384,7 @@ namespace CommonPart {
     /// <summary>
     /// テキストとフォントを扱うImage
     /// </summary>
-    /*class TextAndFont: Image {
+    class TextAndFont: Image {
         #region 変数
         /// <summary>
         /// X方向の大きさ
@@ -410,7 +410,7 @@ namespace CommonPart {
         /// <summary>
         /// フォントを省略するとこれになる
         /// </summary>
-        const FontID defaultFont = FontID.Test;
+        const FontID defaultFont = FontID.Medium;
         #endregion
         #region 関数
         public TextAndFont(string mes) : this(mes, defaultFont, Color.White) { }
@@ -441,7 +441,7 @@ namespace CommonPart {
             d.DrawText(pos, font, str, color, depth, size, angle);
         }
         #endregion
-    }*/
+    }
     /// <summary>
     /// 1文字毎に別描画なImage
     /// </summary>

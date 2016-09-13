@@ -4,24 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using System.IO;
 
 namespace CommonPart {
     /// <summary>
     /// ゲーム開始後の処理を書いたクラス
     /// </summary>
-    class MapScene : Scene {
+    class PlayScene : Scene {
         #region Variable
         // ボックスウィンドウ（ユニットボックスとか）
-        ArrangeBar arrangeBar;
+        ProductArrangeBar proarrBar;
         MinimapBox minimapBox;
-        ProductBox productBox;
         StatusBar statusBar;
         StudyBar studyBar;
         UnitBox unitBox;
         // カメラ
         Vector Camera { get { return _camera; } }
-        double CameraX {
+        double CameraX
+        {
             get { return _camera.X; }
             set { _camera.X = Math.Max(-Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], value)); }
         }
@@ -36,7 +37,7 @@ namespace CommonPart {
         // ユニットマネージャ
         UnitManager um;
         // カメラの移動速度
-        int defcameraVel = 15;
+        int defcameraVel = DataBase.cameraV;
         // カメラの倍率
         int _scale = DataBase.DefaultMapScale;
         int Scale {
@@ -50,32 +51,29 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        int studyPoint = 0;
-        int productPoint = 0;
-        int leftUnit = 0;
-        decimal bodyTemp = 36;
+        int studyPower = 36;
+        int studyPoint = 364;
+        int maxStudyPoint = 514;
+        int PP = 0;
+        int maxPP = 25;
+        int leftUnit = 19;
+        decimal bodyTemp = 36.0m;
 
-        // WhichHexの返り値用の構造体
-        public struct PAIR　{
-            public int i, j;
-            public PAIR(int _i, int _j) { i = _i; j = _j; }
-        }
         
         #endregion
 
         #region Method
         // コンストラクタ
-        public MapScene(SceneManager s)
+        public PlayScene(SceneManager s)
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
-            um = new UnitManager();
-            studyBar = new StudyBar();
+            studyBar = new StudyBar(maxStudyPoint, studyPoint, studyPower, "親和性成熟");
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
-            statusBar = new StatusBar(studyPoint, productPoint, leftUnit, bodyTemp);
-            arrangeBar = new ArrangeBar();
-            productBox = new ProductBox();
+            statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
+            proarrBar = new ProductArrangeBar();
+            um = new UnitManager(ref unitBox);
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -85,8 +83,7 @@ namespace CommonPart {
                 unitBox.IsOn(x, y) ||
                 minimapBox.IsOn(x, y) ||
                 statusBar.IsOn(x, y) ||
-                arrangeBar.IsOn(x, y) ||
-                productBox.IsOn(x, y)) return new PAIR(-1, 0);
+                proarrBar.IsOn(x, y)) return new PAIR(-1, 0);
             
             for (int i = 0; i < DataBase.MAP_MAX; i++)
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
@@ -143,19 +140,18 @@ namespace CommonPart {
         /// <param name="d"></param>
         public override void SceneDraw(Drawing d) {
             // マップの描画
-            nMap.Draw(d, Camera, Scale, DepthID.BackGroundFloor, Game1._WindowSizeX, Game1._WindowSizeY, new Vector(0,0));
+            nMap.Draw(d, Camera, Scale);
             // ユニットの描画
             um.Draw(d, Camera, Scale);
             // それぞれのバーの描画
             studyBar.Draw(d);
-            unitBox.Draw(d);
-            minimapBox.Draw(d, nMap, Camera, Scale);
+            minimapBox.Draw(d, um, nMap, Camera, Scale);
             statusBar.Draw(d);
-            arrangeBar.Draw(d);
-            productBox.Draw(d);
+            proarrBar.Draw(d);
+            unitBox.Draw(d);
         }
         public override void SceneUpdate() {
-            base.SceneUpdate();
+            // 現在のマウスの状態を取得
             MouseState state = Mouse.GetState();
             // マウスカーソルがウィンドウの外に出たときにカメラがその方向へ移動
             if (state.X <= 0)                   CameraX -= defcameraVel / DataBase.MapScale[Scale];
@@ -170,30 +166,32 @@ namespace CommonPart {
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
+            
+            // バー・ボックスの更新
+            studyBar.Update();
+            unitBox.Update(um, nMap, this, pstate, state);
+            minimapBox.Update();
+            statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
+            proarrBar.Update(pstate, state, um, this, nMap);
+
             // ユニットの更新
             um.Update();
 
-            // バー・ボックスの更新
-            studyBar.Update();
-            unitBox.Update();
-            minimapBox.Update();
-            statusBar.Update(studyPoint, productPoint, leftUnit, bodyTemp);
-            arrangeBar.Update();
-            productBox.Update();
-
-            // ボタンの上にカーソルがあるときに、カーソルの形状を手の形に変化
-            if (unitBox.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || productBox.IsOnButton(state.X, state.Y))
+            // カーソルの形状を変化
+            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
             else
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
 
-            pstate = state;
 
             // Rキーが押されるとマップデータの読み込み
             if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
+
+            pstate = state;
+            base.SceneUpdate();
         }
         #endregion
     }// class end
