@@ -13,24 +13,28 @@ namespace CommonPart {
 
         #region Window
         // ウィンドウの元のサイズ(4：3)
-        public static readonly int WindowDefaultSizeX = Game1.WindowSizeX;
-        public static readonly int WindowDefaultSizeY = Game1.WindowSizeY;
+        public static readonly int WindowDefaultSizeX = Game1.WindowSizeX; // 1280
+        public static readonly int WindowDefaultSizeY = Game1.WindowSizeY; // 960
         // 16：9にした時のウィンドウの縦のサイズ
         public static readonly int WindowSlimSizeY = 720;
         #endregion
 
         #region Map
         // へクス画像のリスト
+        public static List<Texture2D> mini_hex_tex;
         public static List<Texture2D> hex_tex;
-        // マップのサイズは MAP_MAX×MAP_MAX
+        public static Texture2D select_tex;
+        // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
-        public static readonly double[] MapScale = new[] { 0.15d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1.0d, 1.2d, 1.5d, 2.0d, 3.0d };
+        public static readonly double[] MapScale = new[] { 0.1d, 0.5d, 0.75d, 1.0d };
         // デフォルトのマップの倍率
-        public static readonly int DefaultMapScale = 8;
+        public static readonly int DefaultMapScale = 3;
         // へクス画像の横幅と縦幅
         public static readonly int HexWidth = 180;
         public static readonly int HexHeight = 200;
+        // カメラの移動速度
+        public static readonly int cameraV = 12;
         #endregion
 
         #region Bar&Box
@@ -54,21 +58,39 @@ namespace CommonPart {
 
         #region Unit
         // ユニット画像のリスト
-        public static List<Texture2D> unit_tex;
-        // ユニットの名前　※要らないけど名前と番号のメモ用に
-        public enum MyUnitName
+        public static List<Texture2D> miniUnit_tex;
+        public static List<Texture2D> myUnit_tex;
+        public static List<Texture2D> enemyUnit_tex;
+        // ユニットの名前
+        /*public enum UnitType
         {
-            Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma
-        }
-        public enum EnemyUnitName
+            NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
+        }*/
+        public static readonly string[] MyUnitName = new[]
         {
-            
-        }
+            "好中球", "マクロファージ", "樹状細胞", "好酸球", "NK細胞", "ヘルパーT細胞", "キラーT細胞", "B細胞", "プラズマ細胞"
+        };
+        public static readonly string[] EnemyUnitName = new[]
+        {
+            "菌", "カビ", "ウイルス", "ガン", "寄生虫"
+        };
         // ユニット各種類ごとの固有値
-        public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
-        public static readonly int[] MyUnitMAX_LP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
-        public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 };
+        public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
+        public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+        public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
+        public static readonly int[] MyUnitATK = new[] { 5, 10, 10, 10, 10, 10, 10, 10, 1000 };
+        public static readonly int[] MyUnitATK_range = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+        public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
+        public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
+        public static readonly int[] EnemyUnitATK = new[] { 5, 10, 10, 10, 10 };
+        public static readonly int[] EnemyUnitATK_range = new[] { 2, 2, 2, 2, 2 };
 
+        #endregion
+
+        #region Button
+        // ユニットボックスのコマンドボタン画像のリスト
+        public static List<Texture2D> command_tex;
         #endregion
 
         #region Method
@@ -101,4 +123,17 @@ namespace CommonPart {
         #endregion
 
     }// DataBase end
+
+    // ユニットの名前
+    public enum UnitType
+    {
+        NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
+    }
+    // x_index と y_index のペアの構造体
+    public struct PAIR
+    {
+        public int i, j;
+        public PAIR(int _i, int _j) { i = _i; j = _j; }
+    }
+
 }// namespace end
