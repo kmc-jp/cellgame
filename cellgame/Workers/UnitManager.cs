@@ -200,7 +200,7 @@ namespace CommonPart
         // スキップコマンド
         public void Skip()
         {
-            if (moving || attacking) return;
+            if (moving || attacking || select_i == -1) return;
 
             unitMap[select_i, select_j].command = false;
             NextUnit();

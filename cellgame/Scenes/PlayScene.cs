@@ -179,8 +179,6 @@ namespace CommonPart {
             // カーソルの形状を変化
             if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
-            else
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
 
 
             // Rキーが押されるとマップデータの読み込み

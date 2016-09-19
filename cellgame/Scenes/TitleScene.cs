@@ -3,71 +3,78 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Reflection;
 using MyUpdaterLib;
 
 
 namespace CommonPart {
-    class TitleScene: MenuScene {
+    class TitleScene: Scene {
         enum TitleIndex {
             Start, Editor, Load, Config, Save, Quit
         }
         static readonly string[] choiceDefault = new[] { "ニューゲーム", "マップエディター", "ロード", "オプション", "記録", "ゲーム終了" };
         readonly string[] choice = (string[])choiceDefault.Clone();
-        bool[] enabled = new bool[] { true, true, false, true, false, true };
-        Color[] defaultColor = new Color[] { Color.White, Color.White, Color.White, Color.White, Color.Gold, Color.White };
-        Animation cursor = TalkWindow.GetCursorAnimation();
-        
-        public TitleScene(SceneManager s) : base(s, choiceDefault.Length) {
+        List<Button> button;
+        MouseState pstate;
 
-            Focused();
-            
-            enabled[(int)TitleIndex.Load] = Function.GetEnumLength<BGMID>() > 1;
-        }
-        public override void Deleted() {
+        public TitleScene(SceneManager s) : base(s) {
+            button = new List<Button>();
+            for(int i = 0; i < choice.Length; i++)
+            {
+                button.Add(new Button(new Vector2(540, 200 + i * 60), 200, new Color(255, 162,0), new Color(200, 120, 0), choice[i]));
+            }
         }
         public override void SceneUpdate() {
-            cursor.Update();
-            SoundManager.Music.PlayBGM(BGMID.None, true);
+            if (button[(int)TitleIndex.Start].Clicked())
+            {
+                new NewGameScene(scenem);
+            }
+            else if (button[(int)TitleIndex.Editor].Clicked())
+            {
+                new EditorScene(scenem);
+            }
+            else if (button[(int)TitleIndex.Load].Clicked())
+            {
+
+            }
+            else if (button[(int)TitleIndex.Config].Clicked())
+            {
+                new SettingsScene(scenem);
+            }
+            else if (button[(int)TitleIndex.Save].Clicked())
+            {
+
+            }
+            else if (button[(int)TitleIndex.Quit].Clicked())
+            {
+                Delete = true;
+            }
+            MouseState state = Mouse.GetState();
+            for(int i = 0; i < button.Count; i++)
+            {
+                button[i].Update(pstate, state);
+            }
+            
+            bool on = false;
+            for (int i = 0; i < button.Count; i++)
+            {
+                if (button[i].IsOn(state))
+                    on = true;
+            }
+
+            if (on)
+                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
+
+            pstate = state;
             base.SceneUpdate();
         }
-        protected override void Choosed(int i) {
-            if(!enabled[i]) return;
-            switch((TitleIndex)i) {
-                case TitleIndex.Start:
-                    new PlayScene(scenem);
-                    break;
-                case TitleIndex.Editor:
-                    new EditorScene(scenem);
-                    break;
-                case TitleIndex.Load:
-                    new SoundTest(scenem);
-                    break;
-                case TitleIndex.Config:
-                    new SettingsScene(scenem);
-                    break;
-                case TitleIndex.Save:
-                    break;
-                case TitleIndex.Quit:
-                    Delete = true;
-                    break;
-            }
-        }
-        public override void Focused() {
-            JoyPadManager.GetPad();
-            JoyPadManager.Update();
-        }
         public override void SceneDraw(Drawing d) {
-            if(scenem.IsTopScene(this) && Settings.WindowStyleOld != Settings.WindowStyle) d.DrawStyle = Settings.WindowStyle;
-
-            Vector2 basePos = new Vector2(218, 234);
-            TalkWindow.DrawMessageBack(d, new Vector2(274, 28 + MaxIndex * 25), basePos, DepthID.Message);
-            for(int i = 0; i < MaxIndex; i++) {
-                new RichText(choice[i], FontID.Medium, enabled[i] ? defaultColor[i] : Color.Gray).Draw(d, basePos + new Vector(34, 10 + i * 26), DepthID.Message);
+            for(int i = 0;i < button.Count; i++)
+            {
+                button[i].Draw(d);
             }
-            cursor.Draw(d, basePos + new Vector2(12, 16 + Index * 26), DepthID.Message);
-            
         }
     }
 }
