@@ -64,7 +64,7 @@ namespace CommonPart {
 
         #region Method
         // コンストラクタ
-        public PlayScene(SceneManager s)
+        public PlayScene(SceneManager s, int map_n)
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
@@ -74,6 +74,7 @@ namespace CommonPart {
             statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
             proarrBar = new ProductArrangeBar();
             um = new UnitManager(ref unitBox);
+            ReadMap(map_n + 1);
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -92,33 +93,14 @@ namespace CommonPart {
 
             return new PAIR(0, -1);
         }
-
-        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv に保存する（既に存在するときは上書き保存）
-        public void SaveMap()
-        {
-            if (!Directory.Exists("MapData"))
-                Directory.CreateDirectory("MapData");
-            using (StreamWriter w = new StreamWriter(@"MapData\MapData.csv"))
-            {
-                for (int i = 0; i < DataBase.MAP_MAX; i++)
-                {
-                    w.Write("{0}", nMap.GetState(0, i));
-                    for (int j = 1; j < DataBase.MAP_MAX; j++)
-                    {
-                        w.Write(",{0}", nMap.GetState(j, i));
-                    }
-                    w.Write("\r\n");
-                }
-            }
-        }
-
+        
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
-        public void ReadMap()
+        public void ReadMap(int n)
         {
-            if (File.Exists(@"MapData\MapData.csv"))
+            if (File.Exists(string.Format(@"MapData\MapData{0}.csv",n)))
             {
 
-                using (StreamReader r = new StreamReader(@"MapData\MapData.csv"))
+                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
@@ -180,10 +162,7 @@ namespace CommonPart {
             if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
 
-
-            // Rキーが押されるとマップデータの読み込み
-            if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();
-
+            
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
 

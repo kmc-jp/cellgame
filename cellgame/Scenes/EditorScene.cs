@@ -90,11 +90,11 @@ namespace CommonPart
         }
 
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv に保存する（既に存在するときは上書き保存）
-        public void SaveMap()
+        public void SaveMap(int n)
         {
             if (!Directory.Exists("MapData"))
                 Directory.CreateDirectory("MapData");
-            using (StreamWriter w = new StreamWriter(@"MapData\MapData.csv"))
+            using (StreamWriter w = new StreamWriter(string.Format(@"MapData\MapData{0}.csv", n)))
             {
                 for (int i = 0; i < DataBase.MAP_MAX; i++)
                 {
@@ -109,12 +109,12 @@ namespace CommonPart
         }
 
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
-        public void ReadMap()
+        public void ReadMap(int n)
         {
-            if (File.Exists(@"MapData\MapData.csv"))
+            if (File.Exists(string.Format(@"MapData\MapData{0}.csv", n)))
             {
 
-                using (StreamReader r = new StreamReader(@"MapData\MapData.csv"))
+                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
@@ -171,11 +171,20 @@ namespace CommonPart
             }
             
             pstate = state;
-            // Sキーが押されるとマップデータの保存
-            if (Keyboard.GetState().IsKeyDown(Keys.S))　SaveMap();
-
-            // Rキーが押されるとマップデータの読み込み
-            if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();
+            // シフト＋数字キーが押されるとマップデータの保存
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1)) SaveMap(1);
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2)) SaveMap(2);
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3)) SaveMap(3);
+            }
+            // 数字キーのみが押されるとマップデータ読み込み
+            else
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1))　ReadMap(1);
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2))　ReadMap(2);
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3))　ReadMap(3);
+            }
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;

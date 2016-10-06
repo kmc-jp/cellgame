@@ -16,8 +16,8 @@ namespace CommonPart
             map, difficulty, AI, lymph, wound, life
         }
         readonly string[] paraName = { "マップ", "難易度", "AI", "リンパへクス", "傷口へクス", "ユニットの寿命" };
-        readonly string[,] paraStr = { { "腸壁", "", "" }, { "難しい", "", "" }, { "攻撃的", "", "" }, { "少なめ", "通常", "多め" }, { "少なめ", "通常", "多め" }, { "あり", "なし", "" } };
-        readonly int[] paraMaxIndex = { 1, 1, 1, 3, 3, 2 };
+        readonly string[,] paraStr = { { "マップ１", "マップ2", "マップ３" }, { "普通", "", "" }, { "普通", "", "" }, { "通常", "多め", "少なめ" }, { "通常", "多め", "少なめ" }, { "あり", "なし", "" } };
+        readonly int[] paraMaxIndex = { 3, 1, 1, 1, 1, 1 };
         int[] paraIndex = { 0, 0, 0, 1, 1, 0 };
         readonly Vector2[] paraPos = { new Vector2(250, 200), new Vector2(250, 400), new Vector2(600, 400), new Vector2(250, 460), new Vector2(600, 460), new Vector2(250, 520) };
         List<Button> paraButton;
@@ -42,7 +42,7 @@ namespace CommonPart
             if (start.Clicked())
             {
                 Delete = true;
-                new PlayScene(scenem);
+                new PlayScene(scenem, paraIndex[0]);
             }
 
             for(int i = 0; i < paraButton.Count; i++)
