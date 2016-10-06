@@ -70,11 +70,17 @@ namespace CommonPart
 
             if(x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
-                um.StartMoving(nMap);
+                if (um.moving)
+                    um.CancelMoving();
+                else
+                    um.StartMoving(nMap);
             }
             else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
-                um.StartAttacking();
+                if (um.attacking)
+                    um.CancelAttacking();
+                else
+                    um.StartAttacking();
             }
             else if (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {

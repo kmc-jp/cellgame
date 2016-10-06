@@ -251,44 +251,23 @@ namespace CommonPart
         // 攻撃コマンドが実行されるための前処理
         public void StartAttacking()
         {
-            if (unitMap[select_i, select_j].ATK < 0) return;
+            if (unitMap[select_i, select_j].Strength < 0) return;
 
             moving = false;
             attacking = true;
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-
-            List<PAIR> bfs = new List<PAIR>();
-            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
-            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
-            {
-                for(int j = 0; j < DataBase.MAP_MAX; j++)
-                {
-                    map[i, j] = -1;
-                }
-            }
-            map[select_i, select_j] = 0;
-            bfs.Add(new PAIR(select_i, select_j));
+            
             int[] di = { 1, 1, 0, -1, -1, 0 };
             int[] dj = { 0, 1, 1, 0, -1, -1 };
-            while (bfs.Count != 0)
+            for(int i = 0; i < 6; i++)
             {
-                PAIR p = bfs.Last(); bfs.RemoveAt(bfs.Count - 1);
-                for(int k = 0; k < 6; k++)
+                int ni = select_i + di[i], nj = select_j + dj[i];
+                if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
+                    nj >= 0 && nj < DataBase.MAP_MAX && unitMap[ni, nj].type < 0)
                 {
-                    if (p.i + di[k] - (p.j + dj[k] + 1) / 2 >= 0 && p.i + di[k] - (p.j + dj[k] + 1) / 2 < DataBase.MAP_MAX &&
-                        p.j + dj[k] >= 0 && p.j + dj[k] < DataBase.MAP_MAX &&
-                        map[p.i, p.j] < unitMap[select_i, select_j].ATK_range &&
-                        map[p.i + di[k], p.j + dj[k]] == -1)
-                    {
-                        bfs.Add(new PAIR(p.i + di[k], p.j + dj[k]));
-                        map[p.i + di[k], p.j + dj[k]] = map[p.i, p.j] + 1;
-                        if(unitMap[p.i + di[k], p.j + dj[k]].type < 0)
-                        {
-                            range.Add(new PAIR(p.i + di[k], p.j + dj[k]));
-                        }
-                    }
+                    range.Add(new PAIR(ni, nj));
                 }
             }
             if(range.Count == 0)
@@ -310,47 +289,71 @@ namespace CommonPart
             }
             if (flag) return;
 
-            if(unitMap[select_i, select_j].ATK > 0)
-                unitMap[x_index + (y_index + 1) / 2, y_index].HP -= unitMap[select_i, select_j].ATK;
-
-            unitMap[select_i, select_j].ATK *= -1;
+            if (unitMap[select_i, select_j].Strength > 0)
+            {
+                unitMap[x_index + (y_index + 1) / 2, y_index].HP -= unitMap[select_i, select_j].Strength;
+                unitMap[select_i, select_j].Strength *= -1;
+            }
             attacking = false;
             unitMap[select_i, select_j].defcommand = true;
             unitMap[select_i, select_j].command = false;
             NextUnit();
         }
-        // 移動可能な位置を求める深さ優先探索関数
-        void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
+        // 攻撃コマンド中止
+        public void CancelAttacking()
         {
-            int[] sx = { 1, 1, 0, -1, -1, 0 };
-            int[] sy = { 0, 1, 1, 0, -1, -1 };
-            for (int i = 0; i < 6; i++)
+            attacking = false;
+        }
+        // SortedSetを使うための比較関数を定義
+        public class CompareDijkstraNode : IComparer<DijkstraNode>
+        {
+            public int Compare(DijkstraNode l, DijkstraNode r)
             {
-                int x = now.i + sx[i] - (now.j + sy[i] + 1) / 2, y = now.j + sy[i];
-                if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
-                    nMap.Data[x, y] != 0 && unitMap[now.i + sx[i], now.j + sy[i]].type == UnitType.NULL)
+                return (l.cost < r.cost ? -1 : (l.cost > r.cost ? 1 : (l.pos < r.pos ? -1 : (l.pos > r.pos ? 1 : 0))));
+            }
+        }
+        public class DijkstraNode {
+            public int cost;
+            public PAIR pos;
+            public DijkstraNode(int _cost, PAIR _pos)
+            {
+                cost = _cost;
+                pos = _pos;
+            }
+        }
+        // 移動可能な位置を求める探索関数
+        void dijkstra(int pow_2, PAIR s, ref List<PAIR> res, ref List<int> costs, Map nMap)
+        {
+            int[] si = { 1, 1, 0, -1, -1, 0 };
+            int[] sj = { 0, 1, 1, 0, -1, -1 };
+            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+            for (int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
+            {
+                for (int j = 0; j < DataBase.MAP_MAX; j++)
                 {
-                    if(nMap.Data[now.i - (now.j + 1) / 2, now.j] == 2 && nMap.Data[x, y] == 2)
+                    map[i, j] = -1;
+                }
+            }
+            SortedSet<DijkstraNode> pq = new SortedSet<DijkstraNode>(new CompareDijkstraNode());
+            pq.Add(new DijkstraNode(0, s));
+            while(pq.Count != 0)
+            {
+                int pi = pq.First().pos.i, pj = pq.First().pos.j, pc = pq.First().cost;
+                pq.Remove(pq.First());
+                if (map[pi, pj] > 0) continue;
+                map[pi, pj] = pc;
+                if (pc != 0)
+                {
+                    res.Add(new PAIR(pi, pj));
+                    costs.Add(pc);
+                }
+                for (int i = 0;i < 6; i++)
+                {
+                    int ni = pi + si[i], nj = pj + sj[i], nc = pc + ((nMap.Data[pi - (pj + 1) / 2, pj] == 2 && nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
+                    if(ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX &&
+                        nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && unitMap[ni, nj].type == UnitType.NULL)
                     {
-                        if(pow_2 >= 1)
-                        {
-                            PAIR next = new PAIR(now.i + sx[i], now.j + sy[i]);
-                            res.Add(next);
-                            if (map[next.i, next.j] < pow_2 - 1)
-                                map[next.i, next.j] = pow_2 - 1;
-                            dfs(ref map, pow_2 - 1, next, ref res, nMap);
-                        }
-                    }
-                    else
-                    {
-                        if (pow_2 >= 2)
-                        {
-                            PAIR next = new PAIR(now.i + sx[i], now.j + sy[i]);
-                            res.Add(next);
-                            if (map[next.i, next.j] < pow_2 - 2)
-                                map[next.i, next.j] = pow_2 - 2;
-                            dfs(ref map, pow_2 - 2, next, ref res, nMap);
-                        }
+                        pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
                     }
                 }
             }
@@ -363,29 +366,8 @@ namespace CommonPart
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
-            List<PAIR> res = new List<PAIR>();
-            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
-            {
-                for(int j = 0; j < DataBase.MAP_MAX; j++)
-                {
-                    map[i, j] = -1;
-                }
-            }
-            dfs(ref map, unitMap[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref res, nMap);
-            if(res.Count == 0)
-            {
-                moving = false;
-            }
-            else
-            {
-                res.Distinct();
-                for (int i = 0; i < res.Count; i++)
-                {
-                    range.Add(new PAIR(res[i].i, res[i].j));
-                    moveCost.Add(unitMap[select_i, select_j].movePower - map[res[i].i, res[i].j] / 2);
-                }
-            }
+            dijkstra(unitMap[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost, nMap);
+            if(range.Count == 0) moving = false;
         }
         // 移動コマンド
         public void Move(int x_index, int y_index)
@@ -421,10 +403,15 @@ namespace CommonPart
 
             unitMap[x_index + (y_index + 1) / 2,y_index] = unitMap[select_i, select_j];
             unitMap[select_i, select_j] = new Unit(UnitType.NULL);
-            unitMap[x_index + (y_index + 1) / 2, y_index].movePower -= moveCost[n];
+            unitMap[x_index + (y_index + 1) / 2, y_index].movePower -= (moveCost[n] + 1) / 2;
             Select(x_index, y_index);
             
             unitMap[select_i, select_j].defcommand = true;
+        }
+        // 移動コマンド中止
+        public void CancelMoving()
+        {
+            moving = false;
         }
         // マップの座標(x_index, y_index)にユニットが存在するかどうか
         public bool IsExist(int x_index, int y_index)

@@ -83,8 +83,7 @@ namespace CommonPart {
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
         public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
-        public static readonly int[] EnemyUnitATK = new[] { 5, 10, 10, 10, 10 };
-        public static readonly int[] EnemyUnitATK_range = new[] { 2, 2, 2, 2, 2 };
+        public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
 
         #endregion
 
@@ -134,6 +133,22 @@ namespace CommonPart {
     {
         public int i, j;
         public PAIR(int _i, int _j) { i = _i; j = _j; }
+        public static bool operator ==(PAIR l, PAIR r)
+        {
+            return l.i == r.i && l.j == r.j;
+        }
+        public static bool operator !=(PAIR l, PAIR r)
+        {
+            return !(l == r);
+        }
+        public static bool operator >(PAIR l, PAIR r)
+        {
+            return l.i > r.i || (l.i == r.i && l.j > r.j);
+        }
+        public static bool operator <(PAIR l, PAIR r)
+        {
+            return l.i < r.i || (l.i == r.i && l.j < r.j);
+        }
     }
 
 }// namespace end
