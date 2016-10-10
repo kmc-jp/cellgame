@@ -19,12 +19,12 @@ namespace CommonPart
         double CameraX
         {
             get { return _camera.X; }
-            set { _camera.X = Math.Max(-DataBase.HexWidth * 2, Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / DataBase.MapScale[Scale] + DataBase.HexWidth * 2, value)); }
+            set { _camera.X = Math.Max(-DataBase.HexWidth * 4, Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / DataBase.MapScale[Scale] + DataBase.HexWidth * 4, value)); }
         }
         double CameraY
         {
             get { return _camera.Y; }
-            set { _camera.Y = Math.Max(-DataBase.HexHeight * 3 / 2, Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / DataBase.MapScale[Scale] + DataBase.HexHeight * 3 / 2, value)); }
+            set { _camera.Y = Math.Max(-DataBase.HexHeight * 3, Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / DataBase.MapScale[Scale] + DataBase.HexHeight * 3, value)); }
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
         // 現在のマップ

@@ -37,7 +37,7 @@ namespace CommonPart
                 HP = MAX_HP = DataBase.MyUnitMAX_HP[(int)type - 1];
                 LP = MAX_LP = DataBase.MyUnitMAX_LP[(int)type - 1];
                 EXP = MAX_EXP = DataBase.MyUnitMAX_EXP[(int)type - 1];
-                Strength = DataBase.MyUnitATK[(int)type - 1];
+                Strength = DataBase.MyUnitStrength[(int)type - 1];
                 unitName = DataBase.MyUnitName[(int)type - 1];
             }
             else if(type < 0)
@@ -45,7 +45,7 @@ namespace CommonPart
                 HP = MAX_HP = DataBase.EnemyUnitMAX_HP[(int)type + 5];
                 LP = MAX_LP = DataBase.EnemyUnitMAX_LP[(int)type + 5];
                 EXP = MAX_EXP = DataBase.EnemyUnitMAX_EXP[(int)type + 5];
-                Strength = DataBase.MyUnitATK[(int)type + 5];
+                Strength = DataBase.EnemyUnitStrength[(int)type + 5];
                 unitName = DataBase.EnemyUnitName[(int)type + 5];
             }
             else
