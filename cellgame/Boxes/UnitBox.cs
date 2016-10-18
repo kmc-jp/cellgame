@@ -66,7 +66,7 @@ namespace CommonPart
         // クリックされた位置を入力としてコマンドを実行
         public void Command(int x, int y, UnitManager um, Map nMap)
         {
-            if (u.type <= 0) return;
+            if (u.type <= 0 || um.moveAnimation || um.attackAnimation) return;
 
             if(x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
@@ -132,7 +132,7 @@ namespace CommonPart
                     {
                         if (um.moving)
                         {
-                            um.Move(p.i, p.j);
+                            um.Move(p.i, p.j, nMap);
                         }
                         else if (um.attacking)
                         {

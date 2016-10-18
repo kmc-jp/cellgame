@@ -18,10 +18,20 @@ namespace CommonPart
         // 現在コマンドの入力中であるかどうか
         public bool moving = false;
         public bool attacking = false;
+        // 現在アニメーション中であるかどうか
+        public bool moveAnimation = false;
+        public bool attackAnimation = false;
         public UnitType producing = UnitType.NULL;
         // 現在移動可能な位置のリスト
         public List<PAIR> range = new List<PAIR>();
         public List<int> moveCost = new List<int>();
+        // 移動コストのマップと最短経路復元ルート
+        int[,] dijkMap = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+        List<PAIR> moveRoute = new List<PAIR>();
+        // 移動した割合
+        int moveState;
+        const int maxMoveState = 30;
+        PAIR movingUnit;
         // 現在のターン
         int pturn = 0;
         int turn = 0;
@@ -30,6 +40,8 @@ namespace CommonPart
         UnitBox ub;
 
         Unit[,] unitMap;
+
+        const int INF = 1000000000;
 
         #endregion
 
@@ -62,46 +74,75 @@ namespace CommonPart
         {
             foreach (PAIR p in myUnits)
             {
-                int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
-                Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
+                if((!moveAnimation && !attackAnimation) || p.i != select_i || p.j != select_j)
                 {
-                    pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
-                    if(unitMap[p.i, p.j].type > 0)
+                    int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
+                    Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
+                    if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
                     {
-                        d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
-                    }
-                    else
-                    {
-                        d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
+                        if (unitMap[p.i, p.j].type > 0)
+                        {
+                            d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        }
+                        else
+                        {
+                            d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        }
                     }
                 }
             }
             foreach (PAIR p in enemyUnits)
             {
-                int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
-                Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
+                if ((!moveAnimation && !attackAnimation) || p.i != select_i || p.j != select_j)
                 {
-                    pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
-                    if (unitMap[p.i, p.j].type > 0)
+                    int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
+                    Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
+                    if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
                     {
-                        d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
-                    }
-                    else
-                    {
-                        d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
+                        if (unitMap[p.i, p.j].type > 0)
+                        {
+                            d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        }
+                        else
+                        {
+                            d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        }
                     }
                 }
             }
-            if (moving || attacking || producing != UnitType.NULL)
+            if (moveAnimation)
+            {
+                int x_index = movingUnit.i - (movingUnit.j + 1) / 2, y_index = movingUnit.j;
+                int tx_index = moveRoute.Last().i - (moveRoute.Last().j + 1) / 2, ty_index = moveRoute.Last().j;
+                Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
+                Vector tpos = DataBase.WhereDisp(tx_index, ty_index, camera, scale);
+                d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), unitMap[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)unitMap[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)unitMap[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                moveState++;
+                if(moveState == maxMoveState)
+                {
+                    moveState = 0;
+                    movingUnit = moveRoute.Last();
+                    moveRoute.RemoveAt(moveRoute.Count - 1);
+                    if (moveRoute.Count == 0)
+                    {
+                        moveAnimation = false;
+                    }
+                }
+            }
+            else if (attackAnimation)
+            {
+
+            }
+            else if (moving || attacking || producing != UnitType.NULL)
             {
                 foreach (PAIR p in range)
                 {
                     d.Draw(DataBase.WhereDisp(p.i - (p.j + 1) / 2, p.j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
                 }
             }
-            else if(select_i != -1)
+            else if (select_i != -1)
             {
                 d.Draw(DataBase.WhereDisp(select_i - (select_j + 1) / 2, select_j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
             }
@@ -326,12 +367,11 @@ namespace CommonPart
         {
             int[] si = { 1, 1, 0, -1, -1, 0 };
             int[] sj = { 0, 1, 1, 0, -1, -1 };
-            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
             for (int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
             {
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
                 {
-                    map[i, j] = -1;
+                    dijkMap[i, j] = -1;
                 }
             }
             SortedSet<DijkstraNode> pq = new SortedSet<DijkstraNode>(new CompareDijkstraNode());
@@ -340,8 +380,8 @@ namespace CommonPart
             {
                 int pi = pq.First().pos.i, pj = pq.First().pos.j, pc = pq.First().cost;
                 pq.Remove(pq.First());
-                if (map[pi, pj] > 0) continue;
-                map[pi, pj] = pc;
+                if (dijkMap[pi, pj] > 0) continue;
+                dijkMap[pi, pj] = pc;
                 if (pc != 0)
                 {
                     res.Add(new PAIR(pi, pj));
@@ -370,7 +410,7 @@ namespace CommonPart
             if(range.Count == 0) moving = false;
         }
         // 移動コマンド
-        public void Move(int x_index, int y_index)
+        public void Move(int x_index, int y_index, Map nMap)
         {
             bool flag = true;
             foreach (PAIR pos in range)
@@ -400,13 +440,44 @@ namespace CommonPart
                     myUnits[i] = new PAIR(x_index + (y_index + 1) / 2, y_index);
                 }
             }
+            
 
-            unitMap[x_index + (y_index + 1) / 2,y_index] = unitMap[select_i, select_j];
+            unitMap[x_index + (y_index + 1) / 2, y_index] = unitMap[select_i, select_j];
             unitMap[select_i, select_j] = new Unit(UnitType.NULL);
             unitMap[x_index + (y_index + 1) / 2, y_index].movePower -= (moveCost[n] + 1) / 2;
             Select(x_index, y_index);
             
             unitMap[select_i, select_j].defcommand = true;
+
+
+            moveAnimation = true;
+            moveState = 0;
+
+            int[] si = { 1, 1, 0, -1, -1, 0 };
+            int[] sj = { 0, 1, 1, 0, -1, -1 };
+
+            PAIR tp = new PAIR(select_i, select_j);
+            moveRoute.Add(tp);
+
+            while (dijkMap[tp.i, tp.j] != 0)
+            {
+                int ti = 0, tj = 0, tc = INF;
+                for (int i = 0; i < 6; i++)
+                {
+                    int ni = tp.i + si[i], nj = tp.j + sj[i], nc = dijkMap[ni, nj];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX && nc != -1 && nc < tc)
+                    {
+                        ti = ni;
+                        tj = nj;
+                        tc = nc;
+                    }
+                }
+                tp.i = ti;
+                tp.j = tj;
+                moveRoute.Add(tp);
+            }
+            movingUnit = moveRoute.Last();
+            moveRoute.RemoveAt(moveRoute.Count - 1);
         }
         // 移動コマンド中止
         public void CancelMoving()
