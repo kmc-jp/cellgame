@@ -31,7 +31,6 @@ namespace CommonPart
                     d.Draw(windowPosition + new Vector(60, 240), DataBase.command_tex[1], DepthID.Message);
                     d.Draw(windowPosition + new Vector(110, 240), DataBase.command_tex[2], DepthID.Message);
                     d.Draw(windowPosition + new Vector(160, 240), DataBase.command_tex[3], DepthID.Message);
-                    d.Draw(windowPosition + new Vector(210, 240), DataBase.command_tex[4], DepthID.Message);
                 }
 
                 if (u.type > 0)
@@ -90,10 +89,6 @@ namespace CommonPart
             {
                 um.Sleep();
             }
-            else if (x >= windowPosition.X + 210 && x <= windowPosition.X + 250 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
-            {
-
-            }
         }
         // 基本的にユニットマネージャから呼び出される
         public void Select(int _x_index, int _y_index, Unit _u)
@@ -117,8 +112,7 @@ namespace CommonPart
                     (x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
                     (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
                     (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
-                    (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
-                    (x >= windowPosition.X + 210 && x <= windowPosition.X + 250 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280));
+                    (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280));
         }
         public void Update(UnitManager um, Map nMap, PlayScene ps, MouseState pstate, MouseState state)
         {
