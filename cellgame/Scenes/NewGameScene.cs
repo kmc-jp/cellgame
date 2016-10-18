@@ -18,7 +18,7 @@ namespace CommonPart
         readonly string[] paraName = { "マップ", "難易度", "AI", "リンパへクス", "傷口へクス", "ユニットの寿命" };
         readonly string[,] paraStr = { { "マップ１", "マップ2", "マップ３" }, { "普通", "", "" }, { "普通", "", "" }, { "通常", "多め", "少なめ" }, { "通常", "多め", "少なめ" }, { "あり", "なし", "" } };
         readonly int[] paraMaxIndex = { 3, 1, 1, 1, 1, 1 };
-        int[] paraIndex = { 0, 0, 0, 1, 1, 0 };
+        int[] paraIndex = { 0, 0, 0, 0, 0, 0 };
         readonly Vector2[] paraPos = { new Vector2(250, 200), new Vector2(250, 400), new Vector2(600, 400), new Vector2(250, 460), new Vector2(600, 460), new Vector2(250, 520) };
         List<Button> paraButton;
         Button start, cancel;

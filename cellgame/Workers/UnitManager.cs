@@ -389,11 +389,14 @@ namespace CommonPart
                 }
                 for (int i = 0;i < 6; i++)
                 {
-                    int ni = pi + si[i], nj = pj + sj[i], nc = pc + ((nMap.Data[pi - (pj + 1) / 2, pj] == 2 && nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
-                    if(ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX &&
-                        nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && unitMap[ni, nj].type == UnitType.NULL)
+                    int ni = pi + si[i], nj = pj + sj[i];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
+                        int nc = pc + ((nMap.Data[pi - (pj + 1) / 2, pj] == 2 && nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
+                        if (nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && unitMap[ni, nj].type == UnitType.NULL)
+                        {
+                            pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
+                        }
                     }
                 }
             }
@@ -465,11 +468,14 @@ namespace CommonPart
                 for (int i = 0; i < 6; i++)
                 {
                     int ni = tp.i + si[i], nj = tp.j + sj[i], nc = dijkMap[ni, nj];
-                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX && nc != -1 && nc < tc)
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0)
                     {
-                        ti = ni;
-                        tj = nj;
-                        tc = nc;
+                        if(nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2))
+                        {
+                            ti = ni;
+                            tj = nj;
+                            tc = nc;
+                        }
                     }
                 }
                 tp.i = ti;
