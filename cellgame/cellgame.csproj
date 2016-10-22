@@ -73,6 +73,7 @@
     <Compile Include="Scenes\MenuScene.cs" />
     <Compile Include="Scenes\PadConfig.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
+    <Compile Include="Scenes\ProductScene.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Scenes\SettingsScene.cs" />

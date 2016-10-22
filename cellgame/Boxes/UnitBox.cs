@@ -12,7 +12,7 @@ namespace CommonPart
     {
         #region Variable
         public int x_index = -1, y_index = 0;
-        Unit u;
+        public Unit u;
         #endregion
         #region Method
         public UnitBox()
@@ -63,7 +63,7 @@ namespace CommonPart
             }
         }
         // クリックされた位置を入力としてコマンドを実行
-        public void Command(int x, int y, UnitManager um, Map nMap)
+        public void Command(int x, int y, UnitManager um, ref Map nMap)
         {
             if (u.type <= 0 || um.moveAnimation || um.attackAnimation) return;
 
@@ -72,7 +72,7 @@ namespace CommonPart
                 if (um.moving)
                     um.CancelMoving();
                 else
-                    um.StartMoving(nMap);
+                    um.StartMoving(ref nMap);
             }
             else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
             {
@@ -102,11 +102,11 @@ namespace CommonPart
             x_index = -1;
             y_index = 0;
         }
-        public bool IsOn(int x, int y)
+        public override bool IsOn(int x, int y)
         {
             return x_index != -1 && base.IsOn(x, y);
         }
-        public bool IsOnButton(int x, int y)
+        public override bool IsOnButton(int x, int y)
         {
             return x_index != -1 && u.type > 0 && (
                     (x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
@@ -114,37 +114,7 @@ namespace CommonPart
                     (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
                     (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280));
         }
-        public void Update(UnitManager um, Map nMap, PlayScene ps, MouseState pstate, MouseState state)
-        {
-            // 左クリックされたときに移動コマンド中でありその座標が移動可能な位置であればその位置へ選択中のユニットを移動
-            if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed)
-            {
-                if (state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
-                {
-                    PAIR p = ps.WhichHex(state.X, state.Y);
-                    if (p.i >= 0 && p.j >= 0)
-                    {
-                        if (um.moving)
-                        {
-                            um.Move(p.i, p.j, nMap);
-                        }
-                        else if (um.attacking)
-                        {
-                            um.Attack(p.i, p.j);
-                        }
-                        else if(um.producing == UnitType.NULL && um.FindType(p.i, p.j) != UnitType.NULL)
-                        {
-                            um.Select(p.i, p.j);
-                        }
-                    }
-                }
-
-                // クリックされた座標がユニットボックスのコマンドボタンであれば、コマンドを実行
-                Command(state.X, state.Y, um, nMap);
-            }
-            if (x_index != -1)
-                u = um.Find(x_index, y_index);
-        }
+        public override void Update() { }
         #endregion
     }// class end
 }// namespace end

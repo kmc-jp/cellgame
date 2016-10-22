@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace CommonPart
 {
@@ -14,7 +16,7 @@ namespace CommonPart
         // 敵ユニット
         List<PAIR> enemyUnits;
         // 現在選択中のユニット
-        int select_i = -1, select_j = 0;
+        public int select_i = -1, select_j = 0;
         // 現在コマンドの入力中であるかどうか
         public bool moving = false;
         public bool attacking = false;
@@ -34,14 +36,15 @@ namespace CommonPart
         PAIR movingUnit;
         // 現在のターン
         int pturn = 0;
-        int turn = 0;
+        public int turn = 0;
+
+        public bool phase = false;
 
         // ユニットボックス
         UnitBox ub;
 
         Unit[,] unitMap;
 
-        const int INF = 1000000000;
 
         #endregion
 
@@ -148,8 +151,44 @@ namespace CommonPart
             }
         }
         // 更新
-        public void Update()
+        public void Update(MouseState pstate, MouseState state, ref Map nMap, PlayScene ps)
         {
+            // 左クリックされたときに移動コマンド中でありその座標が移動可能な位置であればその位置へ選択中のユニットを移動
+            if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed && !moveAnimation && !attackAnimation)
+            {
+                if (state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
+                {
+                    PAIR p = ps.WhichHex(state.X, state.Y);
+                    if (p.i >= 0 && p.j >= 0)
+                    {
+                        if (moving)
+                        {
+                            Move(p.i, p.j, ref nMap);
+                        }
+                        else if (attacking)
+                        {
+                            Attack(p.i, p.j);
+                        }
+                        else if (producing == UnitType.NULL)
+                        {
+                            if (FindType(p.i, p.j) != UnitType.NULL)
+                            {
+                                Select(p.i, p.j);
+                            }
+                            else
+                            {
+                                Unselect();
+                            }
+                        }
+                    }
+                }
+
+                // クリックされた座標がユニットボックスのコマンドボタンであれば、コマンドを実行
+                ub.Command(state.X, state.Y, this, ref nMap);
+            }
+            if(ub.x_index != -1)
+                ub.u = Find(ub.x_index, ub.y_index);
+
             if (pturn < turn)
                 UpdateTurn();
 
@@ -229,13 +268,13 @@ namespace CommonPart
                     select_i = p.i;
                     select_j = p.j;
                     flag = false;
+                    phase = true;
                     break;
                 }
             }
             if (flag)
             {
                 Unselect();
-                if (myUnits.Count != 0) turn++;
             }
         }
         // スキップコマンド
@@ -255,7 +294,7 @@ namespace CommonPart
             NextUnit();
         }
         // 生産コマンドが実行されるための前処理
-        public void StartProducing(UnitType ut, Map nMap)
+        public void StartProducing(UnitType ut, ref Map nMap)
         {
             producing = ut;
             moving = false;
@@ -267,7 +306,7 @@ namespace CommonPart
                 for (int y = 0; y < DataBase.MAP_MAX; y++)
                 {
                     if(unitMap[x + (y + 1) / 2, y].type == UnitType.NULL &&
-                        nMap.Data[x, y] != 0)
+                        nMap.Data[x, y] == (ut > 0 ? 4 : 3))
                     {
                         range.Add(new PAIR(x + (y + 1) / 2, y));
                     }
@@ -277,7 +316,18 @@ namespace CommonPart
         // 生産コマンド
         public bool Produce(int x_index, int y_index)
         {
-            if (IsExist(x_index, y_index)) return false;
+            // 生産できる位置かどうか判定
+            bool flag = true;
+            foreach (PAIR p in range)
+            {
+                if(p.i - (p.j + 1) / 2 == x_index && p.j == y_index)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) return false;
+            // 判定終了
 
             if(producing > 0) myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
             else enemyUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
@@ -363,7 +413,7 @@ namespace CommonPart
             }
         }
         // 移動可能な位置を求める探索関数
-        void dijkstra(int pow_2, PAIR s, ref List<PAIR> res, ref List<int> costs, Map nMap)
+        void dijkstra(int pow_2, PAIR s, ref List<PAIR> res, ref List<int> costs, ref Map nMap)
         {
             int[] si = { 1, 1, 0, -1, -1, 0 };
             int[] sj = { 0, 1, 1, 0, -1, -1 };
@@ -402,18 +452,18 @@ namespace CommonPart
             }
         }
         // 移動のコマンドが実行されるための前処理
-        public void StartMoving(Map nMap)
+        public void StartMoving(ref Map nMap)
         {
             attacking = false;
             moving = true;
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-            dijkstra(unitMap[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost, nMap);
+            dijkstra(unitMap[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost, ref nMap);
             if(range.Count == 0) moving = false;
         }
         // 移動コマンド
-        public void Move(int x_index, int y_index, Map nMap)
+        public void Move(int x_index, int y_index, ref Map nMap)
         {
             bool flag = true;
             foreach (PAIR pos in range)
@@ -458,6 +508,7 @@ namespace CommonPart
 
             int[] si = { 1, 1, 0, -1, -1, 0 };
             int[] sj = { 0, 1, 1, 0, -1, -1 };
+            const int INF = 1000000000;
 
             PAIR tp = new PAIR(select_i, select_j);
             moveRoute.Add(tp);
@@ -489,6 +540,7 @@ namespace CommonPart
         public void CancelMoving()
         {
             moving = false;
+            range.Clear();
         }
         // マップの座標(x_index, y_index)にユニットが存在するかどうか
         public bool IsExist(int x_index, int y_index)

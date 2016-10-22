@@ -13,13 +13,13 @@ namespace CommonPart
         #region Variable
         enum parameter
         {
-            map, difficulty, AI, lymph, wound, life
+            map, difficulty, AI, lymph, wound
         }
-        readonly string[] paraName = { "マップ", "難易度", "AI", "リンパへクス", "傷口へクス", "ユニットの寿命" };
-        readonly string[,] paraStr = { { "マップ１", "マップ2", "マップ３" }, { "普通", "", "" }, { "普通", "", "" }, { "通常", "多め", "少なめ" }, { "通常", "多め", "少なめ" }, { "あり", "なし", "" } };
-        readonly int[] paraMaxIndex = { 3, 1, 1, 1, 1, 1 };
-        int[] paraIndex = { 0, 0, 0, 0, 0, 0 };
-        readonly Vector2[] paraPos = { new Vector2(250, 200), new Vector2(250, 400), new Vector2(600, 400), new Vector2(250, 460), new Vector2(600, 460), new Vector2(250, 520) };
+        readonly string[] paraName = { "マップ", "難易度", "AI", "リンパへクス", "傷口へクス" };
+        readonly string[,] paraStr = { { "マップ１", "マップ２", "マップ３" }, { "普通", "", "" }, { "普通", "", "" }, { "通常", "多め", "少なめ" }, { "通常", "多め", "少なめ" } };
+        readonly int[] paraMaxIndex = { 3, 1, 1, 1, 1 };
+        int[] paraIndex = { 0, 0, 0, 0, 0 };
+        readonly Vector2[] paraPos = { new Vector2(250, 340), new Vector2(250, 400), new Vector2(600, 400), new Vector2(250, 460), new Vector2(600, 460) };
         List<Button> paraButton;
         Button start, cancel;
         MouseState pstate;
@@ -77,8 +77,7 @@ namespace CommonPart
         }
         public override void SceneDraw(Drawing d)
         {
-            new TextAndFont("ニューゲームオプション", Color.Black).Draw(d, new Vector2(250, 120), DepthID.Message);
-            new TextAndFont("ニューゲームオプション", Color.Black).Draw(d, new Vector2(250, 120), DepthID.Message);
+            new TextAndFont("ニューゲームオプション", Color.Black).Draw(d, new Vector2(250, 180), DepthID.Message);
 
             for(int i = 0;i < paraButton.Count; i++)
             {

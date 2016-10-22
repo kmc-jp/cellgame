@@ -79,10 +79,12 @@ namespace CommonPart {
         public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
         public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
         public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 10, 10, 1000 };
+        public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 3 };
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
         public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 2 };
 
         #endregion
 

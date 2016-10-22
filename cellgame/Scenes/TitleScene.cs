@@ -23,7 +23,7 @@ namespace CommonPart {
             button = new List<Button>();
             for(int i = 0; i < choice.Length; i++)
             {
-                button.Add(new Button(new Vector2(540, 200 + i * 60), 200, new Color(255, 162,0), new Color(200, 120, 0), choice[i]));
+                button.Add(new Button(new Vector2(960, 300 + i * 60), 200, new Color(255, 162,0), new Color(200, 120, 0), choice[i]));
             }
         }
         public override void SceneUpdate() {

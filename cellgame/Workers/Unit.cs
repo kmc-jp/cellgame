@@ -20,8 +20,8 @@ namespace CommonPart
         public readonly int MAX_LP;
         public readonly int MAX_EXP;
         public readonly string unitName;
-        public int moveRange = 2;
-        public int movePower = 2;
+        public int moveRange;
+        public int movePower;
         public bool defcommand = true;
         public bool command = true;
         #endregion
@@ -39,6 +39,7 @@ namespace CommonPart
                 EXP = MAX_EXP = DataBase.MyUnitMAX_EXP[(int)type - 1];
                 Strength = DataBase.MyUnitStrength[(int)type - 1];
                 unitName = DataBase.MyUnitName[(int)type - 1];
+                movePower = moveRange = DataBase.MyUnitMoveRange[(int)type - 1];
             }
             else if(type < 0)
             {
@@ -47,6 +48,7 @@ namespace CommonPart
                 EXP = MAX_EXP = DataBase.EnemyUnitMAX_EXP[(int)type + 5];
                 Strength = DataBase.EnemyUnitStrength[(int)type + 5];
                 unitName = DataBase.EnemyUnitName[(int)type + 5];
+                movePower = moveRange = DataBase.EnemyUnitMoveRange[(int)type + 5];
             }
             else
             {

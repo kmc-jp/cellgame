@@ -11,8 +11,8 @@ namespace CommonPart
     class ProductArrangeBar : WindowBar
     {
         #region Variable
-        ProductBox productBox;
-        ArrangeBox arrangeBox;
+        public ProductBox productBox;
+        public ArrangeBox arrangeBox;
         #endregion
         #region Method
         public ProductArrangeBar()
@@ -20,20 +20,34 @@ namespace CommonPart
             productBox = new ProductBox();
             arrangeBox = new ArrangeBox();
         }
-        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, Map nMap)
+        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, ref Map nMap, SceneManager s)
         {
             base.Update();
             if(pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed)
             {
                 if (state.X >= windowPosition.X && state.X <= windowPosition.X +width / 2 * 16 && state.Y >= windowPosition.Y && state.Y <= windowPosition.Y + height * 16)
                 {// 左のボタンをクリック
-                    productBox.Show();
-                    arrangeBox.Hide();
+                    if (productBox.showing)
+                    {
+                        productBox.Hide();
+                    }
+                    else
+                    {
+                        productBox.Show();
+                        arrangeBox.Hide();
+                    }
                 }
                 else if(state.X >= windowPosition.X + width / 2 * 16 && state.X <= windowPosition.X + width * 16 && state.Y >= windowPosition.Y && state.Y <= windowPosition.Y + height * 16)
                 {// 右のボタンをクリック
-                    arrangeBox.Show();
-                    productBox.Hide();
+                    if (arrangeBox.showing)
+                    {
+                        arrangeBox.Hide();
+                    }
+                    else
+                    {
+                        arrangeBox.Show();
+                        productBox.Hide();
+                    }
                 }
                 else if (!IsOn(state.X, state.Y))
                 {
@@ -41,7 +55,8 @@ namespace CommonPart
                     if(um.producing == UnitType.NULL) arrangeBox.Hide();
                 }
             }
-            arrangeBox.Update(pstate, state, um, productBox.Update(pstate, state), ps, nMap);
+            productBox.Update(pstate, state, s, this);
+            arrangeBox.Update(pstate, state, um, ps, ref nMap);
         }
         public override bool IsOn(int x, int y)
         {
@@ -74,79 +89,104 @@ namespace CommonPart
     {
         #region Variable
         public bool showing = false;
+        public int select;
+        public Button create, stop;
+        public List<UnitType> productQ;
+        public List<int> maxPP;
+        public List<int> PP;
+        FilledBox fb;
+        BoxFrame bf;
         #endregion
         #region Method
         public ProductBox()
             : base(DataBase.BarPos[5], DataBase.BarWidth[5], DataBase.BarHeight[5]) {
+            create = new Button(new Vector(1036, 360), 200, new Color(255, 162, 0), new Color(200, 120, 0), "新規作成");
+            stop = new Button(new Vector(1036, 410), 200, new Color(255, 162, 0), new Color(200, 120, 0), "生産中止");
+            fb = new FilledBox(new Vector(270, 250), Color.White);
+            bf = new BoxFrame(new Vector(240, 25), Color.Black);
+            productQ = new List<UnitType>();
+            maxPP = new List<int>();
+            PP = new List<int>();
         }
         public void Show()
         {
             showing = true;
+            select = -1;
         }
         public void Hide()
         {
             showing = false;
+            select = -1;
         }
-        public bool IsOn(int x, int y)
+        public override bool IsOn(int x, int y)
         {
             return showing && base.IsOn(x, y);
         }
-        public bool IsOnButton(int x, int y)
+        public override bool IsOnButton(int x, int y)
         {
             if (showing)
             {
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < Math.Min(productQ.Count, 9); i++)
                 {
-                    if (x >= windowPosition.X + 10 && x <= windowPosition.X + 10 + DataBase.MyUnitName[i].Length * 20 && y >= windowPosition.Y + 10 + 25 * i && y <= windowPosition.Y + 35 + 25 * i)
+                    UnitType ut = productQ[i];
+                    int nl = (ut > 0 ? DataBase.MyUnitName[(int)ut - 1] : DataBase.EnemyUnitName[(int)ut + 5]).Length;
+                    if (x >= windowPosition.X + 15 && x <= windowPosition.X + 15 + nl * 20 && y >= windowPosition.Y + 15 + 25 * i && y <= windowPosition.Y + 40 + 25 * i)
                     {
                         return true;
                     }
                 }
-                for (int i = 0; i < 5; i++)
+                if(create.IsOn(Mouse.GetState()) || stop.IsOn(Mouse.GetState()))
                 {
-                    if (x >= windowPosition.X + 10 && x <= windowPosition.X + 10 + DataBase.EnemyUnitName[i].Length * 20 && y >= windowPosition.Y + 235 + 25 * i && y <= windowPosition.Y + 260 + 25 * i)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             return false;
         }
-        public UnitType Update(MouseState pstate, MouseState state)
+        public void Update(MouseState pstate, MouseState state, SceneManager s, ProductArrangeBar pab)
         {
             base.Update();
-            if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed && showing)
+            if (!showing) return;
+            create.Update(pstate, state);
+            stop.Update(pstate, state);
+            if (create.Clicked())
             {
-                for(int i = 0; i < 9; i++)
+                new ProductScene(s, pab);
+            }
+            if (stop.Clicked())
+            {
+                PP[select] = 0;
+            }
+            if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed)
+            {
+                for (int i = 0; i < Math.Min(productQ.Count, 9); i++)
                 {
-                    if (state.X >= windowPosition.X + 10 && state.X <= windowPosition.X + 10 + DataBase.MyUnitName[i].Length * 20 && state.Y >= windowPosition.Y + 10 + 25 * i && state.Y <= windowPosition.Y + 35 + 25 * i)
+                    UnitType ut = productQ[i];
+                    int nl = (ut > 0 ? DataBase.MyUnitName[(int)ut - 1] : DataBase.EnemyUnitName[(int)ut + 5]).Length;
+                    if (state.X >= windowPosition.X + 15 && state.X <= windowPosition.X + 15 + nl * 20 && state.Y >= windowPosition.Y + 15 + 25 * i && state.Y <= windowPosition.Y + 40 + 25 * i)
                     {
-                        return (UnitType)(i + 1);
-                    }
-                }
-                for (int i = 0; i < 5; i++)
-                {
-                    if (state.X >= windowPosition.X + 10 && state.X <= windowPosition.X + 10 + DataBase.EnemyUnitName[i].Length * 20 && state.Y >= windowPosition.Y + 235 + 25 * i && state.Y <= windowPosition.Y + 260 + 25 * i)
-                    {
-                        return (UnitType)(i - 5);
+                        select = i;
+                        return;
                     }
                 }
             }
-            return UnitType.NULL;
         }
         public override void Draw(Drawing d)
         {
             if (showing)
             {
                 base.Draw(d);
-                for(int i = 0; i < 9; i++)
+                for(int i = 0; i < Math.Min(productQ.Count, 9); i++)
                 {
-                    new TextAndFont(DataBase.MyUnitName[i], Color.Black).Draw(d, windowPosition + new Vector(10, 10 + 25 * i), DepthID.Message);
+                    string name = productQ[i] > 0 ? DataBase.MyUnitName[(int)productQ[i] - 1] : DataBase.EnemyUnitName[(int)productQ[i] + 5];
+                    new TextAndFont(name , Color.Black).Draw(d, windowPosition + new Vector(15, 15 + 25 * i), DepthID.Message);
                 }
-                for (int i = 0; i < 5; i++)
+                if(select != -1)
                 {
-                    new TextAndFont(DataBase.EnemyUnitName[i], Color.Black).Draw(d, windowPosition + new Vector(10, 235 + 25 * i), DepthID.Message);
+                    bf.Draw(d, windowPosition + new Vector(15, 15 + 25 * select), DepthID.Status);
                 }
+                create.Draw(d);
+                stop.Draw(d);
+                fb.Draw(d, windowPosition + new Vector(9, 9), DepthID.StateFront);
             }
         }
         #endregion
@@ -158,6 +198,8 @@ namespace CommonPart
         public bool showing = false;
         int select = -1;
         List<UnitType> arrange;
+        FilledBox fb;
+        BoxFrame bf;
         #endregion
         #region Method
         string TypeName(UnitType tp)
@@ -179,26 +221,30 @@ namespace CommonPart
             : base(DataBase.BarPos[5], DataBase.BarWidth[5], DataBase.BarHeight[5])
         {
             arrange = new List<UnitType>();
+            fb = new FilledBox(new Vector(270, 350), Color.White);
+            bf = new BoxFrame(new Vector(260, 25), Color.Black);
         }
         public void Show()
         {
             showing = true;
+            select = -1;
         }
         public void Hide()
         {
             showing = false;
+            select = -1;
         }
-        public bool IsOn(int x, int y)
+        public override bool IsOn(int x, int y)
         {
             return showing && base.IsOn(x, y);
         }
-        public bool IsOnButton(int x, int y)
+        public override bool IsOnButton(int x, int y)
         {
             if (showing)
             {
                 for (int i = 0; i < Math.Min(arrange.Count, 14); i++)
                 {
-                    if (x >= windowPosition.X + 10 && x <= windowPosition.X + 10 + TypeName(arrange[i]).Length * 20 && y >= windowPosition.Y + 10 + 25 * i && y <= windowPosition.Y + 35 + 25 * i)
+                    if (x >= windowPosition.X + 14 && x <= windowPosition.X + 14 + TypeName(arrange[i]).Length * 20 && y >= windowPosition.Y + 14 + 25 * i && y <= windowPosition.Y + 39 + 25 * i)
                     {
                         return true;
                     }
@@ -206,13 +252,16 @@ namespace CommonPart
             }
             return false;
         }
-        public void Update(MouseState pstate, MouseState state, UnitManager um, UnitType ut, PlayScene ps, Map nMap)
+        public void Add(UnitType ut)
         {
-            base.Update();
-            if(ut != UnitType.NULL)
+            if (ut != UnitType.NULL)
             {
                 arrange.Add(ut);
             }
+        }
+        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, ref Map nMap)
+        {
+            base.Update();
 
             if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed && showing)
             {
@@ -220,9 +269,9 @@ namespace CommonPart
                 {
                     for (int i = 0; i < Math.Min(arrange.Count, 14); i++)
                     {
-                        if (state.X >= windowPosition.X + 10 && state.X <= windowPosition.X + 10 + TypeName(arrange[i]).Length * 20 && state.Y >= windowPosition.Y + 10 + 25 * i && state.Y <= windowPosition.Y + 35 + 25 * i)
+                        if (state.X >= windowPosition.X + 14 && state.X <= windowPosition.X + 14 + TypeName(arrange[i]).Length * 20 && state.Y >= windowPosition.Y + 14 + 25 * i && state.Y <= windowPosition.Y + 39 + 25 * i)
                         {
-                            um.StartProducing(arrange[i], nMap);
+                            um.StartProducing(arrange[i], ref nMap);
                             select = i;
                         }
                     }
@@ -230,10 +279,18 @@ namespace CommonPart
                 else if (um.producing != UnitType.NULL)
                 {
                     PAIR p = ps.WhichHex(state.X, state.Y);
-                    if(p.i >= 0 && p.j >= 0 && um.Produce(p.i, p.j))
+                    if(p.i >= 0 && p.j >= 0)
                     {
-                        arrange.RemoveAt(select);
-                        select = -1;
+                        if(um.Produce(p.i, p.j))
+                        {
+                            arrange.RemoveAt(select);
+                            select = -1;
+                        }
+                        else if (um.FindType(p.i, p.j) == UnitType.NULL)
+                        {
+                            um.producing = UnitType.NULL;
+                            Hide();
+                        }
                     }
                 }
             }
@@ -245,8 +302,11 @@ namespace CommonPart
                 base.Draw(d);
                 for(int i = 0; i < Math.Min(arrange.Count, 14); i++)
                 {
-                    new TextAndFont(TypeName(arrange[i]), Color.Black).Draw(d, windowPosition + new Vector(10, 10 + 25 * i), DepthID.Message);
+                    new TextAndFont(TypeName(arrange[i]), Color.Black).Draw(d, windowPosition + new Vector(14, 14 + 25 * i), DepthID.Map);
                 }
+                fb.Draw(d, windowPosition + new Vector(9, 9), DepthID.Effect);
+                if(select != -1)
+                    bf.Draw(d, windowPosition + new Vector(14, 14 + 25 * select), DepthID.Status);
             }
         }
         #endregion

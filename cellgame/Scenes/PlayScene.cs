@@ -19,6 +19,7 @@ namespace CommonPart {
         StatusBar statusBar;
         StudyBar studyBar;
         UnitBox unitBox;
+        Button next;
         // カメラ
         Vector Camera { get { return _camera; } }
         double CameraX
@@ -56,7 +57,6 @@ namespace CommonPart {
         int maxStudyPoint = 514;
         int PP = 0;
         int maxPP = 25;
-        int leftUnit = 19;
         decimal bodyTemp = 36.0m;
 
         
@@ -71,10 +71,11 @@ namespace CommonPart {
             studyBar = new StudyBar(maxStudyPoint, studyPoint, studyPower, "親和性成熟");
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
-            statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
+            statusBar = new StatusBar(studyPower, PP, maxPP, bodyTemp);
             proarrBar = new ProductArrangeBar();
             um = new UnitManager(ref unitBox);
             ReadMap(map_n + 1);
+            next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -130,6 +131,7 @@ namespace CommonPart {
             statusBar.Draw(d);
             proarrBar.Draw(d);
             unitBox.Draw(d);
+            next.Draw(d);
         }
         public override void SceneUpdate() {
             // 現在のマウスの状態を取得
@@ -150,24 +152,42 @@ namespace CommonPart {
             
             // バー・ボックスの更新
             studyBar.Update();
-            unitBox.Update(um, nMap, this, pstate, state);
+            unitBox.Update();
             minimapBox.Update();
-            statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
-            proarrBar.Update(pstate, state, um, this, nMap);
+            statusBar.Update(studyPower, PP, maxPP, bodyTemp);
+            proarrBar.Update(pstate, state, um, this, ref nMap, scenem);
+
+            next.Update(pstate, state);
 
             // ユニットの更新
-            um.Update();
+            um.Update(pstate, state, ref nMap, this);
+
+            if (um.phase)
+            {
+                if(um.select_i >= 0 && um.select_j >= 0)
+                    FadeIn(um.select_i - (um.select_j + 1) / 2, um.select_j);
+                um.phase = false;
+            }
 
             // カーソルの形状を変化
-            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y))
+            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
 
+            if (next.Clicked())
+            {
+                um.turn++;
+            }
             
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
 
             pstate = state;
             base.SceneUpdate();
+        }
+        public void FadeIn(int x_index, int y_index)
+        {
+            CameraX = (DataBase.HexWidth * x_index + DataBase.HexWidth / 2 * ((y_index % 2) + 1)) - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale];
+            CameraY = (DataBase.HexHeight * 3 / 4 * y_index + DataBase.HexHeight / 2) - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale];
         }
         #endregion
     }// class end
