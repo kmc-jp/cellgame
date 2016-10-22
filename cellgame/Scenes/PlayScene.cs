@@ -59,6 +59,8 @@ namespace CommonPart {
         int maxPP = 25;
         decimal bodyTemp = 36.0m;
 
+        AI ai;
+
         
         #endregion
 
@@ -76,6 +78,7 @@ namespace CommonPart {
             um = new UnitManager(ref unitBox);
             ReadMap(map_n + 1);
             next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
+            ai = new AI(ref nMap, ref um);
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -149,7 +152,10 @@ namespace CommonPart {
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
-            
+            // 敵のターンの時、マウスの状態を更新しない
+            if (ai.turn)
+                state = pstate;
+
             // バー・ボックスの更新
             studyBar.Update();
             unitBox.Update();
@@ -157,11 +163,13 @@ namespace CommonPart {
             statusBar.Update(studyPower, PP, maxPP, bodyTemp);
             proarrBar.Update(pstate, state, um, this, ref nMap, scenem);
 
+            // ボタンの更新
             next.Update(pstate, state);
 
             // ユニットの更新
             um.Update(pstate, state, ref nMap, this);
 
+            // 次のユニットへフェードイン
             if (um.phase)
             {
                 if(um.select_i >= 0 && um.select_j >= 0)
@@ -170,14 +178,19 @@ namespace CommonPart {
             }
 
             // カーソルの形状を変化
-            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state))
+            if (!ai.turn && (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state)))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
 
+            // 次のターンへボタンを押されるとターンを進める
             if (next.Clicked())
             {
                 um.turn++;
+                ai.turn = true;
             }
             
+            // AIの更新
+            ai.Update();
+
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
 

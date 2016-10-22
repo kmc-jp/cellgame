@@ -82,6 +82,7 @@
     <Compile Include="Scenes\TitleScene.cs" />
     <Compile Include="Scenes\UpdateScene.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="Workers\AI.cs" />
     <Compile Include="Workers\Unit.cs" />
     <Compile Include="Workers\UnitManager.cs" />
     <Compile Include="Workers\Worker.cs" />
