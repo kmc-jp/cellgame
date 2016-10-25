@@ -33,8 +33,8 @@ namespace CommonPart
             pab = pab_;
             pstate = Mouse.GetState();
 
-            start = new Button(backGround.windowPosition + new Vector(465, 320), 120, new Color(255, 162, 0), new Color(200, 120, 0), "生産開始");
-            cancel = new Button(new Vector(backGround.windowPosition.X + 315, backGround.windowPosition.Y + 320), 120, new Color(255, 162, 0), new Color(200, 120, 0), "キャンセル");
+            start = new Button(backGround.windowPosition + new Vector(315, 320), 120, new Color(255, 162, 0), new Color(200, 120, 0), "生産開始");
+            cancel = new Button(backGround.windowPosition + new Vector(465, 320), 120, new Color(255, 162, 0), new Color(200, 120, 0), "キャンセル");
             fb = new FilledBox(new Vector2(240, 360), Color.White);
             bf = new BoxFrame(new Vector2(230, 25), Color.Black);
             select = 0;

@@ -27,7 +27,7 @@ namespace CommonPart {
         // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
-        public static readonly double[] MapScale = new[] { 0.1d, 0.5d, 0.75d, 1.0d };
+        public static readonly double[] MapScale = { 0.1d, 0.5d, 0.75d, 1.0d };
         // デフォルトのマップの倍率
         public static readonly int DefaultMapScale = 3;
         // へクス画像の横幅と縦幅
@@ -48,10 +48,10 @@ namespace CommonPart {
             Study, Unit, Minimap, Status, Arrange, Product
         }
         // それぞれのバー・ボックスの横幅の個数と縦幅の個数リスト
-        public static readonly int[] BarWidth = new[] { 22, 22, 22, 40, 18, 18 };
-        public static readonly int[] BarHeight = new[] { 6, 23, 16, 4, 6, 23 };
+        public static readonly int[] BarWidth = { 22, 22, 22, 40, 18, 18 };
+        public static readonly int[] BarHeight = { 6, 23, 16, 4, 6, 23 };
         // それぞれのバー・ボックスの左上の画面上での座標のリスト
-        public static readonly Vector[] BarPos = new[] {
+        public static readonly Vector[] BarPos = {
             new Vector(0d, 0d), new Vector(0d, 96d), new Vector(0d, 704d), new Vector(352d, 0d), new Vector(992d, 0d), new Vector(992d, 96d)
         };
         #endregion
@@ -66,11 +66,11 @@ namespace CommonPart {
         {
             NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
         }*/
-        public static readonly string[] MyUnitName = new[]
+        public static readonly string[] MyUnitName = 
         {
             "好中球", "マクロファージ", "樹状細胞", "好酸球", "NK細胞", "ヘルパーT細胞", "キラーT細胞", "B細胞", "プラズマ細胞"
         };
-        public static readonly string[] EnemyUnitName = new[]
+        public static readonly string[] EnemyUnitName = 
         {
             "菌", "カビ", "ウイルス", "ガン", "寄生虫"
         };
@@ -80,12 +80,31 @@ namespace CommonPart {
         public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
         public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 10, 10, 1000 };
         public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 3 };
+
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
         public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
         public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 2 };
 
+        #endregion
+
+        #region Study
+        // 研究ツリー
+        public enum Study
+        {
+            Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Tyuwa, Masuto
+        }
+        public static readonly string[] StudyName = {
+            "獲得免疫", "サイトカイン", "インターフェロン", "ケモカイン", "クロスプレゼンテーション", "効率的アポトーシス", "クラススイッチ", "親和性成熟", "オプソニン化", "中和", "マスト細胞"
+        };
+        public static readonly int[,] StudyParent = {
+            { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, -1 }, { 0, -1 }, { 2, 4 }, { 1, -1 }, { 1, -1 }, { 6, 7 }, { 6, 7 }, { 6, -1 }
+        };
+        // 必要研究力
+        public static readonly int[] maxStudyPoint = {
+            100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+        };
         #endregion
 
         #region Button

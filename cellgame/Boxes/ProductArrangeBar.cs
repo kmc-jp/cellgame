@@ -13,47 +13,52 @@ namespace CommonPart
         #region Variable
         public ProductBox productBox;
         public ArrangeBox arrangeBox;
+
+        public BlindButton productButton;
+        public BlindButton arrangeButton;
         #endregion
         #region Method
         public ProductArrangeBar()
             : base(DataBase.BarPos[4], DataBase.BarWidth[4], DataBase.BarHeight[4]) {
             productBox = new ProductBox();
             arrangeBox = new ArrangeBox();
+
+            productButton = new BlindButton(windowPosition, new Vector(144, 96));
+            arrangeButton = new BlindButton(windowPosition + new Vector(144, 0), new Vector(144, 96));
         }
         public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, ref Map nMap, SceneManager s)
         {
             base.Update();
-            if(pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed)
+            productButton.Update(pstate, state);
+            arrangeButton.Update(pstate, state);
+            if (productButton.Clicked())
             {
-                if (state.X >= windowPosition.X && state.X <= windowPosition.X +width / 2 * 16 && state.Y >= windowPosition.Y && state.Y <= windowPosition.Y + height * 16)
-                {// 左のボタンをクリック
-                    if (productBox.showing)
-                    {
-                        productBox.Hide();
-                    }
-                    else
-                    {
-                        productBox.Show();
-                        arrangeBox.Hide();
-                    }
-                }
-                else if(state.X >= windowPosition.X + width / 2 * 16 && state.X <= windowPosition.X + width * 16 && state.Y >= windowPosition.Y && state.Y <= windowPosition.Y + height * 16)
-                {// 右のボタンをクリック
-                    if (arrangeBox.showing)
-                    {
-                        arrangeBox.Hide();
-                    }
-                    else
-                    {
-                        arrangeBox.Show();
-                        productBox.Hide();
-                    }
-                }
-                else if (!IsOn(state.X, state.Y))
+                if (productBox.showing)
                 {
                     productBox.Hide();
-                    if(um.producing == UnitType.NULL) arrangeBox.Hide();
                 }
+                else
+                {
+                    productBox.Show();
+                    arrangeBox.Hide();
+                }
+            }
+            if (arrangeButton.Clicked())
+            {
+                if (arrangeBox.showing)
+                {
+                    arrangeBox.Hide();
+                }
+                else
+                {
+                    arrangeBox.Show();
+                    productBox.Hide();
+                }
+            }
+            if(pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed && !IsOn(state.X, state.Y))
+            {
+                productBox.Hide();
+                if(um.producing == UnitType.NULL) arrangeBox.Hide();
             }
             productBox.Update(pstate, state, s, this);
             arrangeBox.Update(pstate, state, um, ps, ref nMap);

@@ -52,12 +52,10 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        int studyPower = 36;
-        int studyPoint = 364;
-        int maxStudyPoint = 514;
-        int PP = 0;
-        int maxPP = 25;
-        decimal bodyTemp = 36.0m;
+        public static int studyPoint;
+        public static int PP;
+        public static int maxPP;
+        public static decimal bodyTemp;
 
         AI ai;
 
@@ -70,15 +68,22 @@ namespace CommonPart {
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
-            studyBar = new StudyBar(maxStudyPoint, studyPoint, studyPower, "親和性成熟");
+            studyBar = new StudyBar();
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
-            statusBar = new StatusBar(studyPower, PP, maxPP, bodyTemp);
+            statusBar = new StatusBar();
             proarrBar = new ProductArrangeBar();
             um = new UnitManager(ref unitBox);
             ReadMap(map_n + 1);
             next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
             ai = new AI(ref nMap, ref um);
+
+
+            
+            studyPoint = 10;
+            PP = 0;
+            maxPP = 25;
+            bodyTemp = 36.0m;
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -157,10 +162,10 @@ namespace CommonPart {
                 state = pstate;
 
             // バー・ボックスの更新
-            studyBar.Update();
+            studyBar.Update(pstate, state, scenem);
             unitBox.Update();
             minimapBox.Update();
-            statusBar.Update(studyPower, PP, maxPP, bodyTemp);
+            statusBar.Update();
             proarrBar.Update(pstate, state, um, this, ref nMap, scenem);
 
             // ボタンの更新
@@ -185,6 +190,7 @@ namespace CommonPart {
             if (next.Clicked())
             {
                 um.turn++;
+                studyBar.UpdateTurn();
                 ai.turn = true;
             }
             

@@ -78,6 +78,7 @@
     <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Scenes\SettingsScene.cs" />
     <Compile Include="Scenes\SoundTest.cs" />
+    <Compile Include="Scenes\StudyScene.cs" />
     <Compile Include="Scenes\TalkWindow.cs" />
     <Compile Include="Scenes\TitleScene.cs" />
     <Compile Include="Scenes\UpdateScene.cs" />
