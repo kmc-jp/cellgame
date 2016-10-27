@@ -47,7 +47,7 @@ namespace CommonPart {
             if(!enabled[i]) return;
             switch((TitleIndex)i) {
                 case TitleIndex.Start:
-                    new MapScene(scenem);
+                    new PlayScene(scenem);
                     break;
                 case TitleIndex.Editor:
                     new EditorScene(scenem);
