@@ -76,13 +76,14 @@ namespace CommonPart
                     }
                 }
             }
+            NextUnit();
         }
 
 
         // 描画
         public void Draw(Drawing d, Vector camera, int scale)
         {
-            if (moveAnimation || attackAnimation) uMap.Draw(d, camera, scale, select_i, select_j);
+            if (moveAnimation || attackAnimation) uMap.Draw(d, camera, scale, select_i - (select_j + 1) / 2, select_j);
             else uMap.Draw(d, camera, scale);
 
             if (moveAnimation)
