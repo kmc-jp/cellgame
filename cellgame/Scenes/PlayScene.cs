@@ -73,8 +73,8 @@ namespace CommonPart {
             minimapBox = new MinimapBox();
             statusBar = new StatusBar();
             proarrBar = new ProductArrangeBar();
-            um = new UnitManager(ref unitBox);
-            ReadMap(map_n + 1);
+            UnitMap _uMap = ReadMap(map_n + 1);
+            um = new UnitManager(ref unitBox, _uMap);
             next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
             ai = new AI(ref nMap, ref um);
 
@@ -103,8 +103,9 @@ namespace CommonPart {
         }
         
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
-        public void ReadMap(int n)
+        public UnitMap ReadMap(int n)
         {
+            UnitMap res = new UnitMap();
             if (File.Exists(string.Format(@"MapData\MapData{0}.csv",n)))
             {
 
@@ -116,11 +117,14 @@ namespace CommonPart {
                         string[] ss = line.Split(',');
                         for (int j = 0; j < ss.Length && j < DataBase.MAP_MAX; j++)
                         {
-                            nMap.ChangeState(j, i, int.Parse(ss[j]));
+                            int v = int.Parse(ss[j]), hex = (v + 10000) % 100, uni = (v - hex) / 100;
+                            nMap.ChangeState(j, i, hex);
+                            res.ChangeType(j, i, (UnitType)uni);
                         }
                     }
                 }
             }
+            return res;
         }
 
         /// <summary>

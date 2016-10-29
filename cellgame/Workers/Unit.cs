@@ -10,7 +10,7 @@ namespace CommonPart
     class Unit
     {
         #region Variable
-        public readonly UnitType type;
+        public UnitType type;
         public int HP { get { return hp; } set { if (value < 0) hp = 0; else if (value > MAX_HP) hp = MAX_HP; else hp = value; } }
         public int LP { get; protected set; }
         public int Strength;

@@ -46,6 +46,9 @@ namespace CommonPart
         // 直前のマウスの状態
         MouseState pstate;
 
+        // ユニットマップ
+        UnitMap um;
+
         // WhichHexの返り値用の構造体
         public struct PAIR
         {
@@ -62,6 +65,7 @@ namespace CommonPart
             :base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
+            um = new UnitMap();
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す
@@ -98,10 +102,10 @@ namespace CommonPart
             {
                 for (int i = 0; i < DataBase.MAP_MAX; i++)
                 {
-                    w.Write("{0}", nMap.GetState(0, i));
+                    w.Write("{0}", nMap.GetState(0, i) + (int)um.GetType(0, i) * 100);
                     for (int j = 1; j < DataBase.MAP_MAX; j++)
                     {
-                        w.Write(",{0}", nMap.GetState(j, i));
+                        w.Write(",{0}", nMap.GetState(j, i) + (int)um.GetType(j, i) * 100);
                     }
                     w.Write("\r\n");
                 }
@@ -122,7 +126,9 @@ namespace CommonPart
                         string[] ss = line.Split(',');
                         for (int j = 0; j < ss.Length && j < DataBase.MAP_MAX; j++)
                         {
-                            nMap.ChangeState(j, i, int.Parse(ss[j]));
+                            int v = int.Parse(ss[j]), hex = (v + 10000) % 100, uni = (v - hex) / 100;
+                            nMap.ChangeState(j, i, hex);
+                            um.ChangeType(j, i, (UnitType)uni);
                         }
                     }
                 }
@@ -137,6 +143,7 @@ namespace CommonPart
         {
             // マップの描画
             nMap.Draw(d, Camera, Scale);
+            um.Draw(d, Camera, Scale);
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
@@ -167,7 +174,7 @@ namespace CommonPart
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0)　nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + DataBase.hex_tex.Count - 1) % DataBase.hex_tex.Count);
+                if (p.i >= 0 && p.j >= 0)　um.ChangeType(p.i, p.j, um.GetType(p.i, p.j) != UnitType.NK ? (UnitType)((int)um.GetType(p.i, p.j) + 1) : UnitType.Kin);
             }
             
             pstate = state;

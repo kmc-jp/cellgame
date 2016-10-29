@@ -293,7 +293,7 @@ namespace CommonPart
                             arrange.RemoveAt(select);
                             select = -1;
                         }
-                        else if (um.FindType(p.i, p.j) == UnitType.NULL)
+                        else if (um.GetType(p.i, p.j) == UnitType.NULL)
                         {
                             um.producing = UnitType.NULL;
                             Hide();
