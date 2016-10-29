@@ -339,6 +339,11 @@ namespace CommonPart
 
             return true;
         }
+        // 攻撃コマンド中止
+        public void CancelProducing()
+        {
+            producing = UnitType.NULL;
+        }
         // 攻撃コマンドが実行されるための前処理
         public void StartAttacking()
         {
@@ -380,10 +385,30 @@ namespace CommonPart
             }
             if (flag) return;
 
-            if (unitMap[select_i, select_j].Strength > 0)
+            int ai = x_index + (y_index + 1) / 2, aj = y_index;
+
+            if (unitMap[select_i, select_j].Strength > 0 && unitMap[ai, aj].Strength > 0)
             {
-                unitMap[x_index + (y_index + 1) / 2, y_index].HP -= unitMap[select_i, select_j].Strength;
+                int da, db;
+                DataBase.Battle(unitMap[select_i, select_j].Strength, unitMap[ai, aj].Strength, out da, out db);
+
+                unitMap[select_i, select_j].HP -= da;
+                unitMap[ai, aj].HP -= db;
                 unitMap[select_i, select_j].Strength *= -1;
+
+                // ユニットを倒したとき
+                if (unitMap[ai, aj].HP == 0)
+                {
+                    // マクロファージか樹状細胞なら研究力を加算
+                    if(unitMap[select_i, select_j].type == UnitType.Macro)
+                    {
+                        PlayScene.studyPower += unitMap[ai, aj].Strength / 2;
+                    }
+                    else if(unitMap[select_i, select_j].type == UnitType.Jujo)
+                    {
+                        PlayScene.studyPower += unitMap[ai, aj].Strength;
+                    }
+                }
             }
             attacking = false;
             unitMap[select_i, select_j].defcommand = true;

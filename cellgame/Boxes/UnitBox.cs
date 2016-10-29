@@ -45,21 +45,20 @@ namespace CommonPart
 
                 new TextAndFont("HP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 160), DepthID.Message);
                 new TextAndFont("LP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 180), DepthID.Message);
-                new TextAndFont("EXP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
 
                 new Gauge(new Vector2(100, 10), Color.Red, 0, u.MAX_HP, u.HP, new Color(255, 192, 192)).Draw(
-                    d, windowPosition + new Vector(60, 165), DepthID.Message);
+                    d, windowPosition + new Vector(60, 165), DepthID.Message
+                    );
                 new Gauge(new Vector2(100, 10), new Color(0, 255, 0), 0, u.MAX_LP, u.LP, new Color(192, 255, 192)).Draw(
-                    d, windowPosition + new Vector(60, 185), DepthID.Message);
-                new Gauge(new Vector2(100, 10), Color.Blue, 0, u.MAX_EXP, u.EXP, new Color(192, 192, 255)).Draw(
-                    d, windowPosition + new Vector(60, 205), DepthID.Message);
+                    d, windowPosition + new Vector(60, 185), DepthID.Message
+                    );
 
                 new TextAndFont(string.Format("{0}/{1}", u.HP, u.MAX_HP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 160), DepthID.Message);
                 new TextAndFont(string.Format("{0}/{1}", u.LP, u.MAX_LP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 180), DepthID.Message);
-                new TextAndFont(string.Format("{0}/{1}", u.EXP, u.MAX_EXP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
 
 
-                new TextAndFont(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(240, 180), DepthID.Message);
+                new TextAndFont(string.Format("戦闘力 {0}", Math.Abs(u.Strength)), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                new TextAndFont(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
             }
         }
         // クリックされた位置を入力としてコマンドを実行
@@ -74,7 +73,7 @@ namespace CommonPart
                 else
                     um.StartMoving(ref nMap);
             }
-            else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
+            else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280 && u.type != UnitType.Plasma)
             {
                 if (um.attacking)
                     um.CancelAttacking();
@@ -110,7 +109,7 @@ namespace CommonPart
         {
             return x_index != -1 && u.type > 0 && (
                     (x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
-                    (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
+                    (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280 && u.type != UnitType.Plasma) ||
                     (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
                     (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280));
         }

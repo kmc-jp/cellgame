@@ -77,15 +77,13 @@ namespace CommonPart {
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
-        public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-        public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 10, 10, 1000 };
+        public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 15, 20, 10 };
         public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 3 };
 
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
-        public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
-        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 2 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 3 };
 
         #endregion
 
@@ -93,17 +91,38 @@ namespace CommonPart {
         // 研究ツリー
         public enum Study
         {
-            Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Tyuwa, Masuto
+            Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Chuwa, Masuto
         }
+        // 研究名
         public static readonly string[] StudyName = {
             "獲得免疫", "サイトカイン", "インターフェロン", "ケモカイン", "クロスプレゼンテーション", "効率的アポトーシス", "クラススイッチ", "親和性成熟", "オプソニン化", "中和", "マスト細胞"
         };
+        // その研究をするために完了しておく必要のある研究
         public static readonly int[,] StudyParent = {
             { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, -1 }, { 0, -1 }, { 2, 4 }, { 1, -1 }, { 1, -1 }, { 6, 7 }, { 6, 7 }, { 6, -1 }
         };
+        // その研究が完了しているかどうか
+        public static bool[] StudyState = {
+            false, false, false, false, false, false, false, false, false, false, false
+        };
         // 必要研究力
-        public static readonly int[] maxStudyPoint = {
+        public static readonly int[] maxStudyPower = {
             100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+        };
+        // 研究力の初期値
+        public static readonly int DefaultStudyPower = 10;
+        #endregion
+
+        #region Product
+        // 生産力の初期値
+        public static readonly int DefaultProductPower = 5;
+        // それぞれの味方ユニットの一ターン毎に割り当てられる生産力の最大値
+        public static readonly int[] maxProductPower = {
+            5, 5, 10, 10, 10, 10, 10, 10, -1
+        };
+        // それぞれの味方ユニットの生産するために必要な合計生産力
+        public static readonly int[] sumProductPower = {
+            10, 10, 15, 20, 25, 30, 35, 40, -1
         };
         #endregion
 
@@ -113,6 +132,13 @@ namespace CommonPart {
         #endregion
 
         #region Method
+        // 戦闘時のダメージ計算
+        public static void Battle(int a, int b, out int Da, out int Db)
+        {
+            double k = (double)(b + a) * (b + a) / ((b + (double)a / 2) * (b + (double)a / 2) * 3) + 0.5d;
+            Da = (int)(20 / k);
+            Db = (int)(20 * k);
+        }
         // マップ上の位置から現在の画面上の座標を求める
         public static Vector WhereDisp(int x_index, int y_index, Vector camera, int scale)
         {

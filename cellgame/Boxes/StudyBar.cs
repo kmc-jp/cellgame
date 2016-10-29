@@ -18,10 +18,10 @@ namespace CommonPart {
         int pstudying;
         public int studying;
 
-        int _studyPoint;
-        int StudyPoint {
-            get { return _studyPoint; }
-            set { _studyPoint = Math.Max(0, Math.Min(value, DataBase.maxStudyPoint[studying])); }
+        int _studyPower;
+        int StudyPower {
+            get { return _studyPower; }
+            set { _studyPower = Math.Max(0, Math.Min(value, DataBase.maxStudyPower[studying])); }
         }
         
         #endregion
@@ -31,16 +31,16 @@ namespace CommonPart {
             pstudying = studying = (int)DataBase.Study.Kaku;
             button = new BlindButton(windowPosition, new Vector(width * 16d, height * 16d));
             
-            StudyPoint = 0;
+            StudyPower = 0;
             nameTex = new TextAndFont(DataBase.StudyName[studying], Color.Black);
-            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, DataBase.maxStudyPoint[studying], StudyPoint, Color.AliceBlue);
+            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, DataBase.maxStudyPower[studying], StudyPower, Color.AliceBlue);
         }
         public override void Draw(Drawing d)
         {
             base.Draw(d);
             gauge.Draw(d, windowPosition + new Vector(6, 35),DepthID.Status);
             nameTex.Draw(d, windowPosition + new Vector(2, 0), DepthID.Status);
-            new TextAndFont(string.Format("{0}/{1}　　{2}ターン", StudyPoint , DataBase.maxStudyPoint[studying], (DataBase.maxStudyPoint[studying] - StudyPoint + PlayScene.studyPoint - 1) / PlayScene.studyPoint), Color.Black).Draw(d, windowPosition + new Vector(120, 56), DepthID.Status);
+            new TextAndFont(string.Format("{0}/{1}　　{2}ターン", StudyPower , DataBase.maxStudyPower[studying], (DataBase.maxStudyPower[studying] - StudyPower + PlayScene.studyPower - 1) / PlayScene.studyPower), Color.Black).Draw(d, windowPosition + new Vector(120, 56), DepthID.Status);
         }
         public void Update(MouseState pstate, MouseState state, SceneManager s)
         {
@@ -54,14 +54,15 @@ namespace CommonPart {
             if (pstudying == studying) return;
 
             pstudying = studying;
-            StudyPoint = 0;
+            StudyPower = 0;
             nameTex = new TextAndFont(DataBase.StudyName[studying], Color.Black);
-            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, DataBase.maxStudyPoint[studying], StudyPoint, Color.AliceBlue);
+            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, DataBase.maxStudyPower[studying], StudyPower, Color.AliceBlue);
         }
         public void UpdateTurn()
         {
-            StudyPoint += PlayScene.studyPoint;
-            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, DataBase.maxStudyPoint[studying], StudyPoint, Color.AliceBlue);
+            StudyPower += PlayScene.studyPower;
+            if (StudyPower == DataBase.maxStudyPower[studying]) DataBase.StudyState[studying] = true;
+            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, DataBase.maxStudyPower[studying], StudyPower, Color.AliceBlue);
         }
         #endregion
     }// class end

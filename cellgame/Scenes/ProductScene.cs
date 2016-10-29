@@ -81,7 +81,6 @@ namespace CommonPart
             new TextAndFont(string.Format("移動力　{0}", select < 9 ? DataBase.MyUnitMoveRange[select] : DataBase.EnemyUnitMoveRange[select - 9]), Color.Black).Draw(d, backGround.windowPosition + new Vector(450, 180), DepthID.Status);
             new TextAndFont(string.Format("HP　　　{0}", select < 9 ? DataBase.MyUnitMAX_HP[select] : DataBase.EnemyUnitMAX_HP[select - 9]), Color.Black).Draw(d, backGround.windowPosition + new Vector(300, 210), DepthID.Status);
             new TextAndFont(string.Format("LP　　　{0}", select < 9 ? DataBase.MyUnitMAX_LP[select] : DataBase.EnemyUnitMAX_LP[select - 9]), Color.Black).Draw(d, backGround.windowPosition + new Vector(450, 210), DepthID.Status);
-            new TextAndFont(string.Format("EXP　 　{0}", select < 9 ? DataBase.MyUnitMAX_EXP[select] : DataBase.EnemyUnitMAX_EXP[select - 9]), Color.Black).Draw(d, backGround.windowPosition + new Vector(300, 240), DepthID.Status);
 
             cancel.Draw(d);
             start.Draw(d);

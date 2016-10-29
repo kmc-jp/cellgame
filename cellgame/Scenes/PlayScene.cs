@@ -52,9 +52,9 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        public static int studyPoint;
-        public static int PP;
-        public static int maxPP;
+        public static int studyPower;
+        public static int productPower;
+        public static int maxProductPower;
         public static decimal bodyTemp;
 
         AI ai;
@@ -80,9 +80,8 @@ namespace CommonPart {
 
 
             
-            studyPoint = 10;
-            PP = 0;
-            maxPP = 25;
+            studyPower = DataBase.DefaultStudyPower;
+            productPower = maxProductPower = DataBase.DefaultProductPower;
             bodyTemp = 36.0m;
         }
 

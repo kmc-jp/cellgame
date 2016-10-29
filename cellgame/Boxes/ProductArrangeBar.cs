@@ -268,6 +268,8 @@ namespace CommonPart
         {
             base.Update();
 
+            if (!showing & um.producing != UnitType.NULL) um.CancelProducing();
+
             if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed && showing)
             {
                 if (IsOn(state.X, state.Y))
