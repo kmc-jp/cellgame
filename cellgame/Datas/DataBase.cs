@@ -115,14 +115,14 @@ namespace CommonPart {
 
         #region Product
         // 生産力の初期値
-        public static readonly int DefaultProductPower = 5;
+        public static readonly int DefaultProductPower = 25;
         // それぞれの味方ユニットの一ターン毎に割り当てられる生産力の最大値
         public static readonly int[] maxProductPower = {
-            5, 5, 10, 10, 10, 10, 10, 10, -1
+            4, 10, 10, 10, 15, 20, 20, 25, -1
         };
         // それぞれの味方ユニットの生産するために必要な合計生産力
         public static readonly int[] sumProductPower = {
-            10, 10, 15, 20, 25, 30, 35, 40, -1
+            15, 30, 30, 50, 50, 70, 70, 100, -1
         };
         #endregion
 

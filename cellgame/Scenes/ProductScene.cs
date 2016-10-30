@@ -41,16 +41,9 @@ namespace CommonPart
         }
         public bool IsOnButton(int x, int y)
         {
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 8; i++)
             {
-                if (x >= backGround.windowPosition.X + 30 && x <= backGround.windowPosition.X + 30 + DataBase.MyUnitName[i].Length * 20 && y >= backGround.windowPosition.Y + 30 + 25 * i && y <= backGround.windowPosition.Y + 55 + 25 * i)
-                {
-                    return true;
-                }
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                if (x >= backGround.windowPosition.X + 30 && x <= backGround.windowPosition.X + 30 + DataBase.EnemyUnitName[i].Length * 20 && y >= backGround.windowPosition.Y + 255 + 25 * i && y <= backGround.windowPosition.Y + 280 + 25 * i)
+                if (x >= backGround.windowPosition.X + 30 && x <= backGround.windowPosition.X + 260 && y >= backGround.windowPosition.Y + 30 + 25 * i && y <= backGround.windowPosition.Y + 55 + 25 * i)
                 {
                     return true;
                 }
@@ -66,13 +59,9 @@ namespace CommonPart
             backGround.Draw(d);
             fb.Draw(d, new Vector(backGround.windowPosition.X + 20, backGround.windowPosition.Y + 20), DepthID.Message);
             base.Draw(d);
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 8; i++)
             {
                 new TextAndFont(DataBase.MyUnitName[i], Color.Black).Draw(d, backGround.windowPosition + new Vector(30, 30 + 25 * i), DepthID.Status);
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                new TextAndFont(DataBase.EnemyUnitName[i], Color.Black).Draw(d, backGround.windowPosition + new Vector(30, 255 + 25 * i), DepthID.Status);
             }
             bf.Draw(d, backGround.windowPosition + new Vector(25, 30 + 25 * select), DepthID.Effect);
             d.Draw(backGround.windowPosition + new Vector(386, 20), select < 9 ? DataBase.myUnit_tex[select] : DataBase.enemyUnit_tex[select - 9], DepthID.Status);
@@ -90,18 +79,11 @@ namespace CommonPart
             MouseState state = Mouse.GetState();
             if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed)
             {
-                for (int i = 0; i < 9; i++)
+                for (int i = 0; i < 8; i++)
                 {
-                    if (state.X >= backGround.windowPosition.X + 30 && state.X <= backGround.windowPosition.X + 30 + DataBase.MyUnitName[i].Length * 20 && state.Y >= backGround.windowPosition.Y + 30 + 25 * i && state.Y <= backGround.windowPosition.Y + 55 + 25 * i)
+                    if (state.X >= backGround.windowPosition.X + 30 && state.X <= backGround.windowPosition.X + 260 && state.Y >= backGround.windowPosition.Y + 30 + 25 * i && state.Y <= backGround.windowPosition.Y + 55 + 25 * i)
                     {
                         select = i;
-                    }
-                }
-                for (int i = 0; i < 5; i++)
-                {
-                    if (state.X >= backGround.windowPosition.X + 30 && state.X <= backGround.windowPosition.X + 30 + DataBase.EnemyUnitName[i].Length * 20 && state.Y >= backGround.windowPosition.Y + 255 + 25 * i && state.Y <= backGround.windowPosition.Y + 280 + 25 * i)
-                    {
-                        select = i + 9;
                     }
                 }
             }
@@ -112,7 +94,7 @@ namespace CommonPart
             start.Update(pstate, state);
             if (start.Clicked())
             {
-                pab.arrangeBox.Add(select < 9 ? (UnitType)(select + 1) : (UnitType)(select - 14));
+                pab.productBox.Add(select < 9 ? (UnitType)(select + 1) : (UnitType)(select - 14));
                 Delete = true;
             }
             cancel.Update(pstate, state);

@@ -41,7 +41,7 @@ namespace CommonPart
                 {
                     d.Draw(windowPosition + new Vector(20, 20), DataBase.enemyUnit_tex[(int)u.type + 5], DepthID.Message);
                 }
-                new TextAndFont(u.unitName, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(150, 100), DepthID.Message);
+                new TextAndFont(u.unitName, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
 
                 new TextAndFont("HP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 160), DepthID.Message);
                 new TextAndFont("LP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 180), DepthID.Message);

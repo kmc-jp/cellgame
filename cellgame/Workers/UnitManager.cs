@@ -311,6 +311,7 @@ namespace CommonPart
                     }
                 }
             }
+            Unselect();
         }
         // 生産コマンド
         public bool Produce(int x_index, int y_index)

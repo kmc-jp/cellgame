@@ -25,14 +25,14 @@ namespace CommonPart {
         {
             return s.X >= pos.X && s.X <= pos.X + size.X && s.Y >= pos.Y && s.Y <= pos.Y + size.Y;
         }
-        public void Update(MouseState pstate, MouseState state)
+        public void Update(MouseState pstate, MouseState state, bool flag = true)
         {
             clicked = (pstate.LeftButton == ButtonState.Pressed && state.LeftButton == ButtonState.Released && IsOn(state) && pressed);
 
             if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed && IsOn(state)) pressed = true;
             else if (state.LeftButton == ButtonState.Released) pressed = false;
 
-            if (IsOn(state)) System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
+            if (flag && IsOn(state)) System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
         }
         public bool Clicked()
         {
