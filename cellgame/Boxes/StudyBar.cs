@@ -28,7 +28,7 @@ namespace CommonPart {
         #region Method
         public StudyBar()
             : base(DataBase.BarPos[0], DataBase.BarWidth[0], DataBase.BarHeight[0]) {
-            pstudying = studying = (int)DataBase.Study.Kaku;
+            pstudying = studying = (int)Study.Kaku;
             button = new BlindButton(windowPosition, new Vector(width * 16d, height * 16d));
             
             StudyPower = 0;

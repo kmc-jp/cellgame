@@ -34,7 +34,7 @@ namespace CommonPart {
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
         // 現在のマップ
-        Map nMap;
+        public static Map nMap;
         // ユニットマネージャ
         UnitManager um;
         // カメラの移動速度
@@ -57,9 +57,12 @@ namespace CommonPart {
         public static int maxProductPower;
         public static decimal bodyTemp;
 
-        AI ai;
+        // 現在のターン
+        int pturn = 0;
+        public int turn = 0;
 
-        
+        public static bool changeTurn = false;
+
         #endregion
 
         #region Method
@@ -76,7 +79,6 @@ namespace CommonPart {
             UnitMap _uMap = ReadMap(map_n + 1);
             um = new UnitManager(ref unitBox, _uMap);
             next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
-            ai = new AI(ref nMap, ref um);
 
 
             
@@ -159,24 +161,67 @@ namespace CommonPart {
             else if (state.ScrollWheelValue < pstate.ScrollWheelValue)  Scale--;
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
+            
+            // ボタンの更新
+            next.Update(pstate, state);
 
-            // 敵のターンの時、マウスの状態を更新しない
-            if (ai.turn)
-                state = pstate;
+            // 次のターンへボタンを押されるとターンを進める
+            if (next.Clicked())
+            {
+                bool flag = true;
+                foreach (PAIR p in um.myUnits)
+                {
+                    if (um.uMap.data[p.i, p.j].command)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag)
+                {
+                    changeTurn = true;
+                }
+                else
+                {
+                    new ConfirmationScene(scenem);
+                }
+            }
+
+            if (changeTurn)
+            {
+                changeTurn = false;
+                turn++;
+                studyBar.UpdateTurn();
+                new AI(scenem, ref nMap, ref um, this);
+            }
 
             // バー・ボックスの更新
             studyBar.Update(pstate, state, scenem);
             unitBox.Update();
             minimapBox.Update();
             statusBar.Update();
-            proarrBar.Update(pstate, state, um, this, ref nMap, scenem);
+            proarrBar.Update(pstate, state, um, this, scenem);
+            if(pturn < turn)
+            {
+                proarrBar.productBox.UpdateTurn();
+            }
 
-            // ボタンの更新
-            next.Update(pstate, state);
 
             // ユニットの更新
-            um.Update(pstate, state, ref nMap, this);
-
+            um.Update(pstate, state, this);
+            if (pturn < turn) {
+                int wl = um.UpdateTurn();
+                if (wl == 1)
+                {
+                    new GameClearScene(scenem);
+                    Delete = true;
+                }
+                if (wl == -1)
+                {
+                    new GameOverScene(scenem);
+                    Delete = true;
+                }
+            }
             // 次のユニットへフェードイン
             if (um.phase)
             {
@@ -186,25 +231,35 @@ namespace CommonPart {
             }
 
             // カーソルの形状を変化
-            if (!ai.turn && (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state)))
+            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
 
-            // 次のターンへボタンを押されるとターンを進める
-            if (next.Clicked())
-            {
-                um.turn++;
-                studyBar.UpdateTurn();
-                ai.turn = true;
-            }
-            
-            // AIの更新
-            ai.Update();
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
 
+            pturn = turn;
             pstate = state;
             base.SceneUpdate();
+        }
+        public void UpdateByAI()
+        {
+            // 現在のマウスの状態を取得
+            MouseState state = Mouse.GetState();
+            // マウススクロールするとマップの描画倍率が変化
+            int ps = Scale;
+            if (state.ScrollWheelValue > pstate.ScrollWheelValue) Scale++;
+            else if (state.ScrollWheelValue < pstate.ScrollWheelValue) Scale--;
+            CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
+            CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
+
+            // ユニットの更新
+            um.Update(pstate, state, this);
+            
+
+            pstate = state;
+            // Zキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
         }
         public void FadeIn(int x_index, int y_index)
         {

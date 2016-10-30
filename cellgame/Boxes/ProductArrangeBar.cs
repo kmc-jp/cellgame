@@ -26,7 +26,7 @@ namespace CommonPart
             productButton = new BlindButton(windowPosition, new Vector(144, 96));
             arrangeButton = new BlindButton(windowPosition + new Vector(144, 0), new Vector(144, 96));
         }
-        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, ref Map nMap, SceneManager s)
+        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, SceneManager s)
         {
             base.Update();
             productButton.Update(pstate, state);
@@ -61,7 +61,7 @@ namespace CommonPart
                 if(um.producing == UnitType.NULL) arrangeBox.Hide();
             }
             productBox.Update(pstate, state, s, this);
-            arrangeBox.Update(pstate, state, um, ps, ref nMap);
+            arrangeBox.Update(pstate, state, um, ps);
         }
         public override bool IsOn(int x, int y)
         {
@@ -94,7 +94,7 @@ namespace CommonPart
     {
         #region Variable
         public bool showing = false;
-        public int select;
+        public int select = -1;
         public Button create, stop;
         public List<UnitType> productQ;
         public List<int> maxPP;
@@ -147,6 +147,19 @@ namespace CommonPart
             }
             return false;
         }
+        public void UpdateTurn()
+        {
+
+        }
+        public void Add(UnitType ut)
+        {
+            if(ut > 0 && (int)ut < 8)
+            {
+                productQ.Add(ut);
+                maxPP.Add(DataBase.maxProductPower[(int)ut - 1]);
+                PP.Add(Math.Min(PlayScene.productPower, DataBase.maxProductPower[(int)ut - 1]));
+            }
+        }
         public void Update(MouseState pstate, MouseState state, SceneManager s, ProductArrangeBar pab)
         {
             base.Update();
@@ -157,7 +170,7 @@ namespace CommonPart
             {
                 new ProductScene(s, pab);
             }
-            if (stop.Clicked())
+            if (stop.Clicked() && select != -1)
             {
                 PP[select] = 0;
             }
@@ -264,7 +277,7 @@ namespace CommonPart
                 arrange.Add(ut);
             }
         }
-        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps, ref Map nMap)
+        public void Update(MouseState pstate, MouseState state, UnitManager um, PlayScene ps)
         {
             base.Update();
 
@@ -278,7 +291,7 @@ namespace CommonPart
                     {
                         if (state.X >= windowPosition.X + 14 && state.X <= windowPosition.X + 14 + TypeName(arrange[i]).Length * 20 && state.Y >= windowPosition.Y + 14 + 25 * i && state.Y <= windowPosition.Y + 39 + 25 * i)
                         {
-                            um.StartProducing(arrange[i], ref nMap);
+                            um.StartProducing(arrange[i]);
                             select = i;
                         }
                     }

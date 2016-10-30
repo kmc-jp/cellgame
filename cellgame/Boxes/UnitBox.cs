@@ -62,7 +62,7 @@ namespace CommonPart
             }
         }
         // クリックされた位置を入力としてコマンドを実行
-        public void Command(int x, int y, UnitManager um, ref Map nMap)
+        public void Command(int x, int y, UnitManager um)
         {
             if (u.type <= 0 || um.moveAnimation || um.attackAnimation) return;
 
@@ -71,7 +71,7 @@ namespace CommonPart
                 if (um.moving)
                     um.CancelMoving();
                 else
-                    um.StartMoving(ref nMap);
+                    um.StartMoving();
             }
             else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280 && u.type != UnitType.Plasma)
             {

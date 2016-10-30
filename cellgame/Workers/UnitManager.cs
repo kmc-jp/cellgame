@@ -12,9 +12,9 @@ namespace CommonPart
     {
         #region Variable
         // 味方ユニット
-        List<PAIR> myUnits;
+        public List<PAIR> myUnits;
         // 敵ユニット
-        List<PAIR> enemyUnits;
+        public List<PAIR> enemyUnits;
         // 現在選択中のユニット
         public int select_i = -1, select_j = 0;
         // 現在コマンドの入力中であるかどうか
@@ -34,16 +34,13 @@ namespace CommonPart
         int moveState;
         const int maxMoveState = 30;
         PAIR movingUnit;
-        // 現在のターン
-        int pturn = 0;
-        public int turn = 0;
 
         public bool phase = false;
 
         // ユニットボックス
         UnitBox ub;
 
-        UnitMap uMap;
+        public UnitMap uMap;
 
 
 
@@ -102,6 +99,22 @@ namespace CommonPart
                     if (moveRoute.Count == 0)
                     {
                         moveAnimation = false;
+                        int[] si = { 1, 1, 0, -1, -1, 0 };
+                        int[] sj = { 0, 1, 1, 0, -1, -1 };
+                        bool flag = true;
+                        for(int i = 0;i < 6; i++)
+                        {
+                            int ni = select_i + si[i], nj = select_j + sj[i];
+                            if(ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX && uMap.data[ni, nj].type < 0)
+                            {
+                                flag = false;
+                            }
+                        }
+                        if(uMap.data[select_i, select_j].movePower == 0 && (uMap.data[select_i, select_j].Strength < 0 || flag))
+                        {
+                            uMap.data[select_i, select_j].command = false;
+                            NextUnit();
+                        }
                     }
                 }
             }
@@ -122,7 +135,7 @@ namespace CommonPart
             }
         }
         // 更新
-        public void Update(MouseState pstate, MouseState state, ref Map nMap, PlayScene ps)
+        public void Update(MouseState pstate, MouseState state, PlayScene ps)
         {
             // 左クリックされたときに移動コマンド中でありその座標が移動可能な位置であればその位置へ選択中のユニットを移動
             if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed && !moveAnimation && !attackAnimation)
@@ -134,7 +147,7 @@ namespace CommonPart
                     {
                         if (moving)
                         {
-                            Move(p.i, p.j, ref nMap);
+                            Move(p.i, p.j);
                         }
                         else if (attacking)
                         {
@@ -155,13 +168,11 @@ namespace CommonPart
                 }
 
                 // クリックされた座標がユニットボックスのコマンドボタンであれば、コマンドを実行
-                ub.Command(state.X, state.Y, this, ref nMap);
+                ub.Command(state.X, state.Y, this);
             }
             if(ub.x_index != -1)
                 ub.u = Find(ub.x_index, ub.y_index);
-
-            if (pturn < turn)
-                UpdateTurn();
+            
 
             // HP か LP が 0 以下になったユニットを削除
             for (int i = 0; i < myUnits.Count;i++)
@@ -191,7 +202,7 @@ namespace CommonPart
             }
         }
         // ターンの更新
-        public void UpdateTurn()
+        public int UpdateTurn()
         {
             foreach(PAIR p in myUnits)
             {
@@ -201,8 +212,25 @@ namespace CommonPart
             {
                 uMap.data[p.i, p.j].UpdateTurn();
             }
-            pturn = turn;
             NextUnit();
+
+            if (PlayScene.bodyTemp > 42m) return -1;
+            bool flag = true;
+            for(int i = 0;i < DataBase.MAP_MAX; i++)
+            {
+                for(int j = 0;j < DataBase.MAP_MAX; j++)
+                {
+                    if(PlayScene.nMap.Data[i, j] == 3 && GetType(i, j) <= 0)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (!flag)
+                    break;
+            }
+            if (flag) return 1;
+            return 0;
         }
         // ユニットの選択
         public void Select(int x_index, int y_index)
@@ -265,7 +293,7 @@ namespace CommonPart
             NextUnit();
         }
         // 生産コマンドが実行されるための前処理
-        public void StartProducing(UnitType ut, ref Map nMap)
+        public void StartProducing(UnitType ut)
         {
             producing = ut;
             moving = false;
@@ -277,7 +305,7 @@ namespace CommonPart
                 for (int y = 0; y < DataBase.MAP_MAX; y++)
                 {
                     if(uMap.data[x + (y + 1) / 2, y].type == UnitType.NULL &&
-                        nMap.Data[x, y] == (ut > 0 ? 4 : 3))
+                        PlayScene.nMap.Data[x, y] == (ut > 0 ? 4 : 3))
                     {
                         range.Add(new PAIR(x + (y + 1) / 2, y));
                     }
@@ -383,8 +411,11 @@ namespace CommonPart
             }
             attacking = false;
             uMap.data[select_i, select_j].defcommand = true;
-            uMap.data[select_i, select_j].command = false;
-            NextUnit();
+            if (uMap.data[select_i, select_j].movePower == 0)
+            {
+                uMap.data[select_i, select_j].command = false;
+                NextUnit();
+            }
         }
         // 攻撃コマンド中止
         public void CancelAttacking()
@@ -409,7 +440,7 @@ namespace CommonPart
             }
         }
         // 移動可能な位置を求める探索関数
-        void dijkstra(int pow_2, PAIR s, ref List<PAIR> res, ref List<int> costs, ref Map nMap)
+        void dijkstra(int pow_2, PAIR s, ref List<PAIR> res, ref List<int> costs)
         {
             int[] si = { 1, 1, 0, -1, -1, 0 };
             int[] sj = { 0, 1, 1, 0, -1, -1 };
@@ -438,8 +469,8 @@ namespace CommonPart
                     int ni = pi + si[i], nj = pj + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        int nc = pc + ((nMap.Data[pi - (pj + 1) / 2, pj] == 2 && nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
-                        if (nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
+                        int nc = pc + ((PlayScene.nMap.Data[pi - (pj + 1) / 2, pj] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
+                        if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
                         {
                             pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
                         }
@@ -448,18 +479,18 @@ namespace CommonPart
             }
         }
         // 移動のコマンドが実行されるための前処理
-        public void StartMoving(ref Map nMap)
+        public void StartMoving()
         {
             attacking = false;
             moving = true;
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-            dijkstra(uMap.data[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost, ref nMap);
+            dijkstra(uMap.data[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost);
             if(range.Count == 0) moving = false;
         }
         // 移動コマンド
-        public void Move(int x_index, int y_index, ref Map nMap)
+        public void Move(int x_index, int y_index)
         {
             bool flag = true;
             foreach (PAIR pos in range)
@@ -514,10 +545,11 @@ namespace CommonPart
                 int ti = 0, tj = 0, tc = INF;
                 for (int i = 0; i < 6; i++)
                 {
-                    int ni = tp.i + si[i], nj = tp.j + sj[i], nc = dijkMap[ni, nj];
+                    int ni = tp.i + si[i], nj = tp.j + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0)
                     {
-                        if(nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2))
+                        int nc = dijkMap[ni, nj];
+                        if (nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2))
                         {
                             ti = ni;
                             tj = nj;

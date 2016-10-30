@@ -89,10 +89,10 @@ namespace CommonPart {
 
         #region Study
         // 研究ツリー
-        public enum Study
+        /*public enum Study
         {
             Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Chuwa, Masuto
-        }
+        }*/
         // 研究名
         public static readonly string[] StudyName = {
             "獲得免疫", "サイトカイン", "インターフェロン", "ケモカイン", "クロスプレゼンテーション", "効率的アポトーシス", "クラススイッチ", "親和性成熟", "オプソニン化", "中和", "マスト細胞"
@@ -139,6 +139,11 @@ namespace CommonPart {
             Da = (int)(20 / k);
             Db = (int)(20 * k);
         }
+        // 研究を行ったかどうか
+        public bool IsStudy(Study s)
+        {
+            return StudyState[(int)s];
+        }
         // マップ上の位置から現在の画面上の座標を求める
         public static Vector WhereDisp(int x_index, int y_index, Vector camera, int scale)
         {
@@ -173,6 +178,10 @@ namespace CommonPart {
     public enum UnitType
     {
         NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
+    }
+    public enum Study
+    {
+        Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Chuwa, Masuto
     }
     // x_index と y_index のペアの構造体
     public struct PAIR
