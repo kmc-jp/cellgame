@@ -85,6 +85,8 @@ namespace CommonPart {
             studyPower = DataBase.DefaultStudyPower;
             productPower = maxProductPower = DataBase.DefaultProductPower;
             bodyTemp = 36.0m;
+
+            SoundManager.Music.PlayBGM(BGMID.Normal, true);
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -238,8 +240,13 @@ namespace CommonPart {
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
 
+            // Xキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Cancel)) bodyTemp += 1m;
+
             pturn = turn;
             pstate = state;
+
+            if (bodyTemp >= 41m && SoundManager.Music.GetPlayingID != BGMID.Pinch) SoundManager.Music.PlayBGM(BGMID.Pinch, true);
             base.SceneUpdate();
         }
         public void UpdateByAI()

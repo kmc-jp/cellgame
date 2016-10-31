@@ -68,6 +68,8 @@ namespace CommonPart {
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
 
             pstate = state;
+
+            if (SoundManager.Music.GetPlayingID != BGMID.Title) SoundManager.Music.PlayBGM(BGMID.Title, true);
             base.SceneUpdate();
         }
         public override void SceneDraw(Drawing d) {
