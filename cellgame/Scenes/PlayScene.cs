@@ -19,21 +19,22 @@ namespace CommonPart {
         StatusBar statusBar;
         StudyBar studyBar;
         UnitBox unitBox;
+        Button next;
         // カメラ
         Vector Camera { get { return _camera; } }
         double CameraX
         {
             get { return _camera.X; }
-            set { _camera.X = Math.Max(-Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], value)); }
+            set { _camera.X = Math.Max(-DataBase.HexWidth * 4, Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / DataBase.MapScale[Scale] + DataBase.HexWidth * 4, value)); }
         }
         double CameraY
         {
             get { return _camera.Y; }
-            set { _camera.Y = Math.Max(-Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], value)); }
+            set { _camera.Y = Math.Max(-DataBase.HexHeight * 3 , Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / DataBase.MapScale[Scale] + DataBase.HexHeight * 3 , value)); }
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
         // 現在のマップ
-        Map nMap;
+        public static Map nMap;
         // ユニットマネージャ
         UnitManager um;
         // カメラの移動速度
@@ -51,29 +52,41 @@ namespace CommonPart {
         // 直前のマウスの状態
         MouseState pstate;
         // ゲーム内変数
-        int studyPower = 36;
-        int studyPoint = 364;
-        int maxStudyPoint = 514;
-        int PP = 0;
-        int maxPP = 25;
-        int leftUnit = 19;
-        decimal bodyTemp = 36.0m;
+        public static int studyPower;
+        public static int productPower;
+        public static int maxProductPower;
+        public static decimal bodyTemp;
 
-        
+        // 現在のターン
+        int pturn = 0;
+        public int turn = 0;
+
+        public static bool changeTurn = false;
+
         #endregion
 
         #region Method
         // コンストラクタ
-        public PlayScene(SceneManager s)
+        public PlayScene(SceneManager s, int map_n)
             : base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
-            studyBar = new StudyBar(maxStudyPoint, studyPoint, studyPower, "親和性成熟");
+            studyBar = new StudyBar();
             unitBox = new UnitBox();
             minimapBox = new MinimapBox();
-            statusBar = new StatusBar(studyPower, PP, maxPP, leftUnit, bodyTemp);
+            statusBar = new StatusBar();
             proarrBar = new ProductArrangeBar();
-            um = new UnitManager(ref unitBox);
+            UnitMap _uMap = ReadMap(map_n + 1);
+            um = new UnitManager(ref unitBox, _uMap);
+            next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
+
+
+            
+            studyPower = DataBase.DefaultStudyPower;
+            productPower = maxProductPower = DataBase.DefaultProductPower;
+            bodyTemp = 36.0m;
+
+            SoundManager.Music.PlayBGM(BGMID.Normal, true);
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す バーの上にある場合は(-1, 0)を返す
@@ -92,34 +105,15 @@ namespace CommonPart {
 
             return new PAIR(0, -1);
         }
-
-        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv に保存する（既に存在するときは上書き保存）
-        public void SaveMap()
+        
+        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
+        public UnitMap ReadMap(int n)
         {
-            if (!Directory.Exists("MapData"))
-                Directory.CreateDirectory("MapData");
-            using (StreamWriter w = new StreamWriter(@"MapData\MapData.csv"))
-            {
-                for (int i = 0; i < DataBase.MAP_MAX; i++)
-                {
-                    w.Write("{0}", nMap.GetState(0, i));
-                    for (int j = 1; j < DataBase.MAP_MAX; j++)
-                    {
-                        w.Write(",{0}", nMap.GetState(j, i));
-                    }
-                    w.Write("\r\n");
-                }
-            }
-        }
-
-        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（/MapData ディレクトリがなければ何もしない）
-        // ※ /MapData ディレクトリが存在して /MapData/MapData.csv ファイルが存在しなければ実行時にエラーが出るので注意
-        public void ReadMap()
-        {
-            if (Directory.Exists("MapData"))
+            UnitMap res = new UnitMap();
+            if (File.Exists(string.Format(@"MapData\MapData{0}.csv",n)))
             {
 
-                using (StreamReader r = new StreamReader(@"MapData\MapData.csv"))
+                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
@@ -127,11 +121,14 @@ namespace CommonPart {
                         string[] ss = line.Split(',');
                         for (int j = 0; j < ss.Length && j < DataBase.MAP_MAX; j++)
                         {
-                            nMap.ChangeState(j, i, int.Parse(ss[j]));
+                            int v = int.Parse(ss[j]), hex = (v + 10000) % 100, uni = (v - hex) / 100;
+                            nMap.ChangeState(j, i, hex);
+                            res.ChangeType(j, i, (UnitType)uni);
                         }
                     }
                 }
             }
+            return res;
         }
 
         /// <summary>
@@ -149,6 +146,7 @@ namespace CommonPart {
             statusBar.Draw(d);
             proarrBar.Draw(d);
             unitBox.Draw(d);
+            next.Draw(d);
         }
         public override void SceneUpdate() {
             // 現在のマウスの状態を取得
@@ -165,33 +163,115 @@ namespace CommonPart {
             else if (state.ScrollWheelValue < pstate.ScrollWheelValue)  Scale--;
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
-
             
+            // ボタンの更新
+            next.Update(pstate, state);
+
+            // 次のターンへボタンを押されるとターンを進める
+            if (next.Clicked())
+            {
+                bool flag = true;
+                foreach (PAIR p in um.myUnits)
+                {
+                    if (um.uMap.data[p.i, p.j].command)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag)
+                {
+                    changeTurn = true;
+                }
+                else
+                {
+                    new ConfirmationScene(scenem);
+                }
+            }
+
+            if (changeTurn)
+            {
+                changeTurn = false;
+                turn++;
+                studyBar.UpdateTurn();
+                new AI(scenem, ref nMap, ref um, this);
+            }
+
             // バー・ボックスの更新
-            studyBar.Update();
-            unitBox.Update(um, nMap, this, pstate, state);
+            studyBar.Update(pstate, state, scenem);
+            unitBox.Update();
             minimapBox.Update();
-            statusBar.Update(studyPower, PP, maxPP, leftUnit, bodyTemp);
-            proarrBar.Update(pstate, state, um, this, nMap);
+            statusBar.Update();
+            proarrBar.Update(pstate, state, um, this, scenem);
+            if(pturn < turn)
+            {
+                proarrBar.productBox.UpdateTurn();
+            }
+
 
             // ユニットの更新
-            um.Update();
+            um.Update(pstate, state, this);
+            if (pturn < turn) {
+                int wl = um.UpdateTurn();
+                if (wl == 1)
+                {
+                    new GameClearScene(scenem);
+                    Delete = true;
+                }
+                if (wl == -1)
+                {
+                    new GameOverScene(scenem);
+                    Delete = true;
+                }
+            }
+            // 次のユニットへフェードイン
+            if (um.phase)
+            {
+                if(um.select_i >= 0 && um.select_j >= 0)
+                    FadeIn(um.select_i - (um.select_j + 1) / 2, um.select_j);
+                um.phase = false;
+            }
 
             // カーソルの形状を変化
-            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y))
+            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state))
                 System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
-            else
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Arrow;
 
-
-            // Rキーが押されるとマップデータの読み込み
-            if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
 
+            // Xキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Cancel)) bodyTemp += 1m;
+
+            pturn = turn;
             pstate = state;
+
+            if (bodyTemp >= 41m && SoundManager.Music.GetPlayingID != BGMID.Pinch) SoundManager.Music.PlayBGM(BGMID.Pinch, true);
             base.SceneUpdate();
+        }
+        public void UpdateByAI()
+        {
+            // 現在のマウスの状態を取得
+            MouseState state = Mouse.GetState();
+            // マウススクロールするとマップの描画倍率が変化
+            int ps = Scale;
+            if (state.ScrollWheelValue > pstate.ScrollWheelValue) Scale++;
+            else if (state.ScrollWheelValue < pstate.ScrollWheelValue) Scale--;
+            CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
+            CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
+
+            // ユニットの更新
+            um.Update(pstate, state, this);
+            
+
+            pstate = state;
+            // Zキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
+        }
+        public void FadeIn(int x_index, int y_index)
+        {
+            CameraX = (DataBase.HexWidth * x_index + DataBase.HexWidth / 2 * ((y_index % 2) + 1)) - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale];
+            CameraY = (DataBase.HexHeight * 3 / 4 * y_index + DataBase.HexHeight / 2) - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale];
         }
         #endregion
     }// class end

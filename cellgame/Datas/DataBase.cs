@@ -27,7 +27,7 @@ namespace CommonPart {
         // マップのサイズは MAP_MAX × MAP_MAX
         public static readonly int MAP_MAX = 20;
         // マップの倍率の配列
-        public static readonly double[] MapScale = new[] { 0.1d, 0.5d, 0.75d, 1.0d };
+        public static readonly double[] MapScale = { 0.1d, 0.5d, 0.75d, 1.0d };
         // デフォルトのマップの倍率
         public static readonly int DefaultMapScale = 3;
         // へクス画像の横幅と縦幅
@@ -48,10 +48,10 @@ namespace CommonPart {
             Study, Unit, Minimap, Status, Arrange, Product
         }
         // それぞれのバー・ボックスの横幅の個数と縦幅の個数リスト
-        public static readonly int[] BarWidth = new[] { 22, 22, 22, 40, 18, 18 };
-        public static readonly int[] BarHeight = new[] { 6, 23, 16, 4, 6, 23 };
+        public static readonly int[] BarWidth = { 22, 22, 22, 40, 18, 18 };
+        public static readonly int[] BarHeight = { 6, 23, 16, 4, 6, 23 };
         // それぞれのバー・ボックスの左上の画面上での座標のリスト
-        public static readonly Vector[] BarPos = new[] {
+        public static readonly Vector[] BarPos = {
             new Vector(0d, 0d), new Vector(0d, 96d), new Vector(0d, 704d), new Vector(352d, 0d), new Vector(992d, 0d), new Vector(992d, 96d)
         };
         #endregion
@@ -66,26 +66,64 @@ namespace CommonPart {
         {
             NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
         }*/
-        public static readonly string[] MyUnitName = new[]
+        public static readonly string[] MyUnitName = 
         {
             "好中球", "マクロファージ", "樹状細胞", "好酸球", "NK細胞", "ヘルパーT細胞", "キラーT細胞", "B細胞", "プラズマ細胞"
         };
-        public static readonly string[] EnemyUnitName = new[]
+        public static readonly string[] EnemyUnitName = 
         {
             "菌", "カビ", "ウイルス", "ガン", "寄生虫"
         };
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
-        public static readonly int[] MyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100, 100, 100, 100, 100 };
-        public static readonly int[] MyUnitATK = new[] { 5, 10, 10, 10, 10, 10, 10, 10, 1000 };
-        public static readonly int[] MyUnitATK_range = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+        public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 15, 20, 10 };
+        public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 3 };
+
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
-        public static readonly int[] EnemyUnitMAX_EXP = new[] { 100, 100, 100, 100, 100 };
-        public static readonly int[] EnemyUnitATK = new[] { 5, 10, 10, 10, 10 };
-        public static readonly int[] EnemyUnitATK_range = new[] { 2, 2, 2, 2, 2 };
+        public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 3 };
 
+        #endregion
+
+        #region Study
+        // 研究ツリー
+        /*public enum Study
+        {
+            Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Chuwa, Masuto
+        }*/
+        // 研究名
+        public static readonly string[] StudyName = {
+            "獲得免疫", "サイトカイン", "インターフェロン", "ケモカイン", "クロスプレゼンテーション", "効率的アポトーシス", "クラススイッチ", "親和性成熟", "オプソニン化", "中和", "マスト細胞"
+        };
+        // その研究をするために完了しておく必要のある研究
+        public static readonly int[,] StudyParent = {
+            { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, -1 }, { 0, -1 }, { 2, 4 }, { 1, -1 }, { 1, -1 }, { 6, 7 }, { 6, 7 }, { 6, -1 }
+        };
+        // その研究が完了しているかどうか
+        public static bool[] StudyState = {
+            false, false, false, false, false, false, false, false, false, false, false
+        };
+        // 必要研究力
+        public static readonly int[] maxStudyPower = {
+            100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+        };
+        // 研究力の初期値
+        public static readonly int DefaultStudyPower = 10;
+        #endregion
+
+        #region Product
+        // 生産力の初期値
+        public static readonly int DefaultProductPower = 25;
+        // それぞれの味方ユニットの一ターン毎に割り当てられる生産力の最大値
+        public static readonly int[] maxProductPower = {
+            4, 10, 10, 10, 15, 20, 20, 25, -1
+        };
+        // それぞれの味方ユニットの生産するために必要な合計生産力
+        public static readonly int[] sumProductPower = {
+            15, 30, 30, 50, 50, 70, 70, 100, -1
+        };
         #endregion
 
         #region Button
@@ -94,6 +132,18 @@ namespace CommonPart {
         #endregion
 
         #region Method
+        // 戦闘時のダメージ計算
+        public static void Battle(int a, int b, out int Da, out int Db)
+        {
+            double k = (double)(b + a) * (b + a) / ((b + (double)a / 2) * (b + (double)a / 2) * 3) + 0.5d;
+            Da = (int)(20 / k);
+            Db = (int)(20 * k);
+        }
+        // 研究を行ったかどうか
+        public bool IsStudy(Study s)
+        {
+            return StudyState[(int)s];
+        }
         // マップ上の位置から現在の画面上の座標を求める
         public static Vector WhereDisp(int x_index, int y_index, Vector camera, int scale)
         {
@@ -129,11 +179,31 @@ namespace CommonPart {
     {
         NULL, Kochu, Macro, Jujo, Kosan, NK, HelperT, KillerT, B, Plasma, Kin = -5, Kabi, Virus, Gan, Kiseichu
     }
+    public enum Study
+    {
+        Kaku, Saito, Inter, Kemo, Cross, Kou, Class, Shinwa, Opuso, Chuwa, Masuto
+    }
     // x_index と y_index のペアの構造体
     public struct PAIR
     {
         public int i, j;
         public PAIR(int _i, int _j) { i = _i; j = _j; }
+        public static bool operator ==(PAIR l, PAIR r)
+        {
+            return l.i == r.i && l.j == r.j;
+        }
+        public static bool operator !=(PAIR l, PAIR r)
+        {
+            return !(l == r);
+        }
+        public static bool operator >(PAIR l, PAIR r)
+        {
+            return l.i > r.i || (l.i == r.i && l.j > r.j);
+        }
+        public static bool operator <(PAIR l, PAIR r)
+        {
+            return l.i < r.i || (l.i == r.i && l.j < r.j);
+        }
     }
 
 }// namespace end

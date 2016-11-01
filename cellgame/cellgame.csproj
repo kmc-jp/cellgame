@@ -54,7 +54,6 @@
     <Compile Include="Boxes\WindowBox.cs" />
     <Compile Include="Datas\DataBase.cs" />
     <Compile Include="Datas\HitShape.cs" />
-    <Compile Include="Datas\MusicPlayer.cs" />
     <Compile Include="Datas\MusicPlayer2.cs" />
     <Compile Include="Datas\RandomXS.cs" />
     <Compile Include="Datas\SEPlayer.cs" />
@@ -66,21 +65,28 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Save.cs" />
+    <Compile Include="Scenes\ConfirmationScene.cs" />
     <Compile Include="Scenes\EditorScene.cs" />
+    <Compile Include="Scenes\GameClearScene.cs" />
+    <Compile Include="Scenes\GameOverScene.cs" />
     <Compile Include="Scenes\KeyConfig.cs" />
     <Compile Include="Scenes\NewGameScene.cs" />
     <Compile Include="Scenes\PlayScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
     <Compile Include="Scenes\PadConfig.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
+    <Compile Include="Scenes\ProductScene.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Scenes\SettingsScene.cs" />
     <Compile Include="Scenes\SoundTest.cs" />
+    <Compile Include="Scenes\StudyScene.cs" />
     <Compile Include="Scenes\TalkWindow.cs" />
     <Compile Include="Scenes\TitleScene.cs" />
+    <Compile Include="Workers\UnitMap.cs" />
     <Compile Include="Scenes\UpdateScene.cs" />
     <Compile Include="Updater.cs" />
+    <Compile Include="Workers\AI.cs" />
     <Compile Include="Workers\Unit.cs" />
     <Compile Include="Workers\UnitManager.cs" />
     <Compile Include="Workers\Worker.cs" />
@@ -175,9 +181,6 @@
     <Content Include="Content\button\command3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\button\command4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\hex\mini_hex0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -191,6 +194,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\hex\mini_hex4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sounds\normal.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sounds\pinch.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\sounds\title.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\unit\enemyUnit0.png">

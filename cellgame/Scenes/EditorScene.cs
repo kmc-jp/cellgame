@@ -19,14 +19,15 @@ namespace CommonPart
         double CameraX
         {
             get { return _camera.X; }
-            set { _camera.X = Math.Max(-Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale], value)); }
+            set { _camera.X = Math.Max(-DataBase.HexWidth * 4, Math.Min(DataBase.HexWidth * DataBase.MAP_MAX - Game1._WindowSizeX / DataBase.MapScale[Scale] + DataBase.HexWidth * 4, value)); }
         }
         double CameraY
         {
             get { return _camera.Y; }
-            set { _camera.Y = Math.Max(-Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / 2 / DataBase.MapScale[Scale], value)); }
+            set { _camera.Y = Math.Max(-DataBase.HexHeight * 3, Math.Min(DataBase.HexHeight * 3 / 4 * DataBase.MAP_MAX - Game1._WindowSizeY / DataBase.MapScale[Scale] + DataBase.HexHeight * 3, value)); }
         }
         Vector _camera = new Vector(DataBase.HexWidth * DataBase.MAP_MAX / 2 - Game1._WindowSizeX / 2, DataBase.HexHeight * DataBase.MAP_MAX / 2 - Game1._WindowSizeY / 2);
+        // 現在のマップ
         Map nMap;
         // カメラの移動速度
         int defcameraVel = DataBase.cameraV;
@@ -45,6 +46,9 @@ namespace CommonPart
         // 直前のマウスの状態
         MouseState pstate;
 
+        // ユニットマップ
+        UnitMap um;
+
         // WhichHexの返り値用の構造体
         public struct PAIR
         {
@@ -61,6 +65,7 @@ namespace CommonPart
             :base(s) {
             pstate = Mouse.GetState();
             nMap = new Map();
+            um = new UnitMap();
         }
 
         // 画面上の座標(x, y)がどのへクスの上にあるか どのへクスの上にもなければ(0, -1)を返す
@@ -89,32 +94,31 @@ namespace CommonPart
         }
 
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv に保存する（既に存在するときは上書き保存）
-        public void SaveMap()
+        public void SaveMap(int n)
         {
             if (!Directory.Exists("MapData"))
                 Directory.CreateDirectory("MapData");
-            using (StreamWriter w = new StreamWriter(@"MapData\MapData.csv"))
+            using (StreamWriter w = new StreamWriter(string.Format(@"MapData\MapData{0}.csv", n)))
             {
                 for (int i = 0; i < DataBase.MAP_MAX; i++)
                 {
-                    w.Write("{0}", nMap.GetState(0, i));
+                    w.Write("{0}", nMap.GetState(0, i) + (int)um.GetType(0, i) * 100);
                     for (int j = 1; j < DataBase.MAP_MAX; j++)
                     {
-                        w.Write(",{0}", nMap.GetState(j, i));
+                        w.Write(",{0}", nMap.GetState(j, i) + (int)um.GetType(j, i) * 100);
                     }
                     w.Write("\r\n");
                 }
             }
         }
 
-        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（/MapData ディレクトリがなければ何もしない）
-        // ※ /MapData ディレクトリが存在して /MapData/MapData.csv ファイルが存在しなければ実行時にエラーが出るので注意
-        public void ReadMap()
+        // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
+        public void ReadMap(int n)
         {
-            if (Directory.Exists("MapData"))
+            if (File.Exists(string.Format(@"MapData\MapData{0}.csv", n)))
             {
 
-                using (StreamReader r = new StreamReader(@"MapData\MapData.csv"))
+                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
@@ -122,7 +126,9 @@ namespace CommonPart
                         string[] ss = line.Split(',');
                         for (int j = 0; j < ss.Length && j < DataBase.MAP_MAX; j++)
                         {
-                            nMap.ChangeState(j, i, int.Parse(ss[j]));
+                            int v = int.Parse(ss[j]), hex = (v + 10000) % 100, uni = (v - hex) / 100;
+                            nMap.ChangeState(j, i, hex);
+                            um.ChangeType(j, i, (UnitType)uni);
                         }
                     }
                 }
@@ -137,6 +143,7 @@ namespace CommonPart
         {
             // マップの描画
             nMap.Draw(d, Camera, Scale);
+            um.Draw(d, Camera, Scale);
         }
         public override void SceneUpdate() {
             base.SceneUpdate();
@@ -167,15 +174,24 @@ namespace CommonPart
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0)　nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + DataBase.hex_tex.Count - 1) % DataBase.hex_tex.Count);
+                if (p.i >= 0 && p.j >= 0)　um.ChangeType(p.i, p.j, um.GetType(p.i, p.j) != UnitType.NK ? (UnitType)((int)um.GetType(p.i, p.j) + 1) : UnitType.Kin);
             }
             
             pstate = state;
-            // Sキーが押されるとマップデータの保存
-            if (Keyboard.GetState().IsKeyDown(Keys.S))　SaveMap();
-
-            // Rキーが押されるとマップデータの読み込み
-            if (Keyboard.GetState().IsKeyDown(Keys.R))　ReadMap();
+            // シフト＋数字キーが押されるとマップデータの保存
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1)) SaveMap(1);
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2)) SaveMap(2);
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3)) SaveMap(3);
+            }
+            // 数字キーのみが押されるとマップデータ読み込み
+            else
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1))　ReadMap(1);
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2))　ReadMap(2);
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3))　ReadMap(3);
+            }
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select))　Delete = true;

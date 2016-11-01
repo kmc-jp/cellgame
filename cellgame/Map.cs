@@ -80,11 +80,11 @@ namespace CommonPart {
                     if (rect.Width > 0 && rect.Height > 0)
                     {
                         d.Draw(new Vector(position.X + drawp.X, position.Y + drawp.Y), DataBase.mini_hex_tex[Data[i, j]], rect, depth);
-                        if (um.FindType(i, j) > 0)
+                        if (um.GetType(i, j) > 0)
                         {
                             d.Draw(new Vector(position.X + drawp.X, position.Y + drawp.Y), DataBase.miniUnit_tex[0], rect, depth2);
                         }
-                        else if (um.FindType(i, j) < 0)
+                        else if (um.GetType(i, j) < 0)
                         {
                             d.Draw(new Vector(position.X + drawp.X, position.Y + drawp.Y), DataBase.miniUnit_tex[1], rect, depth2);
                         }

@@ -79,15 +79,6 @@ namespace CommonPart {
         /// キーの名前を得る
         /// </summary>
         public static string GetKeyString(KeyID id) {
-            if(Settings.Explain == Settings.ExplainType.Pad){
-                switch(id) {
-                    case KeyID.Up: return "#ffff00↑#ffffff";
-                    case KeyID.Down: return "#ffff00↓#ffffff";
-                    case KeyID.Left: return "#ffff00←#ffffff";
-                    case KeyID.Right: return "#ffff00→#ffffff";
-                    default: return "(" + (JoyPadManager.JoyButtons[(int)id - 4] + 1) + ")";
-                }
-            }
             return "#ffff00" + KeysToStr(InputManager.GetKey(id)) + "#ffffff";
         }
         static string KeysToStr(Keys k) {

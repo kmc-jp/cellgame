@@ -86,7 +86,7 @@ namespace CommonPart
 
             // ユニットボックスのコマンドボタン画像の読み込み
             DataBase.command_tex = new List<Texture2D>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
                 DataBase.command_tex.Add(Content.Load<Texture2D>(string.Format("button/command{0}.png", i)));
 
             // バーの画像読み込み

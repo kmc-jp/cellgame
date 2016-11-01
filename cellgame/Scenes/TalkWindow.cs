@@ -60,11 +60,6 @@ namespace CommonPart {
                 new RichText(name, FontID.Medium, Color.Yellow).Draw(d, new Vector2(50, 328), DepthID.Message);
             }
             text.Draw(d, new Vector2(40, 360), DepthID.Message);
-            if(Settings.Explain != Settings.ExplainType.None) {
-                new RichText("[" + KeyConfig.GetKeyString(KeyID.Select) + "]:進める・選ぶ ["
-                    + KeyConfig.GetKeyString(KeyID.Cancel) + "]:メッセージ履歴 ["
-                    + KeyConfig.GetKeyString(KeyID.Wait) + "]:スキップ", FontID.Medium).Draw(d, new Vector2(40, 454), DepthID.Message, 0.7f);
-            }
             d.SetDrawNormal();
         }
         public static void DrawMessageBack(Drawing d, Vector2 size, Vector2 pos, DepthID id) {

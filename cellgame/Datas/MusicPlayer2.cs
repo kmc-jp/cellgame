@@ -51,7 +51,9 @@ namespace CommonPart {
             if(playingSet != null) playingSet.Close();
         }
         void Load() {
-            //SetBGM(BGMID.GrandGrass, "Content/Sounds/grand_glass2.mp3", 100, 1209600, 5594400);
+            SetBGM(BGMID.Title, "Content/sounds/title.mp3", 500, 0);
+            SetBGM(BGMID.Normal, "Content/sounds/normal.wav", 500, 0);
+            SetBGM(BGMID.Pinch, "Content/sounds/pinch.wav", 500, 0);
         }
         /// <summary>
         /// 音楽の情報をセットする
@@ -279,7 +281,10 @@ namespace CommonPart {
             public PlayerSet(string fileName, long begin, long end) {
                 Enable = true;
                 Player = new WasapiOut(AudioClientShareMode.Shared, 1);
-                Channel = new WaveChannel32(new Mp3FileReader(fileName));
+                if(fileName.Last() == '3')
+                    Channel = new WaveChannel32(new Mp3FileReader(fileName));
+                else
+                    Channel = new WaveChannel32(new WaveFileReader(fileName));
                 Stream = new WaveStreamWithLoopPoint(Channel, begin, end);
                 Player.Init(Stream);
             }
@@ -298,6 +303,6 @@ namespace CommonPart {
         public static int BytesPer1chSample(this WaveStream w) { return w.WaveFormat.BitsPerSample / 8 * w.WaveFormat.Channels; }
     }
     enum BGMID {
-        None = -1,
+        None = -1, Title, Normal, Pinch,
     }
 }

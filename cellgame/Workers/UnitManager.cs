@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace CommonPart
 {
@@ -10,32 +12,43 @@ namespace CommonPart
     {
         #region Variable
         // 味方ユニット
-        List<PAIR> myUnits;
+        public List<PAIR> myUnits;
         // 敵ユニット
-        List<PAIR> enemyUnits;
+        public List<PAIR> enemyUnits;
         // 現在選択中のユニット
-        int select_i = -1, select_j = 0;
+        public int select_i = -1, select_j = 0;
         // 現在コマンドの入力中であるかどうか
         public bool moving = false;
         public bool attacking = false;
+        // 現在アニメーション中であるかどうか
+        public bool moveAnimation = false;
+        public bool attackAnimation = false;
         public UnitType producing = UnitType.NULL;
         // 現在移動可能な位置のリスト
         public List<PAIR> range = new List<PAIR>();
         public List<int> moveCost = new List<int>();
-        // 現在のターン
-        int pturn = 0;
-        int turn = 0;
+        // 移動コストのマップと最短経路復元ルート
+        int[,] dijkMap = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+        List<PAIR> moveRoute = new List<PAIR>();
+        // 移動した割合
+        int moveState;
+        const int maxMoveState = 30;
+        PAIR movingUnit;
+
+        public bool phase = false;
 
         // ユニットボックス
         UnitBox ub;
 
-        Unit[,] unitMap;
+        public UnitMap uMap;
+
+
 
         #endregion
 
         #region Method
         // コンストラクタ
-        public UnitManager(ref UnitBox _ub)
+        public UnitManager(ref UnitBox _ub, UnitMap _uMap)
         {
             // 味方ユニット
             myUnits = new List<PAIR>();
@@ -45,113 +58,179 @@ namespace CommonPart
 
             ub = _ub;
 
-            // ユニットのマップ情報の初期化
-            unitMap = new Unit[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
-            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
+            uMap = new UnitMap(_uMap);
+            for(int i = 0;i < DataBase.MAP_MAX; i++)
             {
-                for(int j = 0; j < DataBase.MAP_MAX; j++)
+                for(int j = 0;j < DataBase.MAP_MAX; j++)
                 {
-                    unitMap[i, j] = new Unit(UnitType.NULL);
+                    if(uMap.GetType(i, j) > 0)
+                    {
+                        myUnits.Add(new PAIR(i + (j + 1) / 2, j));
+                    }
+                    else if (uMap.GetType(i, j) < 0)
+                    {
+                        enemyUnits.Add(new PAIR(i + (j + 1) / 2, j));
+                    }
                 }
             }
+            NextUnit();
         }
 
 
         // 描画
         public void Draw(Drawing d, Vector camera, int scale)
         {
-            foreach (PAIR p in myUnits)
+            if (moveAnimation || attackAnimation) uMap.Draw(d, camera, scale, select_i - (select_j + 1) / 2, select_j);
+            else uMap.Draw(d, camera, scale);
+
+            if (moveAnimation)
             {
-                int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
+                int x_index = movingUnit.i - (movingUnit.j + 1) / 2, y_index = movingUnit.j;
+                int tx_index = moveRoute.Last().i - (moveRoute.Last().j + 1) / 2, ty_index = moveRoute.Last().j;
                 Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
+                Vector tpos = DataBase.WhereDisp(tx_index, ty_index, camera, scale);
+                d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                moveState++;
+                if(moveState == maxMoveState)
                 {
-                    pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
-                    if(unitMap[p.i, p.j].type > 0)
+                    moveState = 0;
+                    movingUnit = moveRoute.Last();
+                    moveRoute.RemoveAt(moveRoute.Count - 1);
+                    if (moveRoute.Count == 0)
                     {
-                        d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
-                    }
-                    else
-                    {
-                        d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                        moveAnimation = false;
+                        int[] si = { 1, 1, 0, -1, -1, 0 };
+                        int[] sj = { 0, 1, 1, 0, -1, -1 };
+                        bool flag = true;
+                        for(int i = 0;i < 6; i++)
+                        {
+                            int ni = select_i + si[i], nj = select_j + sj[i];
+                            if(ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX && uMap.data[ni, nj].type < 0)
+                            {
+                                flag = false;
+                            }
+                        }
+                        if(uMap.data[select_i, select_j].movePower == 0 && (uMap.data[select_i, select_j].Strength < 0 || flag))
+                        {
+                            uMap.data[select_i, select_j].command = false;
+                            NextUnit();
+                        }
                     }
                 }
             }
-            foreach (PAIR p in enemyUnits)
+            else if (attackAnimation)
             {
-                int x_index = p.i - (p.j + 1) / 2, y_index = p.j;
-                Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
-                if (DataBase.IsInDisp(pos, scale) && x_index >= 0 && x_index < DataBase.MAP_MAX && y_index >= 0 && y_index < DataBase.MAP_MAX)
-                {
-                    pos += new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]);
-                    if (unitMap[p.i, p.j].type > 0)
-                    {
-                        d.Draw(pos, DataBase.myUnit_tex[(int)unitMap[p.i, p.j].type - 1], DepthID.Player, (float)DataBase.MapScale[scale]);
-                    }
-                    else
-                    {
-                        d.Draw(pos, DataBase.enemyUnit_tex[(int)unitMap[p.i, p.j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
-                    }
-                }
+
             }
-            if (moving || attacking || producing != UnitType.NULL)
+            else if (moving || attacking || producing != UnitType.NULL)
             {
                 foreach (PAIR p in range)
                 {
                     d.Draw(DataBase.WhereDisp(p.i - (p.j + 1) / 2, p.j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
                 }
             }
-            else if(select_i != -1)
+            else if (select_i != -1)
             {
                 d.Draw(DataBase.WhereDisp(select_i - (select_j + 1) / 2, select_j, camera, scale), DataBase.select_tex, DepthID.Player, (float)DataBase.MapScale[scale]);
             }
         }
         // 更新
-        public void Update()
+        public void Update(MouseState pstate, MouseState state, PlayScene ps)
         {
-            if (pturn < turn)
-                UpdateTurn();
+            // 左クリックされたときに移動コマンド中でありその座標が移動可能な位置であればその位置へ選択中のユニットを移動
+            if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed && !moveAnimation && !attackAnimation)
+            {
+                if (state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
+                {
+                    PAIR p = ps.WhichHex(state.X, state.Y);
+                    if (p.i >= 0 && p.j >= 0)
+                    {
+                        if (moving)
+                        {
+                            Move(p.i, p.j);
+                        }
+                        else if (attacking)
+                        {
+                            Attack(p.i, p.j);
+                        }
+                        else if (producing == UnitType.NULL)
+                        {
+                            if (GetType(p.i, p.j) != UnitType.NULL)
+                            {
+                                Select(p.i, p.j);
+                            }
+                            else
+                            {
+                                Unselect();
+                            }
+                        }
+                    }
+                }
+
+                // クリックされた座標がユニットボックスのコマンドボタンであれば、コマンドを実行
+                ub.Command(state.X, state.Y, this);
+            }
+            if(ub.x_index != -1)
+                ub.u = Find(ub.x_index, ub.y_index);
+            
 
             // HP か LP が 0 以下になったユニットを削除
             for (int i = 0; i < myUnits.Count;i++)
             {
-                Unit u = unitMap[myUnits[i].i, myUnits[i].j];
+                Unit u = uMap.data[myUnits[i].i, myUnits[i].j];
                 if(u.HP <= 0 || u.LP <= 0)
                 {
-                    unitMap[myUnits[i].i, myUnits[i].j] = new Unit(UnitType.NULL);
+                    uMap.data[myUnits[i].i, myUnits[i].j] = new Unit(UnitType.NULL);
                     myUnits.RemoveAt(i);
                     i--;
                 }
             }
             for (int i = 0; i < enemyUnits.Count; i++)
             {
-                Unit u = unitMap[enemyUnits[i].i, enemyUnits[i].j];
+                Unit u = uMap.data[enemyUnits[i].i, enemyUnits[i].j];
                 if (u.HP <= 0 || u.LP <= 0)
                 {
-                    unitMap[enemyUnits[i].i, enemyUnits[i].j] = new Unit(UnitType.NULL);
+                    uMap.data[enemyUnits[i].i, enemyUnits[i].j] = new Unit(UnitType.NULL);
                     enemyUnits.RemoveAt(i);
                     i--;
                 }
             }
             // 選択中のユニットが死滅すると選択解除
-            if (select_i != -1 && unitMap[select_i, select_j].type == UnitType.NULL)
+            if (select_i != -1 && uMap.data[select_i, select_j].type == UnitType.NULL)
             {
                 Unselect();
             }
         }
         // ターンの更新
-        public void UpdateTurn()
+        public int UpdateTurn()
         {
             foreach(PAIR p in myUnits)
             {
-                unitMap[p.i, p.j].UpdateTurn();
+                uMap.data[p.i, p.j].UpdateTurn();
             }
             foreach (PAIR p in enemyUnits)
             {
-                unitMap[p.i, p.j].UpdateTurn();
+                uMap.data[p.i, p.j].UpdateTurn();
             }
-            pturn = turn;
             NextUnit();
+
+            if (PlayScene.bodyTemp > 42m) return -1;
+            bool flag = true;
+            for(int i = 0;i < DataBase.MAP_MAX; i++)
+            {
+                for(int j = 0;j < DataBase.MAP_MAX; j++)
+                {
+                    if(PlayScene.nMap.Data[i, j] == 3 && GetType(i, j) <= 0)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (!flag)
+                    break;
+            }
+            if (flag) return 1;
+            return 0;
         }
         // ユニットの選択
         public void Select(int x_index, int y_index)
@@ -182,27 +261,27 @@ namespace CommonPart
             bool flag = true;
             foreach(PAIR p in myUnits)
             {
-                if(unitMap[p.i, p.j].command)
+                if(uMap.data[p.i, p.j].command)
                 {
-                    ub.Select(p.i - (p.j + 1) / 2, p.j, unitMap[p.i, p.j]);
+                    ub.Select(p.i - (p.j + 1) / 2, p.j, uMap.data[p.i, p.j]);
                     select_i = p.i;
                     select_j = p.j;
                     flag = false;
+                    phase = true;
                     break;
                 }
             }
             if (flag)
             {
                 Unselect();
-                if (myUnits.Count != 0) turn++;
             }
         }
         // スキップコマンド
         public void Skip()
         {
-            if (moving || attacking) return;
+            if (moving || attacking || select_i == -1) return;
 
-            unitMap[select_i, select_j].command = false;
+            uMap.data[select_i, select_j].command = false;
             NextUnit();
         }
         // 休眠コマンド
@@ -210,11 +289,11 @@ namespace CommonPart
         {
             if (moving || attacking) return;
 
-            unitMap[select_i, select_j].defcommand = unitMap[select_i, select_j].command = false;
+            uMap.data[select_i, select_j].defcommand = uMap.data[select_i, select_j].command = false;
             NextUnit();
         }
         // 生産コマンドが実行されるための前処理
-        public void StartProducing(UnitType ut, Map nMap)
+        public void StartProducing(UnitType ut)
         {
             producing = ut;
             moving = false;
@@ -225,22 +304,34 @@ namespace CommonPart
             {
                 for (int y = 0; y < DataBase.MAP_MAX; y++)
                 {
-                    if(unitMap[x + (y + 1) / 2, y].type == UnitType.NULL &&
-                        nMap.Data[x, y] != 0)
+                    if(uMap.data[x + (y + 1) / 2, y].type == UnitType.NULL &&
+                        PlayScene.nMap.Data[x, y] == (ut > 0 ? 4 : 3))
                     {
                         range.Add(new PAIR(x + (y + 1) / 2, y));
                     }
                 }
             }
+            Unselect();
         }
         // 生産コマンド
         public bool Produce(int x_index, int y_index)
         {
-            if (IsExist(x_index, y_index)) return false;
+            // 生産できる位置かどうか判定
+            bool flag = true;
+            foreach (PAIR p in range)
+            {
+                if(p.i - (p.j + 1) / 2 == x_index && p.j == y_index)
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) return false;
+            // 判定終了
 
             if(producing > 0) myUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
             else enemyUnits.Add(new PAIR(x_index + (y_index + 1) / 2, y_index));
-            unitMap[x_index + (y_index + 1) / 2, y_index] = new Unit(producing);
+            uMap.data[x_index + (y_index + 1) / 2, y_index] = new Unit(producing);
 
             producing = UnitType.NULL;
 
@@ -248,47 +339,31 @@ namespace CommonPart
 
             return true;
         }
+        // 攻撃コマンド中止
+        public void CancelProducing()
+        {
+            producing = UnitType.NULL;
+        }
         // 攻撃コマンドが実行されるための前処理
         public void StartAttacking()
         {
-            if (unitMap[select_i, select_j].ATK < 0) return;
+            if (uMap.data[select_i, select_j].Strength < 0) return;
 
             moving = false;
             attacking = true;
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-
-            List<PAIR> bfs = new List<PAIR>();
-            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
-            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
-            {
-                for(int j = 0; j < DataBase.MAP_MAX; j++)
-                {
-                    map[i, j] = -1;
-                }
-            }
-            map[select_i, select_j] = 0;
-            bfs.Add(new PAIR(select_i, select_j));
+            
             int[] di = { 1, 1, 0, -1, -1, 0 };
             int[] dj = { 0, 1, 1, 0, -1, -1 };
-            while (bfs.Count != 0)
+            for(int i = 0; i < 6; i++)
             {
-                PAIR p = bfs.Last(); bfs.RemoveAt(bfs.Count - 1);
-                for(int k = 0; k < 6; k++)
+                int ni = select_i + di[i], nj = select_j + dj[i];
+                if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
+                    nj >= 0 && nj < DataBase.MAP_MAX && uMap.data[ni, nj].type < 0)
                 {
-                    if (p.i + di[k] - (p.j + dj[k] + 1) / 2 >= 0 && p.i + di[k] - (p.j + dj[k] + 1) / 2 < DataBase.MAP_MAX &&
-                        p.j + dj[k] >= 0 && p.j + dj[k] < DataBase.MAP_MAX &&
-                        map[p.i, p.j] < unitMap[select_i, select_j].ATK_range &&
-                        map[p.i + di[k], p.j + dj[k]] == -1)
-                    {
-                        bfs.Add(new PAIR(p.i + di[k], p.j + dj[k]));
-                        map[p.i + di[k], p.j + dj[k]] = map[p.i, p.j] + 1;
-                        if(unitMap[p.i + di[k], p.j + dj[k]].type < 0)
-                        {
-                            range.Add(new PAIR(p.i + di[k], p.j + dj[k]));
-                        }
-                    }
+                    range.Add(new PAIR(ni, nj));
                 }
             }
             if(range.Count == 0)
@@ -310,82 +385,110 @@ namespace CommonPart
             }
             if (flag) return;
 
-            if(unitMap[select_i, select_j].ATK > 0)
-                unitMap[x_index + (y_index + 1) / 2, y_index].HP -= unitMap[select_i, select_j].ATK;
+            int ai = x_index + (y_index + 1) / 2, aj = y_index;
 
-            unitMap[select_i, select_j].ATK *= -1;
-            attacking = false;
-            unitMap[select_i, select_j].defcommand = true;
-            unitMap[select_i, select_j].command = false;
-            NextUnit();
-        }
-        // 移動可能な位置を求める深さ優先探索関数
-        void dfs(ref int[,] map, int pow_2, PAIR now, ref List<PAIR> res, Map nMap)
-        {
-            int[] sx = { 1, 1, 0, -1, -1, 0 };
-            int[] sy = { 0, 1, 1, 0, -1, -1 };
-            for (int i = 0; i < 6; i++)
+            if (uMap.data[select_i, select_j].Strength > 0 && uMap.data[ai, aj].Strength > 0)
             {
-                int x = now.i + sx[i] - (now.j + sy[i] + 1) / 2, y = now.j + sy[i];
-                if (x >= 0 && x < DataBase.MAP_MAX && y >= 0 && y < DataBase.MAP_MAX &&
-                    nMap.Data[x, y] != 0 && unitMap[now.i + sx[i], now.j + sy[i]].type == UnitType.NULL)
+                int da, db;
+                DataBase.Battle(uMap.data[select_i, select_j].Strength, uMap.data[ai, aj].Strength, out da, out db);
+
+                uMap.data[select_i, select_j].HP -= da;
+                uMap.data[ai, aj].HP -= db;
+                uMap.data[select_i, select_j].Strength *= -1;
+
+                // ユニットを倒したとき
+                if (uMap.data[ai, aj].HP == 0)
                 {
-                    if(nMap.Data[now.i - (now.j + 1) / 2, now.j] == 2 && nMap.Data[x, y] == 2)
+                    // マクロファージか樹状細胞なら研究力を加算
+                    if(uMap.data[select_i, select_j].type == UnitType.Macro)
                     {
-                        if(pow_2 >= 1)
-                        {
-                            PAIR next = new PAIR(now.i + sx[i], now.j + sy[i]);
-                            res.Add(next);
-                            if (map[next.i, next.j] < pow_2 - 1)
-                                map[next.i, next.j] = pow_2 - 1;
-                            dfs(ref map, pow_2 - 1, next, ref res, nMap);
-                        }
+                        PlayScene.studyPower += uMap.data[ai, aj].Strength / 2;
                     }
-                    else
+                    else if(uMap.data[select_i, select_j].type == UnitType.Jujo)
                     {
-                        if (pow_2 >= 2)
+                        PlayScene.studyPower += uMap.data[ai, aj].Strength;
+                    }
+                }
+            }
+            attacking = false;
+            uMap.data[select_i, select_j].defcommand = true;
+            if (uMap.data[select_i, select_j].movePower == 0)
+            {
+                uMap.data[select_i, select_j].command = false;
+                NextUnit();
+            }
+        }
+        // 攻撃コマンド中止
+        public void CancelAttacking()
+        {
+            attacking = false;
+        }
+        // SortedSetを使うための比較関数を定義
+        public class CompareDijkstraNode : IComparer<DijkstraNode>
+        {
+            public int Compare(DijkstraNode l, DijkstraNode r)
+            {
+                return (l.cost < r.cost ? -1 : (l.cost > r.cost ? 1 : (l.pos < r.pos ? -1 : (l.pos > r.pos ? 1 : 0))));
+            }
+        }
+        public class DijkstraNode {
+            public int cost;
+            public PAIR pos;
+            public DijkstraNode(int _cost, PAIR _pos)
+            {
+                cost = _cost;
+                pos = _pos;
+            }
+        }
+        // 移動可能な位置を求める探索関数
+        void dijkstra(int pow_2, PAIR s, ref List<PAIR> res, ref List<int> costs)
+        {
+            int[] si = { 1, 1, 0, -1, -1, 0 };
+            int[] sj = { 0, 1, 1, 0, -1, -1 };
+            for (int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
+            {
+                for (int j = 0; j < DataBase.MAP_MAX; j++)
+                {
+                    dijkMap[i, j] = -1;
+                }
+            }
+            SortedSet<DijkstraNode> pq = new SortedSet<DijkstraNode>(new CompareDijkstraNode());
+            pq.Add(new DijkstraNode(0, s));
+            while(pq.Count != 0)
+            {
+                int pi = pq.First().pos.i, pj = pq.First().pos.j, pc = pq.First().cost;
+                pq.Remove(pq.First());
+                if (dijkMap[pi, pj] > 0) continue;
+                dijkMap[pi, pj] = pc;
+                if (pc != 0)
+                {
+                    res.Add(new PAIR(pi, pj));
+                    costs.Add(pc);
+                }
+                for (int i = 0;i < 6; i++)
+                {
+                    int ni = pi + si[i], nj = pj + sj[i];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
+                    {
+                        int nc = pc + ((PlayScene.nMap.Data[pi - (pj + 1) / 2, pj] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
+                        if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
                         {
-                            PAIR next = new PAIR(now.i + sx[i], now.j + sy[i]);
-                            res.Add(next);
-                            if (map[next.i, next.j] < pow_2 - 2)
-                                map[next.i, next.j] = pow_2 - 2;
-                            dfs(ref map, pow_2 - 2, next, ref res, nMap);
+                            pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
                         }
                     }
                 }
             }
         }
         // 移動のコマンドが実行されるための前処理
-        public void StartMoving(Map nMap)
+        public void StartMoving()
         {
             attacking = false;
             moving = true;
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-            int[,] map = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
-            List<PAIR> res = new List<PAIR>();
-            for(int i = 0; i < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; i++)
-            {
-                for(int j = 0; j < DataBase.MAP_MAX; j++)
-                {
-                    map[i, j] = -1;
-                }
-            }
-            dfs(ref map, unitMap[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref res, nMap);
-            if(res.Count == 0)
-            {
-                moving = false;
-            }
-            else
-            {
-                res.Distinct();
-                for (int i = 0; i < res.Count; i++)
-                {
-                    range.Add(new PAIR(res[i].i, res[i].j));
-                    moveCost.Add(unitMap[select_i, select_j].movePower - map[res[i].i, res[i].j] / 2);
-                }
-            }
+            dijkstra(uMap.data[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost);
+            if(range.Count == 0) moving = false;
         }
         // 移動コマンド
         public void Move(int x_index, int y_index)
@@ -418,28 +521,70 @@ namespace CommonPart
                     myUnits[i] = new PAIR(x_index + (y_index + 1) / 2, y_index);
                 }
             }
+            
 
-            unitMap[x_index + (y_index + 1) / 2,y_index] = unitMap[select_i, select_j];
-            unitMap[select_i, select_j] = new Unit(UnitType.NULL);
-            unitMap[x_index + (y_index + 1) / 2, y_index].movePower -= moveCost[n];
+            uMap.data[x_index + (y_index + 1) / 2, y_index] = uMap.data[select_i, select_j];
+            uMap.data[select_i, select_j] = new Unit(UnitType.NULL);
+            uMap.data[x_index + (y_index + 1) / 2, y_index].movePower -= (moveCost[n] + 1) / 2;
             Select(x_index, y_index);
             
-            unitMap[select_i, select_j].defcommand = true;
+            uMap.data[select_i, select_j].defcommand = true;
+
+
+            moveAnimation = true;
+            moveState = 0;
+
+            int[] si = { 1, 1, 0, -1, -1, 0 };
+            int[] sj = { 0, 1, 1, 0, -1, -1 };
+            const int INF = 1000000000;
+
+            PAIR tp = new PAIR(select_i, select_j);
+            moveRoute.Add(tp);
+
+            while (dijkMap[tp.i, tp.j] != 0)
+            {
+                int ti = 0, tj = 0, tc = INF;
+                for (int i = 0; i < 6; i++)
+                {
+                    int ni = tp.i + si[i], nj = tp.j + sj[i];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0)
+                    {
+                        int nc = dijkMap[ni, nj];
+                        if (nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2))
+                        {
+                            ti = ni;
+                            tj = nj;
+                            tc = nc;
+                        }
+                    }
+                }
+                tp.i = ti;
+                tp.j = tj;
+                moveRoute.Add(tp);
+            }
+            movingUnit = moveRoute.Last();
+            moveRoute.RemoveAt(moveRoute.Count - 1);
+        }
+        // 移動コマンド中止
+        public void CancelMoving()
+        {
+            moving = false;
+            range.Clear();
         }
         // マップの座標(x_index, y_index)にユニットが存在するかどうか
         public bool IsExist(int x_index, int y_index)
         {
-            return unitMap[x_index + (y_index + 1) / 2, y_index].type != UnitType.NULL;
+            return uMap.data[x_index + (y_index + 1) / 2, y_index].type != UnitType.NULL;
         }
         // マップの座標(i,j)のユニット
         public Unit Find(int x_index, int y_index)
         {
-            return unitMap[x_index + (y_index + 1) / 2, y_index];
+            return uMap.data[x_index + (y_index + 1) / 2, y_index];
         }
         // マップの座標(i,j)のユニットの種類
-        public UnitType FindType(int x_index, int y_index)
+        public UnitType GetType(int x_index, int y_index)
         {
-            return unitMap[x_index + (y_index + 1) / 2, y_index].type;
+            return uMap.data[x_index + (y_index + 1) / 2, y_index].type;
         }
         #endregion
     }// class end
