@@ -22,11 +22,9 @@ namespace CommonPart
         public override void Draw(Drawing d)
         {
             base.Draw(d);
-            /*
-            d.Draw(windowPosition + new Vector(20, 10), DataBase.status_tex[0], DepthID.Message);
-            d.Draw(windowPosition + new Vector(170, 10), DataBase.status_tex[1], DepthID.Message);
-            d.Draw(windowPosition + new Vector(470, 10), DataBase.status_tex[2], DepthID.Message);
-            */
+            d.Draw(windowPosition + new Vector(50, 0), DataBase.studyIcon, DepthID.Message);
+            d.Draw(windowPosition + new Vector(250, 0), DataBase.productIcon, DepthID.Message);
+            d.Draw(windowPosition + new Vector(450, 0), DataBase.temperIcon, DepthID.Message);
             new TextAndFont(string.Format("{0}",PlayScene.studyPower), Color.Black).Draw(d, windowPosition + new Vector(130, 20), DepthID.Message);
             new TextAndFont(string.Format("{0}/{1}", PlayScene.productPower, PlayScene.maxProductPower), Color.Black).Draw(d, windowPosition + new Vector(330, 20), DepthID.Message);
             new TextAndFont(string.Format("{0}", PlayScene.bodyTemp), Color.Black).Draw(d, windowPosition + new Vector(530, 20), DepthID.Message);

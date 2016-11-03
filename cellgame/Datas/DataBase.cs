@@ -40,8 +40,9 @@ namespace CommonPart {
         #region Bar&Box
         // バー画像のリスト
         public static List<Texture2D> bar_frame_tex;
-        // ボックス画像のリスト
-        public static List<Texture2D> box_frame_tex;
+        public static List<Texture2D> minimapButton;
+        public static List<Texture2D> productButton;
+        public static List<Texture2D> arrangeButton;
         // バー・ボックスの名前　※要らないけど名前と番号のメモ用に
         public enum BarName
         {
@@ -76,15 +77,22 @@ namespace CommonPart {
         };
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
-        public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
-        public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 15, 20, 10 };
-        public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 3 };
+        public static readonly int[] MyUnitMAX_LP = new[] { 15, 60, 20, 20, 30, 60, 60, 20, 40 };
+        public static readonly int[] MyUnitStrength = new[] { 8, 5, 5, 5, 5, 4, 5, 4, 4 };
+        public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 };
 
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
-        public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
-        public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
-        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 3 };
+        public static readonly int[] EnemyUnitMAX_LP = new[] { 30, 30, 30, 10000, 60 };
+        public static readonly int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 2 };
 
+        #endregion
+
+        #region Status
+        // アイコン画像
+        public static Texture2D studyIcon;
+        public static Texture2D productIcon;
+        public static Texture2D temperIcon;
         #endregion
 
         #region Study
@@ -118,11 +126,11 @@ namespace CommonPart {
         public static readonly int DefaultProductPower = 25;
         // それぞれの味方ユニットの一ターン毎に割り当てられる生産力の最大値
         public static readonly int[] maxProductPower = {
-            4, 10, 10, 10, 15, 20, 20, 25, -1
+            3, 5, 4, 4, 6, 6, 6, 5, -1
         };
         // それぞれの味方ユニットの生産するために必要な合計生産力
         public static readonly int[] sumProductPower = {
-            15, 30, 30, 50, 50, 70, 70, 100, -1
+            9, 30, 16, 16, 36, 30, 30, 20, -1
         };
         #endregion
 
@@ -135,9 +143,10 @@ namespace CommonPart {
         // 戦闘時のダメージ計算
         public static void Battle(int a, int b, out int Da, out int Db)
         {
-            double k = (double)(b + a) * (b + a) / ((b + (double)a / 2) * (b + (double)a / 2) * 3) + 0.5d;
-            Da = (int)(20 / k);
-            Db = (int)(20 * k);
+            double r = a >= b ? (double)a / b : (double)b / a;
+            double s = (Math.Pow(2.0, r + 1.0) + 3.0) / 7.0;
+            Da = (int)(a >= b ? 10.0 / s : 10.0 * s);
+            Db = (int)(a >= b ? 12 * s : 12 / s);
         }
         // 研究を行ったかどうか
         public bool IsStudy(Study s)

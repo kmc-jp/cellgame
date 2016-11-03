@@ -36,7 +36,7 @@ namespace CommonPart {
         // 現在のマップ
         public static Map nMap;
         // ユニットマネージャ
-        UnitManager um;
+        public static UnitManager um;
         // カメラの移動速度
         int defcameraVel = DataBase.cameraV;
         // カメラの倍率
@@ -199,8 +199,8 @@ namespace CommonPart {
 
             // バー・ボックスの更新
             studyBar.Update(pstate, state, scenem);
-            unitBox.Update();
-            minimapBox.Update();
+            unitBox.Update(pstate, state, scenem);
+            minimapBox.Update(pstate, state);
             statusBar.Update();
             proarrBar.Update(pstate, state, um, this, scenem);
             if(pturn < turn)
@@ -231,14 +231,10 @@ namespace CommonPart {
                     FadeIn(um.select_i - (um.select_j + 1) / 2, um.select_j);
                 um.phase = false;
             }
-
-            // カーソルの形状を変化
-            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state))
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
-
+            
 
             // Zキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
+            if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
 
             // Xキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Cancel)) bodyTemp += 1m;

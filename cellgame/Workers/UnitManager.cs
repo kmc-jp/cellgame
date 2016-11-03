@@ -166,9 +166,6 @@ namespace CommonPart
                         }
                     }
                 }
-
-                // クリックされた座標がユニットボックスのコマンドボタンであれば、コマンドを実行
-                ub.Command(state.X, state.Y, this);
             }
             if(ub.x_index != -1)
                 ub.u = Find(ub.x_index, ub.y_index);
@@ -570,6 +567,16 @@ namespace CommonPart
         {
             moving = false;
             range.Clear();
+        }
+        // 削除コマンド
+        public void Delete()
+        {
+            myUnits.Remove(new PAIR(select_i, select_j));
+            enemyUnits.Remove(new PAIR(select_i, select_j));
+
+            uMap.data[select_i, select_j] = new Unit(UnitType.NULL);
+
+            Unselect();
         }
         // マップの座標(x_index, y_index)にユニットが存在するかどうか
         public bool IsExist(int x_index, int y_index)

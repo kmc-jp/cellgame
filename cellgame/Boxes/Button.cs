@@ -21,6 +21,10 @@ namespace CommonPart {
             pos = _pos;
             size = _size;
         }
+        public bool IsOn()
+        {
+            return IsOn(Mouse.GetState());
+        }
         public bool IsOn(MouseState s)
         {
             return s.X >= pos.X && s.X <= pos.X + size.X && s.Y >= pos.Y && s.Y <= pos.Y + size.Y;

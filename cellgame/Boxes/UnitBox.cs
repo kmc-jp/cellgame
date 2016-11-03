@@ -11,13 +11,28 @@ namespace CommonPart
     class UnitBox : WindowBar
     {
         #region Variable
+        // 選択中のユニットの位置
         public int x_index = -1, y_index = 0;
+        // 選択中のユニット
         public Unit u;
+
+        // コマンドの数
+        public readonly int command_N = 5;
+        public enum Commands
+        {
+            Move, Attack, Skip, Sleep, Delete
+        }
+        List<BlindButton> commandButton;
         #endregion
         #region Method
         public UnitBox()
             : base(DataBase.BarPos[1], DataBase.BarWidth[1], DataBase.BarHeight[1]) {
             u = new Unit(UnitType.NULL);
+            commandButton = new List<BlindButton>();
+            for(int i = 0;i < command_N; i++)
+            {
+                commandButton.Add(new BlindButton(windowPosition + new Vector(10 + 50 * i, 240), new Vector2(40, 40)));
+            }
         }
         public override void Draw(Drawing d)
         {
@@ -27,10 +42,10 @@ namespace CommonPart
                 // コマンドボタン表示
                 if(u.type > 0)
                 {
-                    d.Draw(windowPosition + new Vector(10, 240), DataBase.command_tex[0], DepthID.Message);
-                    d.Draw(windowPosition + new Vector(60, 240), DataBase.command_tex[1], DepthID.Message);
-                    d.Draw(windowPosition + new Vector(110, 240), DataBase.command_tex[2], DepthID.Message);
-                    d.Draw(windowPosition + new Vector(160, 240), DataBase.command_tex[3], DepthID.Message);
+                    for (int i = 0; i < command_N; i++)
+                    {
+                        d.Draw(windowPosition + new Vector(10 + 50 * i, 240), DataBase.command_tex[i], DepthID.Message);
+                    }
                 }
 
                 if (u.type > 0)
@@ -61,34 +76,6 @@ namespace CommonPart
                 new TextAndFont(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
             }
         }
-        // クリックされた位置を入力としてコマンドを実行
-        public void Command(int x, int y, UnitManager um)
-        {
-            if (u.type <= 0 || um.moveAnimation || um.attackAnimation) return;
-
-            if(x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
-            {
-                if (um.moving)
-                    um.CancelMoving();
-                else
-                    um.StartMoving();
-            }
-            else if (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280 && u.type != UnitType.Plasma)
-            {
-                if (um.attacking)
-                    um.CancelAttacking();
-                else
-                    um.StartAttacking();
-            }
-            else if (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
-            {
-                um.Skip();
-            }
-            else if (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280)
-            {
-                um.Sleep();
-            }
-        }
         // 基本的にユニットマネージャから呼び出される
         public void Select(int _x_index, int _y_index, Unit _u)
         {
@@ -105,15 +92,42 @@ namespace CommonPart
         {
             return x_index != -1 && base.IsOn(x, y);
         }
-        public override bool IsOnButton(int x, int y)
+        public void Update(MouseState pstate, MouseState state, SceneManager s)
         {
-            return x_index != -1 && u.type > 0 && (
-                    (x >= windowPosition.X + 10 && x <= windowPosition.X + 50 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
-                    (x >= windowPosition.X + 60 && x <= windowPosition.X + 100 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280 && u.type != UnitType.Plasma) ||
-                    (x >= windowPosition.X + 110 && x <= windowPosition.X + 150 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280) ||
-                    (x >= windowPosition.X + 160 && x <= windowPosition.X + 200 && y >= windowPosition.Y + 240 && y <= windowPosition.Y + 280));
+            for(int i = 0;i < command_N; i++)
+            {
+                commandButton[i].Update(pstate, state, u.type > 0);
+            }
+
+            if (u.type <= 0 || PlayScene.um.moveAnimation || PlayScene.um.attackAnimation) return;
+
+            if (commandButton[(int)Commands.Move].Clicked())
+            {
+                if (PlayScene.um.moving)
+                    PlayScene.um.CancelMoving();
+                else
+                    PlayScene.um.StartMoving();
+            }
+            if (commandButton[(int)Commands.Attack].Clicked() && u.type != UnitType.Plasma)
+            {
+                if (PlayScene.um.attacking)
+                    PlayScene.um.CancelAttacking();
+                else
+                    PlayScene.um.StartAttacking();
+            }
+            if (commandButton[(int)Commands.Skip].Clicked())
+            {
+                PlayScene.um.Skip();
+            }
+            if (commandButton[(int)Commands.Sleep].Clicked())
+            {
+                PlayScene.um.Sleep();
+            }
+            if (commandButton[(int)Commands.Delete].Clicked())
+            {
+                new DeleteUnit(s);
+            }
         }
-        public override void Update() { }
         #endregion
     }// class end
 }// namespace end

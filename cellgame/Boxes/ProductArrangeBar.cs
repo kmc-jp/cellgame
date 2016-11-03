@@ -67,21 +67,14 @@ namespace CommonPart
         {
             return base.IsOn(x, y) || productBox.IsOn(x, y) || arrangeBox.IsOn(x, y);
         }
-        public override bool IsOnButton(int x, int y)
-        {
-            return base.IsOn(x, y) || productBox.IsOnButton(x, y) || arrangeBox.IsOnButton(x, y);
-        }
         public override void Draw(Drawing d)
         {
             base.Draw(d);
-            if(productBox.showing)
-                new TextAndFont("生産ボックス", Color.White).Draw(d, windowPosition + new Vector(10, 35), DepthID.Message);
-            else
-                new TextAndFont("生産ボックス", Color.Black).Draw(d, windowPosition + new Vector(10, 35), DepthID.Message);
-            if(arrangeBox.showing)
-                new TextAndFont("配置ボックス", Color.White).Draw(d, windowPosition + new Vector(154, 35), DepthID.Message);
-            else
-                new TextAndFont("配置ボックス", Color.Black).Draw(d, windowPosition + new Vector(154, 35), DepthID.Message);
+
+            new TextAndFont("ユニット生産", productBox.showing ? Color.White : Color.Black).Draw(d, windowPosition + new Vector(10, 35), DepthID.Message);
+
+            new TextAndFont("ユニット配置", arrangeBox.showing ? Color.White : Color.Black).Draw(d, windowPosition + new Vector(154, 35), DepthID.Message);
+
             new FilledBox(new Vector2(4, 96), Color.Black).Draw(d, windowPosition + new Vector(142, 0), DepthID.Message);
             productBox.Draw(d);
             arrangeBox.Draw(d);
@@ -111,7 +104,7 @@ namespace CommonPart
         public List<int> maxPP;
         public List<int> PP;
         FilledBox fb;
-        BoxFrame bf, prebf, nexbf;
+        BoxFrame bf;
 
         ArrangeBox ab;
         #endregion
@@ -122,9 +115,7 @@ namespace CommonPart
             stop = new Button(new Vector(1036, 410), 200, new Color(255, 162, 0), new Color(200, 120, 0), "生産中止");
 
             prePage = new BlindButton(windowPosition + new Vector2(9, 9), new Vector2(15, 250));
-            prebf = new BoxFrame(new Vector2(15, 250), Color.Black);
             nexPage = new BlindButton(windowPosition + new Vector2(264, 9), new Vector2(15, 250));
-            nexbf = new BoxFrame(new Vector2(15, 250), Color.Black);
 
             fb = new FilledBox(new Vector(270, 250), Color.White);
             bf = new BoxFrame(new Vector(238, 50), Color.Black);
@@ -147,24 +138,6 @@ namespace CommonPart
         public override bool IsOn(int x, int y)
         {
             return showing && base.IsOn(x, y);
-        }
-        public override bool IsOnButton(int x, int y)
-        {
-            if (showing)
-            {
-                for (int i = Page * pageMax; i < Math.Min(productQ.Count, (Page + 1) * pageMax); i++)
-                {
-                    if (x >= windowPosition.X + 25 && x <= windowPosition.X + 260 && y >= windowPosition.Y + 15 + 50 * (i - Page * pageMax) && y <= windowPosition.Y + 65 + 50 * (i - Page * pageMax))
-                    {
-                        return true;
-                    }
-                }
-                if(create.IsOn(Mouse.GetState()) || (stop.IsOn(Mouse.GetState()) && select != -1))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
         public void UpdateTurn()
         {
@@ -253,7 +226,7 @@ namespace CommonPart
             }
             if (prePage.Clicked())
             {
-                Page = 0;
+                Page--;
                 select = -1;
             }
             else if (nexPage.Clicked())
@@ -269,6 +242,17 @@ namespace CommonPart
                     {
                         select = i;
                         return;
+                    }
+                }
+            }
+
+            if (showing)
+            {
+                for (int i = Page * pageMax; i < Math.Min(productQ.Count, (Page + 1) * pageMax); i++)
+                {
+                    if (state.X >= windowPosition.X + 25 && state.X <= windowPosition.X + 260 && state.Y >= windowPosition.Y + 15 + 50 * (i - Page * pageMax) && state.Y <= windowPosition.Y + 65 + 50 * (i - Page * pageMax))
+                    {
+                        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
                     }
                 }
             }
@@ -293,9 +277,9 @@ namespace CommonPart
                     bf.Draw(d, windowPosition + new Vector(25, 10 + 50 * (select - Page * pageMax)), DepthID.Status);
                 }
                 if (Page > 0)
-                    prebf.Draw(d, windowPosition + new Vector(9, 9), DepthID.Status);
+                    d.Draw(windowPosition + new Vector(9, 9), DataBase.productButton[0], DepthID.Status);
                 if (Page < Math.Max((productQ.Count + pageMax - 1) / pageMax - 1, 0))
-                    prebf.Draw(d, windowPosition + new Vector(264, 9), DepthID.Status);
+                    d.Draw(windowPosition + new Vector(264, 9), DataBase.productButton[1], DepthID.Status);
                 create.Draw(d);
                 stop.Draw(d);
                 fb.Draw(d, windowPosition + new Vector(9, 9), DepthID.StateFront);
@@ -311,7 +295,7 @@ namespace CommonPart
         int select = -1;
         List<UnitType> arrange;
         FilledBox fb;
-        BoxFrame bf, prebf, nexbf;
+        BoxFrame bf;
         const int pageMax = 14;
         int pagen = 0;
         int Page {
@@ -348,9 +332,7 @@ namespace CommonPart
             bf = new BoxFrame(new Vector(238, 25), Color.Black);
 
             prePage = new BlindButton(windowPosition + new Vector(9, 9), new Vector2(15, 350));
-            prebf = new BoxFrame(new Vector2(15, 350), Color.Black);
             nexPage = new BlindButton(windowPosition + new Vector(264, 9), new Vector2(15, 350));
-            nexbf = new BoxFrame(new Vector2(15, 350), Color.Black);
         }
         public void Show()
         {
@@ -366,21 +348,6 @@ namespace CommonPart
         public override bool IsOn(int x, int y)
         {
             return showing && base.IsOn(x, y);
-        }
-        public override bool IsOnButton(int x, int y)
-        {
-            if (showing)
-            {
-                for (int i = Page * pageMax; i < Math.Min(arrange.Count, (Page + 1) * pageMax); i++)
-                {
-                    if (x >= windowPosition.X + 24 && x <= windowPosition.X + 264
-                        && y >= windowPosition.Y + 9 + 25 * (i - Page * pageMax) && y <= windowPosition.Y + 34 + 25 * (i - Page * pageMax))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
         public void Add(UnitType ut)
         {
@@ -444,6 +411,17 @@ namespace CommonPart
                     }
                 }
             }
+            if (showing)
+            {
+                for (int i = Page * pageMax; i < Math.Min(arrange.Count, (Page + 1) * pageMax); i++)
+                {
+                    if (state.X >= windowPosition.X + 24 && state.X <= windowPosition.X + 264
+                        && state.Y >= windowPosition.Y + 9 + 25 * (i - Page * pageMax) && state.Y <= windowPosition.Y + 34 + 25 * (i - Page * pageMax))
+                    {
+                        System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
+                    }
+                }
+            }
         }
         public override void Draw(Drawing d)
         {
@@ -458,9 +436,9 @@ namespace CommonPart
                 if(select != -1)
                     bf.Draw(d, windowPosition + new Vector(25, 9 + 25 * (select - Page * pageMax)), DepthID.Status);
                 if (Page > 0)
-                    prebf.Draw(d, windowPosition + new Vector(9, 9), DepthID.Status);
+                    d.Draw(windowPosition + new Vector(9, 9), DataBase.arrangeButton[0], DepthID.Status);
                 if (Page < Math.Max((arrange.Count + pageMax - 1) / pageMax - 1, 0))
-                    nexbf.Draw(d, windowPosition + new Vector(264, 9), DepthID.Status);
+                    d.Draw(windowPosition + new Vector(264, 9), DataBase.arrangeButton[1], DepthID.Status);
             }
         }
         #endregion

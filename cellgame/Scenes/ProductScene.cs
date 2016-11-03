@@ -39,21 +39,6 @@ namespace CommonPart
             bf = new BoxFrame(new Vector2(230, 25), Color.Black);
             select = 0;
         }
-        public bool IsOnButton(int x, int y)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                if (x >= backGround.windowPosition.X + 30 && x <= backGround.windowPosition.X + 260 && y >= backGround.windowPosition.Y + 30 + 25 * i && y <= backGround.windowPosition.Y + 55 + 25 * i)
-                {
-                    return true;
-                }
-            }
-            if (start.IsOn(Mouse.GetState()) || cancel.IsOn(Mouse.GetState()))
-            {
-                return true;
-            }
-            return false;
-        }
         public override void SceneDraw(Drawing d)
         {
             backGround.Draw(d);
@@ -87,10 +72,6 @@ namespace CommonPart
                     }
                 }
             }
-            if (IsOnButton(state.X, state.Y))
-            {
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
-            }
             start.Update(pstate, state);
             if (start.Clicked())
             {
@@ -103,6 +84,14 @@ namespace CommonPart
                 Delete = true;
             }
             pstate = state;
+
+            for (int i = 0; i < 8; i++)
+            {
+                if (state.X >= backGround.windowPosition.X + 30 && state.X <= backGround.windowPosition.X + 260 && state.Y >= backGround.windowPosition.Y + 30 + 25 * i && state.Y <= backGround.windowPosition.Y + 55 + 25 * i)
+                {
+                    System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
+                }
+            }
         }
         #endregion
     }
