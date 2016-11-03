@@ -56,7 +56,7 @@ namespace CommonPart
                 {
                     d.Draw(windowPosition + new Vector(20, 20), DataBase.enemyUnit_tex[(int)u.type + 5], DepthID.Message);
                 }
-                new TextAndFont(u.unitName, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
+                new TextAndFont(u.Name, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
 
                 new TextAndFont("HP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 160), DepthID.Message);
                 new TextAndFont("LP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 180), DepthID.Message);
@@ -72,7 +72,12 @@ namespace CommonPart
                 new TextAndFont(string.Format("{0}/{1}", u.LP, u.MAX_LP), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 180), DepthID.Message);
 
 
-                new TextAndFont(string.Format("戦闘力 {0}", Math.Abs(u.Strength)), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                new TextAndFont("戦闘力", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                int real = PlayScene.um.RealStrength(x_index + (y_index + 1) / 2, y_index), pre = u.Strength;
+                if (real == pre)
+                    new TextAndFont(string.Format("{0}", real), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                else
+                    new TextAndFont(string.Format("{0}({1})", real, pre), FontID.Medium, real > pre ? Color.Red : Color.Blue).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
                 new TextAndFont(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
             }
         }

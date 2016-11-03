@@ -62,6 +62,8 @@ namespace CommonPart {
         public static List<Texture2D> miniUnit_tex;
         public static List<Texture2D> myUnit_tex;
         public static List<Texture2D> enemyUnit_tex;
+        public static List<Texture2D> Plasma_tex;
+        public static List<Texture2D> Virus_tex;
         // ユニットの名前
         /*public enum UnitType
         {
@@ -78,13 +80,13 @@ namespace CommonPart {
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 15, 60, 20, 20, 30, 60, 60, 20, 40 };
-        public static readonly int[] MyUnitStrength = new[] { 8, 5, 5, 5, 5, 4, 5, 4, 4 };
+        public static int[] MyUnitStrength = new[] { 8, 5, 5, 5, 5, 4, 5, 4, 4 };
         public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 };
 
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 30, 30, 30, 10000, 60 };
-        public static readonly int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
-        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 2 };
+        public static int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 0, 2 };
 
         #endregion
 
@@ -109,10 +111,6 @@ namespace CommonPart {
         public static readonly int[,] StudyParent = {
             { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, -1 }, { 0, -1 }, { 2, 4 }, { 1, -1 }, { 1, -1 }, { 6, 7 }, { 6, 7 }, { 6, -1 }
         };
-        // その研究が完了しているかどうか
-        public static bool[] StudyState = {
-            false, false, false, false, false, false, false, false, false, false, false
-        };
         // 必要研究力
         public static readonly int[] maxStudyPower = {
             100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
@@ -129,7 +127,7 @@ namespace CommonPart {
             3, 5, 4, 4, 6, 6, 6, 5, -1
         };
         // それぞれの味方ユニットの生産するために必要な合計生産力
-        public static readonly int[] sumProductPower = {
+        public static int[] sumProductPower = {
             9, 30, 16, 16, 36, 30, 30, 20, -1
         };
         #endregion
@@ -145,13 +143,9 @@ namespace CommonPart {
         {
             double r = a >= b ? (double)a / b : (double)b / a;
             double s = (Math.Pow(2.0, r + 1.0) + 3.0) / 7.0;
+
             Da = (int)(a >= b ? 10.0 / s : 10.0 * s);
             Db = (int)(a >= b ? 12 * s : 12 / s);
-        }
-        // 研究を行ったかどうか
-        public bool IsStudy(Study s)
-        {
-            return StudyState[(int)s];
         }
         // マップ上の位置から現在の画面上の座標を求める
         public static Vector WhereDisp(int x_index, int y_index, Vector camera, int scale)

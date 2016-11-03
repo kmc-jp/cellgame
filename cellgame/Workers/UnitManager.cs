@@ -110,7 +110,7 @@ namespace CommonPart
                                 flag = false;
                             }
                         }
-                        if(uMap.data[select_i, select_j].movePower == 0 && (uMap.data[select_i, select_j].Strength < 0 || flag))
+                        if(uMap.data[select_i, select_j].movePower == 0 && (uMap.data[select_i, select_j].attack || flag))
                         {
                             uMap.data[select_i, select_j].command = false;
                             NextUnit();
@@ -344,7 +344,7 @@ namespace CommonPart
         // 攻撃コマンドが実行されるための前処理
         public void StartAttacking()
         {
-            if (uMap.data[select_i, select_j].Strength < 0) return;
+            if (uMap.data[select_i, select_j].attack) return;
 
             moving = false;
             attacking = true;
@@ -384,14 +384,19 @@ namespace CommonPart
 
             int ai = x_index + (y_index + 1) / 2, aj = y_index;
 
-            if (uMap.data[select_i, select_j].Strength > 0 && uMap.data[ai, aj].Strength > 0)
+            if (!uMap.data[select_i, select_j].attack)
             {
-                int da, db;
-                DataBase.Battle(uMap.data[select_i, select_j].Strength, uMap.data[ai, aj].Strength, out da, out db);
+                uMap.data[select_i, select_j].attack = true;
 
-                uMap.data[select_i, select_j].HP -= da;
+                int da, db;
+                if(uMap.data[select_i, select_j].type == UnitType.Kosan)
+                    DataBase.Battle(RealStrength(select_i, select_j) * 2, RealStrength(ai, aj), out da, out db);
+                else
+                    DataBase.Battle(RealStrength(select_i, select_j), RealStrength(ai, aj), out da, out db);
+
+                if(!StudyManager.IsDone(Study.Opuso) || !IsWeakened(ai, aj))
+                    uMap.data[select_i, select_j].HP -= da;
                 uMap.data[ai, aj].HP -= db;
-                uMap.data[select_i, select_j].Strength *= -1;
 
                 // ユニットを倒したとき
                 if (uMap.data[ai, aj].HP == 0)
@@ -404,6 +409,11 @@ namespace CommonPart
                     else if(uMap.data[select_i, select_j].type == UnitType.Jujo)
                     {
                         PlayScene.studyPower += uMap.data[ai, aj].Strength;
+                    }
+                    // B細胞ならプラズマ細胞に進化
+                    else if (uMap.data[select_i, select_j].type == UnitType.B)
+                    {
+                        uMap.data[select_i, select_j].Evolve(uMap.data[ai, aj].type);
                     }
                 }
             }
@@ -592,6 +602,108 @@ namespace CommonPart
         public UnitType GetType(int x_index, int y_index)
         {
             return uMap.data[x_index + (y_index + 1) / 2, y_index].type;
+        }
+        // ユニットの現在の実際の戦闘力
+        public int RealStrength(int _i, int _j)
+        {
+            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return 0;
+            if (uMap.data[_i, _j].type == UnitType.NULL) return 0;
+
+            int[] di = { 1, 1, 0, -1, -1, 0 };
+            int[] dj = { 0, 1, 1, 0, -1, -1 };
+
+
+            int rate = 10;
+            if (uMap.data[_i, _j].type > 0)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    int ni = select_i + di[i], nj = select_j + dj[i];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
+                        nj >= 0 && nj < DataBase.MAP_MAX && uMap.data[ni, nj].type == UnitType.HelperT)
+                    {
+                        rate += (StudyManager.IsDone(Study.Saito) ? 4 : 2);
+                    }
+                }
+                return uMap.data[_i, _j].Strength * rate / 10;
+            }
+            rate = 30;
+            int[,] used = new int[DataBase.MAP_MAX, DataBase.MAP_MAX];
+
+            for (int i = 0;i < DataBase.MAP_MAX;i++)
+            {
+                for (int j = 0;j < DataBase.MAP_MAX;j++)
+                {
+                    used[i, j] = -1;
+                }
+            }
+
+            Queue<PAIR> Q = new Queue<PAIR>();
+            Q.Enqueue(new PAIR(select_i, select_j));
+            used[select_i - (select_j + 1) / 2, select_j] = 0;
+            while(Q.Count != 0)
+            {
+                PAIR p = Q.Dequeue();
+                if (used[p.i - (p.j + 1) / 2, p.j] == 2) continue;
+                for (int i = 0; i < 6; i++)
+                {
+                    int ni = p.i + di[i], nj = p.j + dj[i];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
+                        nj >= 0 && nj < DataBase.MAP_MAX && used[ni - (nj + 1) / 2, nj] == -1)
+                    {
+                        used[ni - (nj + 1), nj] = used[p.i - (p.j + 1) / 2, p.j] + 1;
+                        Q.Enqueue(new PAIR(ni, nj));
+                        if(uMap.data[_i, _j].type == uMap.data[ni, nj].enemyType)
+                        {
+                            rate = Math.Max(0, rate - (StudyManager.IsDone(Study.Saito) ? 4 : 3));
+                        }
+                    }
+                }
+            }
+            return uMap.data[_i, _j].Strength * rate / 30;
+        }
+        public bool IsWeakened(int _i, int _j)
+        {
+            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return false;
+            if (uMap.data[_i, _j].type >= 0) return false;
+
+            int[] di = { 1, 1, 0, -1, -1, 0 };
+            int[] dj = { 0, 1, 1, 0, -1, -1 };
+
+            
+            int[,] used = new int[DataBase.MAP_MAX, DataBase.MAP_MAX];
+
+            for (int i = 0; i < DataBase.MAP_MAX; i++)
+            {
+                for (int j = 0; j < DataBase.MAP_MAX; j++)
+                {
+                    used[i, j] = -1;
+                }
+            }
+
+            Queue<PAIR> Q = new Queue<PAIR>();
+            Q.Enqueue(new PAIR(select_i, select_j));
+            used[select_i - (select_j + 1) / 2, select_j] = 0;
+            while (Q.Count != 0)
+            {
+                PAIR p = Q.Dequeue();
+                if (used[p.i - (p.j + 1) / 2, p.j] == 2) continue;
+                for (int i = 0; i < 6; i++)
+                {
+                    int ni = p.i + di[i], nj = p.j + dj[i];
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
+                        nj >= 0 && nj < DataBase.MAP_MAX && used[ni - (nj + 1) / 2, nj] == -1)
+                    {
+                        used[ni - (nj + 1), nj] = used[p.i - (p.j + 1) / 2, p.j] + 1;
+                        Q.Enqueue(new PAIR(ni, nj));
+                        if (uMap.data[_i, _j].type == uMap.data[ni, nj].enemyType)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
         #endregion
     }// class end

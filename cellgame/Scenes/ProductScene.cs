@@ -23,6 +23,7 @@ namespace CommonPart
         BoxFrame bf;
         Button start;
         Button cancel;
+        public static int productable = 5;
         #endregion
 
         #region Method
@@ -44,7 +45,7 @@ namespace CommonPart
             backGround.Draw(d);
             fb.Draw(d, new Vector(backGround.windowPosition.X + 20, backGround.windowPosition.Y + 20), DepthID.Message);
             base.Draw(d);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < productable; i++)
             {
                 new TextAndFont(DataBase.MyUnitName[i], Color.Black).Draw(d, backGround.windowPosition + new Vector(30, 30 + 25 * i), DepthID.Status);
             }
@@ -64,7 +65,7 @@ namespace CommonPart
             MouseState state = Mouse.GetState();
             if (pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed)
             {
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < productable; i++)
                 {
                     if (state.X >= backGround.windowPosition.X + 30 && state.X <= backGround.windowPosition.X + 260 && state.Y >= backGround.windowPosition.Y + 30 + 25 * i && state.Y <= backGround.windowPosition.Y + 55 + 25 * i)
                     {
@@ -85,7 +86,7 @@ namespace CommonPart
             }
             pstate = state;
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < productable; i++)
             {
                 if (state.X >= backGround.windowPosition.X + 30 && state.X <= backGround.windowPosition.X + 260 && state.Y >= backGround.windowPosition.Y + 30 + 25 * i && state.Y <= backGround.windowPosition.Y + 55 + 25 * i)
                 {

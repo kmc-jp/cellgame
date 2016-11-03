@@ -114,12 +114,21 @@ namespace CommonPart
             DataBase.miniUnit_tex = new List<Texture2D>();
             DataBase.myUnit_tex = new List<Texture2D>();
             DataBase.enemyUnit_tex = new List<Texture2D>();
+            DataBase.Plasma_tex = new List<Texture2D>();
+            DataBase.Virus_tex = new List<Texture2D>();
             for (int i = 0; i < 2; i++)
                 DataBase.miniUnit_tex.Add(Content.Load<Texture2D>(string.Format("unit/miniUnit{0}.png", i)));
             for (int i = 0; i < 9; i++)
                 DataBase.myUnit_tex.Add(Content.Load<Texture2D>(string.Format("unit/myUnit{0}.png", i)));
             for (int i = 0; i < 5; i++)
                 DataBase.enemyUnit_tex.Add(Content.Load<Texture2D>(string.Format("unit/enemyUnit{0}.png", i)));
+
+
+            for (int i = 0; i < 5; i++)
+                DataBase.Plasma_tex.Add(Content.Load<Texture2D>(string.Format("unit/myUnit8_{0}.png", i)));
+
+            DataBase.Virus_tex.Add(DataBase.enemyUnit_tex[2]);
+            DataBase.Virus_tex.Add(Content.Load<Texture2D>("unit/enemyUnit2_.png"));
 
             // TODO: use this.Content to load your game content here
             TextureManager.Load(Content);
