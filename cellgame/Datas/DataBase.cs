@@ -141,8 +141,18 @@ namespace CommonPart {
         // 戦闘時のダメージ計算
         public static void Battle(int a, int b, out int Da, out int Db)
         {
+            if(b == 0) {
+                Da = 0;
+                Db = 100;
+                return;
+            }
+            else if (a == 0) {
+                Da = 100;
+                Db = 0;
+            }
+
             double r = a >= b ? (double)a / b : (double)b / a;
-            double s = (Math.Pow(2.0, r + 1.0) + 3.0) / 7.0;
+            double s = Math.Min(Math.Max((Math.Pow(2.0, r + 1.0) + 3.0) / 7.0, 0.0625), 16.0);
 
             Da = (int)(a >= b ? 10.0 / s : 10.0 * s);
             Db = (int)(a >= b ? 12 * s : 12 / s);

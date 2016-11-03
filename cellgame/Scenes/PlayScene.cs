@@ -78,7 +78,7 @@ namespace CommonPart {
             proarrBar = new ProductArrangeBar();
             UnitMap _uMap = ReadMap(map_n + 1);
             um = new UnitManager(ref unitBox, _uMap);
-            next = new Button(new Vector(1160, 912), 160, Color.White, Color.White, "次のターンへ");
+            next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), new Color(200, 120, 0), "　次のターンへ");
 
 
             

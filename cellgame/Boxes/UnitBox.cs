@@ -75,9 +75,9 @@ namespace CommonPart
                 new TextAndFont("戦闘力", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
                 int real = PlayScene.um.RealStrength(x_index + (y_index + 1) / 2, y_index), pre = u.Strength;
                 if (real == pre)
-                    new TextAndFont(string.Format("{0}", real), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                    new TextAndFont(string.Format("{0}", real), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(90, 200), DepthID.Message);
                 else
-                    new TextAndFont(string.Format("{0}({1})", real, pre), FontID.Medium, real > pre ? Color.Red : Color.Blue).Draw(d, windowPosition + new Vector(20, 200), DepthID.Message);
+                    new TextAndFont(string.Format("{0}({1})", real, pre), FontID.Medium, real > pre ? Color.Red : Color.Blue).Draw(d, windowPosition + new Vector(90, 200), DepthID.Message);
                 new TextAndFont(string.Format("移動力 {0}/{1}", u.movePower, u.moveRange), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 200), DepthID.Message);
             }
         }
