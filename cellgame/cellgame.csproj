@@ -69,11 +69,9 @@
     <Compile Include="Scenes\EditorScene.cs" />
     <Compile Include="Scenes\GameClearScene.cs" />
     <Compile Include="Scenes\GameOverScene.cs" />
-    <Compile Include="Scenes\KeyConfig.cs" />
     <Compile Include="Scenes\NewGameScene.cs" />
     <Compile Include="Scenes\PlayScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
-    <Compile Include="Scenes\PadConfig.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
     <Compile Include="Scenes\ProductScene.cs" />
     <Compile Include="Scenes\Scene.cs" />
@@ -85,8 +83,6 @@
     <Compile Include="Scenes\TitleScene.cs" />
     <Compile Include="Workers\StudyManager.cs" />
     <Compile Include="Workers\UnitMap.cs" />
-    <Compile Include="Scenes\UpdateScene.cs" />
-    <Compile Include="Updater.cs" />
     <Compile Include="Workers\AI.cs" />
     <Compile Include="Workers\Unit.cs" />
     <Compile Include="Workers\UnitManager.cs" />

@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Reflection;
-using MyUpdaterLib;
 
 
 namespace CommonPart {

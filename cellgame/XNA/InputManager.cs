@@ -43,8 +43,8 @@ namespace CommonPart {
             SetKey(KeyID.Right, Keys.Right);
             SetKey(KeyID.Select, Keys.Z);
             SetKey(KeyID.Cancel, Keys.X);
-            SetKey(KeyID.Wait, Keys.C);
-            SetKey(KeyID.Skip, Keys.LeftControl);
+            SetKey(KeyID.Setting, Keys.S);
+            SetKey(KeyID.Escape, Keys.Escape);
             SetKey(KeyID.N, Keys.N);
         }
         public static void SetKey(KeyID id, Keys k) {
@@ -111,7 +111,7 @@ namespace CommonPart {
 	}
     enum KeyID {
         Up, Down, Left, Right,
-        Select, Cancel, Wait, Skip,
+        Select, Cancel, Setting, Escape,
         //以下デバッグ用
         N,
     }

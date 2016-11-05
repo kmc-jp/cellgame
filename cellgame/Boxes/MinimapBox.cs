@@ -49,9 +49,15 @@ namespace CommonPart
                 showing = showing == false;
 
             if (Settings.WindowStyle == 1 && windowPosition.Y != DataBase.BarPos[2].Y)
+            {
                 windowPosition = DataBase.BarPos[2];
+                shButton.MoveTo(windowPosition);
+            }
             else if (Settings.WindowStyle == 0 && windowPosition.Y == DataBase.BarPos[2].Y)
+            {
                 windowPosition = new Vector(DataBase.BarPos[2].X, DataBase.BarPos[2].Y - (DataBase.WindowDefaultSizeY - DataBase.WindowSlimSizeY));
+                shButton.MoveTo(windowPosition);
+            }
         }
         public override bool IsOn(int x, int y)
         {

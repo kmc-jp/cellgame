@@ -67,8 +67,7 @@ namespace CommonPart {
             d.CenterBased = false;
             var tex = TextureManager.GetTexture(TextureID.MessageBack);
             if(tex == null) {
-                new FilledBox(size, Color.FromNonPremultiplied(Settings.WindowR, Settings.WindowG, Settings.WindowB, Settings.WindowA)).Draw(d, pos, id);
-                new BoxFrame(size, Color.White).Draw(d, pos, id);
+                new WindowBar((Vector)pos, (int)size.X / 16, (int)size.Y / 16).Draw(d);
                 d.CenterBased = f;
                 return;
             }
@@ -87,7 +86,6 @@ namespace CommonPart {
             d.Draw(pos + new Vector2(x + grid, 0), TextureManager.GetTexture(TextureID.MessageBack), new Rectangle(xBase + grid, 0, grid, grid), id);
             d.Draw(pos + new Vector2(0, grid), TextureManager.GetTexture(TextureID.MessageBack), new Rectangle(0, grid, grid, yBase), id, new Vector2(1, (float)y / xBase));
             Color colortemp = d.Color;
-            d.Color = Color.FromNonPremultiplied(Settings.WindowR, Settings.WindowG, Settings.WindowB, Settings.WindowA);
             d.Draw(pos + new Vector2(grid, grid), TextureManager.GetTexture(TextureID.MessageBack), new Rectangle(grid, grid, xBase, yBase), id, new Vector2((float)x / xBase, (float)y / xBase));
             d.Color = colortemp;
             d.Draw(pos + new Vector2(x + grid, grid), TextureManager.GetTexture(TextureID.MessageBack), new Rectangle(xBase + grid, grid, grid, yBase), id, new Vector2(1, (float)y / xBase));
@@ -141,7 +139,7 @@ namespace CommonPart {
             public override void Update(InputManager input, MessageManager message) {
                 if(IsEnd) return;
                 if((input.GetKeyPressed(KeyID.Select) && wait >= 10)
-                    || (input.IsKeyDown(KeyID.Wait) && wait >= 2 ) || page == -1/* || wait == 300*/) {
+                    || (input.IsKeyDown(KeyID.Setting) && wait >= 2 ) || page == -1/* || wait == 300*/) {
                     page++; wait = 0;
                     if(page >= maxPage) { IsEnd = true; page--;
                     } else { message.Add("#ffff00" + name + "#ffffff : " + mes[page], true); }

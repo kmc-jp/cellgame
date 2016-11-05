@@ -51,13 +51,14 @@ namespace CommonPart {
     class Button {
         #region Variable
         FilledBox front, back;
-        Vector2 pos;
+        public Vector2 pos { get; private set; }
         DepthID depth;
         string str;
         TextAndFont tex;
         Color color, backColor;
         bool pressed = false;
         bool clicked = false;
+        public Vector2 size { get { return back.Size; } }
         #endregion
         #region Method
         public Button(Vector2 _pos, float sizeX, Color _color, Color _backColor, string _str = "", DepthID _depth = DepthID.Message)

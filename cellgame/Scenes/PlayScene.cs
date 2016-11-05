@@ -163,7 +163,17 @@ namespace CommonPart {
             else if (state.ScrollWheelValue < pstate.ScrollWheelValue)  Scale--;
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
-            
+
+            // ウィンドウのサイズが変わったら次のターンボタンを移動
+            if (Settings.WindowStyle == 1 && next.pos.Y + next.size.Y != Game1._WindowSizeY)
+            {
+                next.MoveTo(new Vector2(next.pos.X, next.pos.Y + 240));
+            }
+            else if (Settings.WindowStyle == 0 && next.pos.Y + next.size.Y != Game1._WindowSizeY)
+            {
+                next.MoveTo(new Vector2(next.pos.X, next.pos.Y - 240));
+            }
+
             // ボタンの更新
             next.Update(pstate, state);
 
@@ -231,7 +241,10 @@ namespace CommonPart {
                     FadeIn(um.select_i - (um.select_j + 1) / 2, um.select_j);
                 um.phase = false;
             }
-            
+
+
+            // Sキーが押されるとセッティングメニューを開く
+            if (Input.GetKeyPressed(KeyID.Setting)) new SettingsScene(scenem);
 
             // Zキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
