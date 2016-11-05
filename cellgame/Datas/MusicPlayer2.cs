@@ -51,7 +51,7 @@ namespace CommonPart {
             if(playingSet != null) playingSet.Close();
         }
         void Load() {
-            SetBGM(BGMID.Title, "Content/sounds/title.mp3", 500, 8009, 98108);
+            SetBGM(BGMID.Title, "Content/sounds/title.mp3", 500, 7909, 100108);
             SetBGM(BGMID.Normal, "Content/sounds/normal.wav", 500, 0);
             SetBGM(BGMID.Pinch, "Content/sounds/pinch.wav", 500, 0);
         }

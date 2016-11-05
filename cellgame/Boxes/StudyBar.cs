@@ -30,7 +30,8 @@ namespace CommonPart {
             base.Draw(d);
             gauge.Draw(d, windowPosition + new Vector(6, 35),DepthID.Status);
             nameTex.Draw(d, windowPosition + new Vector(2, 0), DepthID.Status);
-            new TextAndFont(string.Format("{0}/{1}　　{2}ターン", StudyManager.StudyPower, StudyManager.MaxStudyPower, StudyManager.LeftTurn), Color.Black).Draw(d, windowPosition + new Vector(120, 56), DepthID.Status);
+            new TextAndFont(string.Format("{0}/{1}", StudyManager.StudyPower, StudyManager.MaxStudyPower), Color.Black).Draw(d, windowPosition + new Vector(120, 56), DepthID.Status);
+            new TextAndFont(StudyManager.LeftTurn > 0 ? string.Format("{0}ターン", StudyManager.LeftTurn) : "完了", Color.Black).Draw(d, windowPosition + new Vector(220, 56), DepthID.Status);
         }
         public void Update(MouseState pstate, MouseState state, SceneManager s)
         {

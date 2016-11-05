@@ -81,12 +81,12 @@ namespace CommonPart {
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 15, 60, 20, 20, 30, 60, 60, 20, 40 };
         public static int[] MyUnitStrength = new[] { 8, 5, 5, 5, 5, 4, 5, 4, 4 };
-        public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+        public static readonly int[] MyUnitMoveRange = new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 30, 30, 30, 10000, 60 };
         public static int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
-        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 0, 2 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 5, 5, 5, 0, 5 };
 
         #endregion
 
@@ -98,6 +98,9 @@ namespace CommonPart {
         #endregion
 
         #region Study
+        public static Texture2D tree_tex;
+        public static readonly Vector studyTreePos = new Vector(104, 120);
+        public static readonly Vector studyTreeSize = new Vector(1072, 528);
         // 研究ツリー
         /*public enum Study
         {
@@ -106,6 +109,20 @@ namespace CommonPart {
         // 研究名
         public static readonly string[] StudyName = {
             "獲得免疫", "サイトカイン", "インターフェロン", "ケモカイン", "クロスプレゼンテーション", "効率的アポトーシス", "クラススイッチ", "親和性成熟", "オプソニン化", "中和", "マスト細胞"
+        };
+        // 研究の説明
+        public static readonly string[] StudyExpl = {
+            "ヘルパーT細胞、キラーT細胞が生産可能になる。",
+            "B細胞が生産可能になる。ヘルパーT細胞が味方ユニットを強化する効率が+100%される。",
+            "全ての研究項目で必要研究力が-20%される。",
+            "全てのユニットの生産時間が-1ターンされる。",
+            "キラーT細胞、NK細胞の生産時間が-2ターンされる。",
+            "キラーT細胞、NK細胞の戦闘力が+33%される。",
+            "プラズマ細胞が敵を弱体化する効率が+33%される。",
+            "B細胞の戦闘力が+100%される。",
+            "プラズマ細胞が弱体化しているユニットを攻撃する味方ユニットは反撃を受けない。\n（自分から攻撃した場合、敵ユニットのみがダメージを受ける）",
+            "プラズマ細胞によって弱体化されているユニットは自身の複製を行わない。",
+            "寄生虫の戦闘力が-25%される。"
         };
         // その研究をするために完了しておく必要のある研究
         public static readonly int[,] StudyParent = {

@@ -110,6 +110,9 @@ namespace CommonPart
             DataBase.productIcon = Content.Load<Texture2D>("icon/production.png");
             DataBase.temperIcon = Content.Load<Texture2D>("icon/temperature.png");
 
+            // 研究ツリーの画像の読み込み
+            DataBase.tree_tex = Content.Load<Texture2D>("bar/tree.png");
+
             // ユニットの画像読み込み
             DataBase.miniUnit_tex = new List<Texture2D>();
             DataBase.myUnit_tex = new List<Texture2D>();

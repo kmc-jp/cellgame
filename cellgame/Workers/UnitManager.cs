@@ -477,7 +477,7 @@ namespace CommonPart
                     int ni = pi + si[i], nj = pj + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        int nc = pc + ((PlayScene.nMap.Data[pi - (pj + 1) / 2, pj] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2);
+                        int nc = pc + ((PlayScene.nMap.Data[pi - (pj + 1) / 2, pj] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5);
                         if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
                         {
                             pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
@@ -494,7 +494,7 @@ namespace CommonPart
             producing = UnitType.NULL;
             range.Clear();
             moveCost.Clear();
-            dijkstra(uMap.data[select_i, select_j].movePower * 2, new PAIR(select_i, select_j), ref range, ref moveCost);
+            dijkstra(uMap.data[select_i, select_j].movePower, new PAIR(select_i, select_j), ref range, ref moveCost);
             if(range.Count == 0) moving = false;
         }
         // 移動コマンド
@@ -532,7 +532,7 @@ namespace CommonPart
 
             uMap.data[x_index + (y_index + 1) / 2, y_index] = uMap.data[select_i, select_j];
             uMap.data[select_i, select_j] = new Unit(UnitType.NULL);
-            uMap.data[x_index + (y_index + 1) / 2, y_index].movePower -= (moveCost[n] + 1) / 2;
+            uMap.data[x_index + (y_index + 1) / 2, y_index].movePower -= moveCost[n];
             Select(x_index, y_index);
             
             uMap.data[select_i, select_j].defcommand = true;
@@ -557,7 +557,7 @@ namespace CommonPart
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0)
                     {
                         int nc = dijkMap[ni, nj];
-                        if (nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 2))
+                        if (nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5))
                         {
                             ti = ni;
                             tj = nj;
