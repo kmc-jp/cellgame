@@ -35,11 +35,11 @@ namespace CommonPart
         }
         // LP
         public int LP {
-            get; protected set;
+            get; set;
         }
         // 最大移動力
         public int moveRange {
-            get { return type > 0 ? DataBase.MyUnitMoveRange[(int)type - 1] : type < 0 ? DataBase.EnemyUnitMoveRange[(int)type + 5] : 0; }
+            get { return type > 0 ? DataBase.MyUnitMoveRange[(int)type - 1] : type < 0 ? (type == UnitType.Virus && virusState == 1) ? 0 : DataBase.EnemyUnitMoveRange[(int)type + 5] : 0; }
         }
         // 移動力
         public int movePower;
@@ -67,7 +67,7 @@ namespace CommonPart
             LP = MAX_LP;
             movePower = moveRange;
 
-            if (type == UnitType.HelperT)
+            if (type == UnitType.HelperT || type == UnitType.Gan)
             {
                 attack = defattack = true;
             }
@@ -85,6 +85,7 @@ namespace CommonPart
             command = defcommand;
             attack = defattack;
         }
+        // 敵を倒したB細胞の進化
         public void Evolve(UnitType ene)
         {
             if (type != UnitType.B || (ene != UnitType.Kin && ene != UnitType.Kabi && ene != UnitType.Virus && ene != UnitType.Kiseichu)) return;
@@ -97,6 +98,13 @@ namespace CommonPart
             attack = defattack = true;
 
             enemyType = ene;
+        }
+        // ウイルスの定着
+        public void Fix()
+        {
+            if (type != UnitType.Virus) return;
+            virusState = 1;
+            movePower = moveRange;
         }
         #endregion
     }// Unit end

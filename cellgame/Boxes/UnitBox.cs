@@ -48,13 +48,17 @@ namespace CommonPart
                     }
                 }
 
-                if (u.type > 0)
+                if(u.type == UnitType.Plasma)
                 {
-                    d.Draw(windowPosition + new Vector(20, 20), DataBase.myUnit_tex[(int)u.type - 1], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(20, 20), DataBase.Plasma_tex[(int)u.enemyType + 5], DepthID.Message);
                 }
-                else if(u.type < 0)
+                if (u.type == UnitType.Virus)
                 {
-                    d.Draw(windowPosition + new Vector(20, 20), DataBase.enemyUnit_tex[(int)u.type + 5], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(20, 20), DataBase.Virus_tex[u.virusState], DepthID.Message);
+                }
+                else
+                {
+                    d.Draw(windowPosition + new Vector(20, 20), u.type > 0 ? DataBase.myUnit_tex[(int)u.type - 1] : DataBase.enemyUnit_tex[(int)u.type + 5], DepthID.Message);
                 }
                 new TextAndFont(u.Name, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
 

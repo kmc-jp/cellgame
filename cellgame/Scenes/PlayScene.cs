@@ -14,14 +14,14 @@ namespace CommonPart {
     class PlayScene : Scene {
         #region Variable
         // ボックスウィンドウ（ユニットボックスとか）
-        ProductArrangeBar proarrBar;
-        MinimapBox minimapBox;
-        StatusBar statusBar;
-        StudyBar studyBar;
-        UnitBox unitBox;
+        public ProductArrangeBar proarrBar;
+        public MinimapBox minimapBox;
+        public StatusBar statusBar;
+        public StudyBar studyBar;
+        public UnitBox unitBox;
         Button next;
         // カメラ
-        Vector Camera { get { return _camera; } }
+        public Vector Camera { get { return _camera; } }
         double CameraX
         {
             get { return _camera.X; }
@@ -41,7 +41,7 @@ namespace CommonPart {
         int defcameraVel = DataBase.cameraV;
         // カメラの倍率
         int _scale = DataBase.DefaultMapScale;
-        int Scale {
+        public int Scale {
             get { return _scale; }
             set {
                 if (value < 1) _scale = 1;
@@ -55,13 +55,19 @@ namespace CommonPart {
         public static int studyPower;
         public static int productPower;
         public static int maxProductPower;
-        public static decimal bodyTemp;
+        static decimal _bodyTemp;
+        public static decimal BodyTemp{
+            get { return _bodyTemp; }
+            set { _bodyTemp = Math.Max(36.0m, value); }
+        }
 
         // 現在のターン
         int pturn = 0;
         public int turn = 0;
 
         public static bool changeTurn = false;
+
+        AI ai;
 
         #endregion
 
@@ -84,7 +90,7 @@ namespace CommonPart {
             
             studyPower = DataBase.DefaultStudyPower;
             productPower = maxProductPower = DataBase.DefaultProductPower;
-            bodyTemp = 36.0m;
+            BodyTemp = 36.0m;
 
             SoundManager.Music.PlayBGM(BGMID.Normal, true);
         }
@@ -204,7 +210,7 @@ namespace CommonPart {
                 changeTurn = false;
                 turn++;
                 studyBar.UpdateTurn();
-                new AI(scenem, ref nMap, ref um, this);
+                ai = new AI(scenem, ref nMap, ref um, this);
             }
 
             // バー・ボックスの更新
@@ -220,18 +226,22 @@ namespace CommonPart {
 
 
             // ユニットの更新
-            um.Update(pstate, state, this);
+            um.Update(pstate, state, this, false);
             if (pturn < turn) {
                 int wl = um.UpdateTurn();
                 if (wl == 1)
                 {
                     new GameClearScene(scenem);
                     Delete = true;
+                    ai.Delete = true;
+                    return;
                 }
                 if (wl == -1)
                 {
                     new GameOverScene(scenem);
                     Delete = true;
+                    ai.Delete = true;
+                    return;
                 }
             }
             // 次のユニットへフェードイン
@@ -245,17 +255,14 @@ namespace CommonPart {
 
             // Sキーが押されるとセッティングメニューを開く
             if (Input.GetKeyPressed(KeyID.Setting)) new SettingsScene(scenem);
-
-            // Zキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
-
-            // Xキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Cancel)) bodyTemp += 1m;
+            
+            // Xキーが押されると体温上昇
+            if (Input.GetKeyPressed(KeyID.Cancel)) BodyTemp += 1m;
 
             pturn = turn;
             pstate = state;
 
-            if (bodyTemp >= 41m && SoundManager.Music.GetPlayingID != BGMID.Pinch) SoundManager.Music.PlayBGM(BGMID.Pinch, true);
+            if (BodyTemp >= 41m && SoundManager.Music.GetPlayingID != BGMID.Pinch) SoundManager.Music.PlayBGM(BGMID.Pinch, true);
             base.SceneUpdate();
         }
         public void UpdateByAI()
@@ -270,13 +277,14 @@ namespace CommonPart {
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
             // ユニットの更新
-            um.Update(pstate, state, this);
+            um.Update(pstate, state, this, true);
             
+            if (um.select_i >= 0 && um.select_j >= 0)
+                FadeIn(um.select_i - (um.select_j + 1) / 2, um.select_j);
 
             pstate = state;
-            // Zキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
         }
+        // 選択されたユニットにフェードイン
         public void FadeIn(int x_index, int y_index)
         {
             CameraX = (DataBase.HexWidth * x_index + DataBase.HexWidth / 2 * ((y_index % 2) + 1)) - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale];
