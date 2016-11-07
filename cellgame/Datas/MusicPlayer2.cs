@@ -51,9 +51,9 @@ namespace CommonPart {
             if(playingSet != null) playingSet.Close();
         }
         void Load() {
-            SetBGM(BGMID.Title, "Content/sounds/title.mp3", 500, 0);
-            SetBGM(BGMID.Normal, "Content/sounds/normal.wav", 500, 0);
-            SetBGM(BGMID.Pinch, "Content/sounds/pinch.wav", 500, 0);
+            SetBGM(BGMID.Title, "Content/sounds/title.mp3", 100, 7909, 100108);
+            SetBGM(BGMID.Normal, "Content/sounds/normal.wav", 100, 3510, 187058);
+            SetBGM(BGMID.Pinch, "Content/sounds/pinch.wav", 100, 9784, 80040);
         }
         /// <summary>
         /// 音楽の情報をセットする
@@ -239,8 +239,8 @@ namespace CommonPart {
             public int BytesPer1chSample { get { return WaveFormat.BitsPerSample / 8 * WaveFormat.Channels; } }
             public WaveStreamWithLoopPoint(WaveStream baseStream, long begin, long end) {
                 this.baseStream = baseStream;
-                LoopBegin = begin * BytesPer1chSample;
-                LoopEnd = end * BytesPer1chSample;
+                LoopBegin = begin * BytesPer1chSample * WaveFormat.SampleRate / 1000;
+                LoopEnd = end * BytesPer1chSample * WaveFormat.SampleRate / 1000;
             }
             public override long Length { get { return baseStream.Length; } }
             public override long Position {

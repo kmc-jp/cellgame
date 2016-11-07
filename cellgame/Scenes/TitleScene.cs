@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 using System.Reflection;
-using MyUpdaterLib;
 
 
 namespace CommonPart {
@@ -37,7 +36,7 @@ namespace CommonPart {
             }
             else if (button[(int)TitleIndex.Load].Clicked())
             {
-
+                new LoadScene(scenem);
             }
             else if (button[(int)TitleIndex.Config].Clicked())
             {

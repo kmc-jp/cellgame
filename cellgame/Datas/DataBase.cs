@@ -40,8 +40,9 @@ namespace CommonPart {
         #region Bar&Box
         // バー画像のリスト
         public static List<Texture2D> bar_frame_tex;
-        // ボックス画像のリスト
-        public static List<Texture2D> box_frame_tex;
+        public static List<Texture2D> minimapButton;
+        public static List<Texture2D> productButton;
+        public static List<Texture2D> arrangeButton;
         // バー・ボックスの名前　※要らないけど名前と番号のメモ用に
         public enum BarName
         {
@@ -61,6 +62,8 @@ namespace CommonPart {
         public static List<Texture2D> miniUnit_tex;
         public static List<Texture2D> myUnit_tex;
         public static List<Texture2D> enemyUnit_tex;
+        public static List<Texture2D> Plasma_tex;
+        public static List<Texture2D> Virus_tex;
         // ユニットの名前
         /*public enum UnitType
         {
@@ -76,18 +79,28 @@ namespace CommonPart {
         };
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
-        public static readonly int[] MyUnitMAX_LP = new[] { 10, 10, 10, 10, 10, 10, 10, 10, 10 };
-        public static readonly int[] MyUnitStrength = new[] { 5, 10, 10, 10, 10, 10, 15, 20, 10 };
-        public static readonly int[] MyUnitMoveRange = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 3 };
+        public static readonly int[] MyUnitMAX_LP = new[] { 15, 60, 20, 20, 30, 60, 60, 20, 40 };
+        public static int[] MyUnitStrength = new[] { 8, 5, 5, 5, 5, 4, 5, 4, 4 };
+        public static readonly int[] MyUnitMoveRange = new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
-        public static readonly int[] EnemyUnitMAX_LP = new[] { 10, 10, 10, 10, 10 };
-        public static readonly int[] EnemyUnitStrength = new[] { 5, 10, 15, 10, 20 };
-        public static readonly int[] EnemyUnitMoveRange = new[] { 2, 2, 2, 2, 3 };
+        public static readonly int[] EnemyUnitMAX_LP = new[] { 30, 30, 30, 10000, 60 };
+        public static int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
+        public static readonly int[] EnemyUnitMoveRange = new[] { 5, 5, 5, 0, 5 };
 
         #endregion
 
+        #region Status
+        // アイコン画像
+        public static Texture2D studyIcon;
+        public static Texture2D productIcon;
+        public static Texture2D temperIcon;
+        #endregion
+
         #region Study
+        public static Texture2D tree_tex;
+        public static readonly Vector studyTreePos = new Vector(104, 120);
+        public static readonly Vector studyTreeSize = new Vector(1072, 528);
         // 研究ツリー
         /*public enum Study
         {
@@ -97,13 +110,23 @@ namespace CommonPart {
         public static readonly string[] StudyName = {
             "獲得免疫", "サイトカイン", "インターフェロン", "ケモカイン", "クロスプレゼンテーション", "効率的アポトーシス", "クラススイッチ", "親和性成熟", "オプソニン化", "中和", "マスト細胞"
         };
+        // 研究の説明
+        public static readonly string[] StudyExpl = {
+            "ヘルパーT細胞、キラーT細胞が生産可能になる。",
+            "B細胞が生産可能になる。ヘルパーT細胞が味方ユニットを強化する効率が+100%される。",
+            "全ての研究項目で必要研究力が-20%される。",
+            "全てのユニットの生産時間が-1ターンされる。",
+            "キラーT細胞、NK細胞の生産時間が-2ターンされる。",
+            "キラーT細胞、NK細胞の戦闘力が+33%される。",
+            "プラズマ細胞が敵を弱体化する効率が+33%される。",
+            "B細胞の戦闘力が+100%される。",
+            "プラズマ細胞が弱体化しているユニットを攻撃する味方ユニットは反撃を受けない。\n（自分から攻撃した場合、敵ユニットのみがダメージを受ける）",
+            "プラズマ細胞によって弱体化されているユニットは自身の複製を行わない。",
+            "寄生虫の戦闘力が-25%される。"
+        };
         // その研究をするために完了しておく必要のある研究
         public static readonly int[,] StudyParent = {
             { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, -1 }, { 0, -1 }, { 2, 4 }, { 1, -1 }, { 1, -1 }, { 6, 7 }, { 6, 7 }, { 6, -1 }
-        };
-        // その研究が完了しているかどうか
-        public static bool[] StudyState = {
-            false, false, false, false, false, false, false, false, false, false, false
         };
         // 必要研究力
         public static readonly int[] maxStudyPower = {
@@ -118,11 +141,11 @@ namespace CommonPart {
         public static readonly int DefaultProductPower = 25;
         // それぞれの味方ユニットの一ターン毎に割り当てられる生産力の最大値
         public static readonly int[] maxProductPower = {
-            4, 10, 10, 10, 15, 20, 20, 25, -1
+            3, 5, 4, 4, 6, 6, 6, 5, -1
         };
         // それぞれの味方ユニットの生産するために必要な合計生産力
-        public static readonly int[] sumProductPower = {
-            15, 30, 30, 50, 50, 70, 70, 100, -1
+        public static int[] sumProductPower = {
+            9, 30, 16, 16, 36, 30, 30, 20, -1
         };
         #endregion
 
@@ -135,14 +158,21 @@ namespace CommonPart {
         // 戦闘時のダメージ計算
         public static void Battle(int a, int b, out int Da, out int Db)
         {
-            double k = (double)(b + a) * (b + a) / ((b + (double)a / 2) * (b + (double)a / 2) * 3) + 0.5d;
-            Da = (int)(20 / k);
-            Db = (int)(20 * k);
-        }
-        // 研究を行ったかどうか
-        public bool IsStudy(Study s)
-        {
-            return StudyState[(int)s];
+            if(b == 0) {
+                Da = 0;
+                Db = 100;
+                return;
+            }
+            else if (a == 0) {
+                Da = 100;
+                Db = 0;
+            }
+
+            double r = a >= b ? (double)a / b : (double)b / a;
+            double s = Math.Min(Math.Max((Math.Pow(2.0, r + 1.0) + 3.0) / 7.0, 0.0625), 16.0);
+
+            Da = (int)(a >= b ? 10.0 / s : 10.0 * s);
+            Db = (int)(a >= b ? 12 * s : 12 / s);
         }
         // マップ上の位置から現在の画面上の座標を求める
         public static Vector WhereDisp(int x_index, int y_index, Vector camera, int scale)

@@ -86,7 +86,7 @@ namespace CommonPart
 
             // ユニットボックスのコマンドボタン画像の読み込み
             DataBase.command_tex = new List<Texture2D>();
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
                 DataBase.command_tex.Add(Content.Load<Texture2D>(string.Format("button/command{0}.png", i)));
 
             // バーの画像読み込み
@@ -94,21 +94,44 @@ namespace CommonPart
             for (int i = 0; i < 9; i++)
                 DataBase.bar_frame_tex.Add(Content.Load<Texture2D>(string.Format("bar/bar_frame{0}.png", i)));
 
-            // ボックスの画像読み込み
-            DataBase.box_frame_tex = new List<Texture2D>();
-            for (int i = 0; i < 10; i++)
-                DataBase.box_frame_tex.Add(Content.Load<Texture2D>(string.Format("box/box_frame{0}.png", i)));
+            // 表示非表示切替ボタン、またはページ切り替えボタンの画像の読み込み
+            DataBase.minimapButton = new List<Texture2D>();
+            DataBase.productButton = new List<Texture2D>();
+            DataBase.arrangeButton = new List<Texture2D>();
+            DataBase.minimapButton.Add(Content.Load<Texture2D>("bar/bar2.png"));
+            DataBase.minimapButton.Add(Content.Load<Texture2D>("bar/bar2_.png"));
+            DataBase.productButton.Add(Content.Load<Texture2D>("bar/bar1.png"));
+            DataBase.productButton.Add(Content.Load<Texture2D>("bar/bar1_.png"));
+            DataBase.arrangeButton.Add(Content.Load<Texture2D>("bar/bar3.png"));
+            DataBase.arrangeButton.Add(Content.Load<Texture2D>("bar/bar3_.png"));
+
+            // ステータスバーのアイコン画像
+            DataBase.studyIcon = Content.Load<Texture2D>("icon/study.png");
+            DataBase.productIcon = Content.Load<Texture2D>("icon/production.png");
+            DataBase.temperIcon = Content.Load<Texture2D>("icon/temperature.png");
+
+            // 研究ツリーの画像の読み込み
+            DataBase.tree_tex = Content.Load<Texture2D>("bar/tree.png");
 
             // ユニットの画像読み込み
             DataBase.miniUnit_tex = new List<Texture2D>();
             DataBase.myUnit_tex = new List<Texture2D>();
             DataBase.enemyUnit_tex = new List<Texture2D>();
+            DataBase.Plasma_tex = new List<Texture2D>();
+            DataBase.Virus_tex = new List<Texture2D>();
             for (int i = 0; i < 2; i++)
                 DataBase.miniUnit_tex.Add(Content.Load<Texture2D>(string.Format("unit/miniUnit{0}.png", i)));
             for (int i = 0; i < 9; i++)
                 DataBase.myUnit_tex.Add(Content.Load<Texture2D>(string.Format("unit/myUnit{0}.png", i)));
             for (int i = 0; i < 5; i++)
                 DataBase.enemyUnit_tex.Add(Content.Load<Texture2D>(string.Format("unit/enemyUnit{0}.png", i)));
+
+
+            for (int i = 0; i < 5; i++)
+                DataBase.Plasma_tex.Add(Content.Load<Texture2D>(string.Format("unit/myUnit8_{0}.png", i)));
+
+            DataBase.Virus_tex.Add(DataBase.enemyUnit_tex[2]);
+            DataBase.Virus_tex.Add(Content.Load<Texture2D>("unit/enemyUnit2_.png"));
 
             // TODO: use this.Content to load your game content here
             TextureManager.Load(Content);

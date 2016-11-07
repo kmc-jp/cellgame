@@ -45,7 +45,16 @@ namespace CommonPart
                     if (drawp.Y <= Game1._WindowSizeY && drawp.Y >= -DataBase.HexHeight * DataBase.MapScale[Scale]
                         && drawp.X <= Game1._WindowSizeX && drawp.X >= -DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale] && data[i + (j + 1) /2, j].type != UnitType.NULL && !(i == select_x && j == select_y))
                     {
-                        d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), data[i + (j + 1) /2, j].type > 0 ? DataBase.myUnit_tex[(int)data[i + (j + 1) /2, j].type - 1] : DataBase.enemyUnit_tex[(int)data[i + (j + 1) /2, j].type + 5], DepthID.Player, (float)DataBase.MapScale[Scale]);
+                        if (data[i + (j + 1) / 2, j].type == UnitType.Plasma)
+                        {
+                            d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), DataBase.Plasma_tex[(int)data[i + (j + 1) / 2, j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[Scale]);
+                        }
+                        else if (data[i + (j + 1) / 2, j].type == UnitType.Virus)
+                        {
+                            d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), DataBase.Virus_tex[data[i + (j + 1) / 2, j].virusState], DepthID.Player, (float)DataBase.MapScale[Scale]);
+                        }
+                        else
+                            d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), data[i + (j + 1) / 2, j].type > 0 ? DataBase.myUnit_tex[(int)data[i + (j + 1) / 2, j].type - 1] : DataBase.enemyUnit_tex[(int)data[i + (j + 1) / 2, j].type + 5], DepthID.Player, (float)DataBase.MapScale[Scale]);
                     }
                 }
             }
@@ -60,7 +69,16 @@ namespace CommonPart
                     if (drawp.Y <= Game1._WindowSizeY && drawp.Y >= -DataBase.HexHeight * DataBase.MapScale[Scale]
                         && drawp.X <= Game1._WindowSizeX && drawp.X >= -DataBase.HexWidth * 3 / 2 * DataBase.MapScale[Scale] && data[i + (j + 1) /2, j].type != UnitType.NULL)
                     {
-                        d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), data[i + (j + 1) /2, j].type > 0 ? DataBase.myUnit_tex[(int)data[i + (j + 1) /2, j].type - 1] : DataBase.enemyUnit_tex[(int)data[i + (j + 1) /2, j].type + 5], DepthID.Player, (float)DataBase.MapScale[Scale]);
+                        if (data[i + (j + 1) / 2, j].type == UnitType.Plasma)
+                        {
+                            d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), DataBase.Plasma_tex[(int)data[i + (j + 1) / 2, j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[Scale]);
+                        }
+                        else if (data[i + (j + 1) / 2, j].type == UnitType.Virus)
+                        {
+                            d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), DataBase.Virus_tex[data[i + (j + 1) / 2, j].virusState], DepthID.Player, (float)DataBase.MapScale[Scale]);
+                        }
+                        else
+                            d.Draw(new Vector(drawp.X, drawp.Y) + new Vector(26 * DataBase.MapScale[Scale], 36 * DataBase.MapScale[Scale]), data[i + (j + 1) /2, j].type > 0 ? DataBase.myUnit_tex[(int)data[i + (j + 1) /2, j].type - 1] : DataBase.enemyUnit_tex[(int)data[i + (j + 1) /2, j].type + 5], DepthID.Player, (float)DataBase.MapScale[Scale]);
                     }
                 }
             }

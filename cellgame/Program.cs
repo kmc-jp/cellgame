@@ -55,8 +55,6 @@ namespace CommonPart
         }
         static void MainProcess(string[] args)
         {
-            if (File.Exists(UpdateScene.TempExe)) File.Delete(UpdateScene.TempExe);
-            if (File.Exists(UpdateScene.TempExe + ".config")) File.Delete(UpdateScene.TempExe + ".config");
             using (Game1 game = new Game1())
             {
                 game.Run();

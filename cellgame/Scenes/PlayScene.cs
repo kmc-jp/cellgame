@@ -14,14 +14,14 @@ namespace CommonPart {
     class PlayScene : Scene {
         #region Variable
         // ボックスウィンドウ（ユニットボックスとか）
-        ProductArrangeBar proarrBar;
-        MinimapBox minimapBox;
-        StatusBar statusBar;
-        StudyBar studyBar;
-        UnitBox unitBox;
+        public ProductArrangeBar proarrBar;
+        public MinimapBox minimapBox;
+        public StatusBar statusBar;
+        public StudyBar studyBar;
+        public UnitBox unitBox;
         Button next;
         // カメラ
-        Vector Camera { get { return _camera; } }
+        public Vector Camera { get { return _camera; } }
         double CameraX
         {
             get { return _camera.X; }
@@ -36,12 +36,12 @@ namespace CommonPart {
         // 現在のマップ
         public static Map nMap;
         // ユニットマネージャ
-        UnitManager um;
+        public static UnitManager um;
         // カメラの移動速度
         int defcameraVel = DataBase.cameraV;
         // カメラの倍率
         int _scale = DataBase.DefaultMapScale;
-        int Scale {
+        public int Scale {
             get { return _scale; }
             set {
                 if (value < 1) _scale = 1;
@@ -55,7 +55,11 @@ namespace CommonPart {
         public static int studyPower;
         public static int productPower;
         public static int maxProductPower;
-        public static decimal bodyTemp;
+        static decimal _bodyTemp;
+        public static decimal BodyTemp{
+            get { return _bodyTemp; }
+            set { _bodyTemp = Math.Max(36.0m, value); }
+        }
 
         // 現在のターン
         int pturn = 0;
@@ -63,12 +67,15 @@ namespace CommonPart {
 
         public static bool changeTurn = false;
 
+        AI ai;
+
         #endregion
 
         #region Method
         // コンストラクタ
-        public PlayScene(SceneManager s, int map_n)
-            : base(s) {
+        public PlayScene(SceneManager s, int map_n, string dataName = "")
+            : base(s)
+        {
             pstate = Mouse.GetState();
             nMap = new Map();
             studyBar = new StudyBar();
@@ -78,13 +85,17 @@ namespace CommonPart {
             proarrBar = new ProductArrangeBar();
             UnitMap _uMap = ReadMap(map_n + 1);
             um = new UnitManager(ref unitBox, _uMap);
-            next = new Button(new Vector(1160, 912), 120, Color.White, Color.White, "　次のターンへ");
+            next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), Color.Black, "次のターンへ");
 
 
-            
+
             studyPower = DataBase.DefaultStudyPower;
             productPower = maxProductPower = DataBase.DefaultProductPower;
-            bodyTemp = 36.0m;
+            BodyTemp = 36.0m;
+            if (dataName != "")
+            {
+                ReadData(dataName);
+            }
 
             SoundManager.Music.PlayBGM(BGMID.Normal, true);
         }
@@ -131,6 +142,45 @@ namespace CommonPart {
             return res;
         }
 
+        // セーブする
+        public void SaveData(string name = "")
+        {
+            if (!Directory.Exists("SaveData")) Directory.CreateDirectory("SaveData");
+
+            if (name == "") name = DateTime.Now.ToString("yy_MM_dd_hh：mm") + ".save";
+
+            using (StreamWriter w = new StreamWriter(string.Format(@"SaveData\{0}", name)))
+            {
+                for (int i = 0; i < DataBase.MAP_MAX; i++)
+                {
+                    for (int j = 0; j < DataBase.MAP_MAX; j++)
+                    {
+                        Unit u = um.uMap.data[i + (j + 1) / 2, j];
+                        w.Write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\r\n", nMap.Data[i, j], (int)u.type, u.HP, u.LP, u.movePower, u.defcommand, u.command, u.defattack, u.attack, (int)u.enemyType, u.virusState);
+                    }
+                }
+            }
+        }
+        // セーブデータを読み込む(読み込めなければfalseを返す)
+        public bool ReadData(string name)
+        {
+            if (File.Exists(@"SaveData\" + name + ".save"))
+            {
+                using (StreamReader r = new StreamReader(@"SaveData\" + name + ".save"))
+                {
+                    string line;
+                    for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX * DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
+                    {
+                        string[] ss = line.Split(',');
+                        nMap.Data[i / DataBase.MAP_MAX, i % DataBase.MAP_MAX] = int.Parse(ss[0]);
+                        um.uMap.data[i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX] =
+                            new Unit((UnitType)int.Parse(ss[1]), int.Parse(ss[2]), int.Parse(ss[3]), int.Parse(ss[4]), bool.Parse(ss[5]), bool.Parse(ss[6]), bool.Parse(ss[7]), bool.Parse(ss[8]), (UnitType)int.Parse(ss[9]), int.Parse(ss[10]));
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// ゲーム画面の描画メソッド
         /// </summary>
@@ -163,7 +213,17 @@ namespace CommonPart {
             else if (state.ScrollWheelValue < pstate.ScrollWheelValue)  Scale--;
             CameraX = CameraX + Game1._WindowSizeX / DataBase.MapScale[ps] / 2 - Game1._WindowSizeX / DataBase.MapScale[Scale] / 2;
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
-            
+
+            // ウィンドウのサイズが変わったら次のターンボタンを移動
+            if (Settings.WindowStyle == 1 && next.pos.Y + next.size.Y != Game1._WindowSizeY)
+            {
+                next.MoveTo(new Vector2(next.pos.X, next.pos.Y + 240));
+            }
+            else if (Settings.WindowStyle == 0 && next.pos.Y + next.size.Y != Game1._WindowSizeY)
+            {
+                next.MoveTo(new Vector2(next.pos.X, next.pos.Y - 240));
+            }
+
             // ボタンの更新
             next.Update(pstate, state);
 
@@ -194,13 +254,13 @@ namespace CommonPart {
                 changeTurn = false;
                 turn++;
                 studyBar.UpdateTurn();
-                new AI(scenem, ref nMap, ref um, this);
+                ai = new AI(scenem, ref nMap, ref um, this);
             }
 
             // バー・ボックスの更新
             studyBar.Update(pstate, state, scenem);
-            unitBox.Update();
-            minimapBox.Update();
+            unitBox.Update(pstate, state, scenem);
+            minimapBox.Update(pstate, state);
             statusBar.Update();
             proarrBar.Update(pstate, state, um, this, scenem);
             if(pturn < turn)
@@ -210,18 +270,22 @@ namespace CommonPart {
 
 
             // ユニットの更新
-            um.Update(pstate, state, this);
+            um.Update(pstate, state, this, false);
             if (pturn < turn) {
                 int wl = um.UpdateTurn();
                 if (wl == 1)
                 {
                     new GameClearScene(scenem);
                     Delete = true;
+                    ai.Delete = true;
+                    return;
                 }
                 if (wl == -1)
                 {
                     new GameOverScene(scenem);
                     Delete = true;
+                    ai.Delete = true;
+                    return;
                 }
             }
             // 次のユニットへフェードイン
@@ -232,21 +296,17 @@ namespace CommonPart {
                 um.phase = false;
             }
 
-            // カーソルの形状を変化
-            if (unitBox.IsOnButton(state.X, state.Y) || proarrBar.IsOnButton(state.X, state.Y) || minimapBox.IsOnButton(state.X, state.Y) || next.IsOn(state))
-                System.Windows.Forms.Cursor.Current = System.Windows.Forms.Cursors.Hand;
 
-
-            // Zキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
-
-            // Xキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Cancel)) bodyTemp += 1m;
+            // Sキーが押されるとセッティングメニューを開く
+            if (Input.GetKeyPressed(KeyID.Setting)) new SettingsScene(scenem);
+            
+            // Xキーが押されるとセーブ
+            if (Input.GetKeyPressed(KeyID.Cancel)) new SaveConfScene(scenem, this);
 
             pturn = turn;
             pstate = state;
 
-            if (bodyTemp >= 41m && SoundManager.Music.GetPlayingID != BGMID.Pinch) SoundManager.Music.PlayBGM(BGMID.Pinch, true);
+            if (BodyTemp >= 41m && SoundManager.Music.GetPlayingID != BGMID.Pinch) SoundManager.Music.PlayBGM(BGMID.Pinch, true);
             base.SceneUpdate();
         }
         public void UpdateByAI()
@@ -261,13 +321,14 @@ namespace CommonPart {
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
             // ユニットの更新
-            um.Update(pstate, state, this);
+            um.Update(pstate, state, this, true);
             
+            if (um.select_i >= 0 && um.select_j >= 0)
+                FadeIn(um.select_i - (um.select_j + 1) / 2, um.select_j);
 
             pstate = state;
-            // Zキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Select)) Delete = true;
         }
+        // 選択されたユニットにフェードイン
         public void FadeIn(int x_index, int y_index)
         {
             CameraX = (DataBase.HexWidth * x_index + DataBase.HexWidth / 2 * ((y_index % 2) + 1)) - Game1._WindowSizeX / 2 / DataBase.MapScale[Scale];

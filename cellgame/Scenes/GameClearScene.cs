@@ -10,7 +10,10 @@ namespace CommonPart
     class GameClearScene : Scene
     {
         public GameClearScene(SceneManager s)
-            : base(s) { }
+            : base(s)
+        {
+            SoundManager.Music.StopBGM();
+        }
 
         public override void SceneDraw(Drawing d)
         {

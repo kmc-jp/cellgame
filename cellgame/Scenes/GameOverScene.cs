@@ -10,7 +10,10 @@ namespace CommonPart
     class GameOverScene : Scene
     {
         public GameOverScene(SceneManager s)
-            : base(s) { }
+            : base(s)
+        {
+            SoundManager.Music.StopBGM();
+        }
 
         public override void SceneDraw(Drawing d)
         {

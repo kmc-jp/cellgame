@@ -55,13 +55,7 @@ namespace CommonPart {
         }
 
         public virtual void Update() { }
-
-        // 位置がこのWindowBar 上のボタンの上にあるかどうか
-        public virtual bool IsOnButton(int x, int y)
-        {
-
-            return false;
-        }
+        
         // 位置がこの WindowBar の上にあるかどうか
         public virtual bool IsOn(int x, int y) {
             return x >= windowPosition.X && x <= (windowPosition.X + width * 16) && y >= windowPosition.Y && y <= (windowPosition.Y + height * 16);
