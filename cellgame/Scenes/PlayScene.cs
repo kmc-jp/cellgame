@@ -65,7 +65,7 @@ namespace CommonPart {
         int pturn = 0;
         public int turn = 0;
 
-        public static bool changeTurn = false;
+        public static bool changeTurn;
 
         AI ai;
 
@@ -90,7 +90,7 @@ namespace CommonPart {
             next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), Color.Black, "次のターンへ");
 
 
-
+            changeTurn = false;
             studyPower = DataBase.DefaultStudyPower;
             productPower = maxProductPower = DataBase.DefaultProductPower;
             BodyTemp = 36.0m;
