@@ -183,6 +183,8 @@ namespace CommonPart
         public void Update(MouseState pstate, MouseState state, SceneManager s, ProductArrangeBar pab)
         {
             base.Update();
+            stop.ChangeColor(select != -1 ? new Color(255, 162, 0) : Color.White, select != -1 ? new Color(200, 120, 0) : Color.Gray);
+
             if (!showing) return;
             create.Update(pstate, state);
             if (select != -1)

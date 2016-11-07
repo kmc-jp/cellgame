@@ -362,7 +362,8 @@ namespace CommonPart
             {
                 int ni = select_i + di[i], nj = select_j + dj[i];
                 if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
-                    nj >= 0 && nj < DataBase.MAP_MAX && (int)uMap.data[ni, nj].type * (int)uMap.data[select_i, select_j].type < 0 && (uMap.data[ni, nj].type != UnitType.Gan || uMap.data[select_i, select_j].type == UnitType.KillerT || uMap.data[select_i, select_j].type == UnitType.NK))
+                    nj >= 0 && nj < DataBase.MAP_MAX && (int)uMap.data[ni, nj].type * (int)uMap.data[select_i, select_j].type < 0
+                    && ((uMap.data[ni, nj].type != UnitType.Gan && !(uMap.data[ni, nj].type == UnitType.Virus && uMap.data[ni, nj].virusState == 1)) || uMap.data[select_i, select_j].type == UnitType.KillerT || uMap.data[select_i, select_j].type == UnitType.NK))
                 {
                     range.Add(new PAIR(ni, nj));
                 }

@@ -23,7 +23,7 @@ namespace CommonPart {
             button = new BlindButton(windowPosition, new Vector(width * 16d, height * 16d));
             
             nameTex = new TextAndFont(StudyManager.StudyName, Color.Black);
-            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.AliceBlue);
+            gauge = new Gauge(new Vector(340, 20), Color.Blue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.SkyBlue);
         }
         public override void Draw(Drawing d)
         {
@@ -47,13 +47,13 @@ namespace CommonPart {
             if (StudyManager.StartStudying(st))
             {
                 nameTex = new TextAndFont(StudyManager.StudyName, Color.Black);
-                gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.AliceBlue);
+                gauge = new Gauge(new Vector(340, 20), Color.Blue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.SkyBlue);
             }
         }
         public void UpdateTurn()
         {
             StudyManager.UpdateTurn();
-            gauge = new Gauge(new Vector(340, 20), Color.CornflowerBlue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.AliceBlue);
+            gauge = new Gauge(new Vector(340, 20), Color.Blue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.SkyBlue);
         }
         #endregion
     }// class end

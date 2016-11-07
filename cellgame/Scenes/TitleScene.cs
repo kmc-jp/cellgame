@@ -36,7 +36,7 @@ namespace CommonPart {
             }
             else if (button[(int)TitleIndex.Load].Clicked())
             {
-
+                new LoadScene(scenem);
             }
             else if (button[(int)TitleIndex.Config].Clicked())
             {

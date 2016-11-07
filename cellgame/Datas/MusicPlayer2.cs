@@ -52,8 +52,8 @@ namespace CommonPart {
         }
         void Load() {
             SetBGM(BGMID.Title, "Content/sounds/title.mp3", 100, 7909, 100108);
-            SetBGM(BGMID.Normal, "Content/sounds/normal.wav", 100, 0);
-            SetBGM(BGMID.Pinch, "Content/sounds/pinch.wav", 100, 0);
+            SetBGM(BGMID.Normal, "Content/sounds/normal.wav", 100, 3510, 187058);
+            SetBGM(BGMID.Pinch, "Content/sounds/pinch.wav", 100, 9784, 80040);
         }
         /// <summary>
         /// 音楽の情報をセットする

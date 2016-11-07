@@ -47,7 +47,7 @@ namespace CommonPart
         public bool defcommand = true;
         public bool command = true;
         // 攻撃コマンドを行ったかどうか
-        bool defattack = false;
+        public bool defattack = false;
         public bool attack = false;
 
         // 弱体化させる敵ユニットの種類（プラズマ細胞にのみ意味のある変数）
@@ -67,7 +67,7 @@ namespace CommonPart
             LP = MAX_LP;
             movePower = moveRange;
 
-            if (type == UnitType.HelperT || type == UnitType.Gan)
+            if (type == UnitType.HelperT || type == UnitType.Plasma || type == UnitType.Gan)
             {
                 attack = defattack = true;
             }
@@ -77,6 +77,19 @@ namespace CommonPart
                 attack = defattack = true;
                 command = defcommand = false;
             }
+        }
+        public Unit(UnitType _type, int _HP, int _LP, int _movePower, bool _defcommand, bool _command, bool _defattack, bool _attack, UnitType _enemyType, int _virusState)
+        {
+            type = _type;
+            HP = _HP;
+            LP = _LP;
+            movePower = _movePower;
+            defcommand = _defcommand;
+            command = _command;
+            defattack = _defattack;
+            attack = _attack;
+            enemyType = _enemyType;
+            virusState = _virusState;
         }
         public void UpdateTurn()
         {

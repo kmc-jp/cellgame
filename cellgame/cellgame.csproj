@@ -69,11 +69,13 @@
     <Compile Include="Scenes\EditorScene.cs" />
     <Compile Include="Scenes\GameClearScene.cs" />
     <Compile Include="Scenes\GameOverScene.cs" />
+    <Compile Include="Scenes\LoadScene.cs" />
     <Compile Include="Scenes\NewGameScene.cs" />
     <Compile Include="Scenes\PlayScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
     <Compile Include="Scenes\ProductScene.cs" />
+    <Compile Include="Scenes\SaveConfScene.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Scenes\SettingsScene.cs" />

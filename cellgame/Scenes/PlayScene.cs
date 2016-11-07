@@ -73,8 +73,9 @@ namespace CommonPart {
 
         #region Method
         // コンストラクタ
-        public PlayScene(SceneManager s, int map_n)
-            : base(s) {
+        public PlayScene(SceneManager s, int map_n, string dataName = "")
+            : base(s)
+        {
             pstate = Mouse.GetState();
             nMap = new Map();
             studyBar = new StudyBar();
@@ -84,13 +85,17 @@ namespace CommonPart {
             proarrBar = new ProductArrangeBar();
             UnitMap _uMap = ReadMap(map_n + 1);
             um = new UnitManager(ref unitBox, _uMap);
-            next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), new Color(200, 120, 0), "次のターンへ");
+            next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), Color.Black, "次のターンへ");
 
 
-            
+
             studyPower = DataBase.DefaultStudyPower;
             productPower = maxProductPower = DataBase.DefaultProductPower;
             BodyTemp = 36.0m;
+            if (dataName != "")
+            {
+                ReadData(dataName);
+            }
 
             SoundManager.Music.PlayBGM(BGMID.Normal, true);
         }
@@ -137,6 +142,45 @@ namespace CommonPart {
             return res;
         }
 
+        // セーブする
+        public void SaveData(string name = "")
+        {
+            if (!Directory.Exists("SaveData")) Directory.CreateDirectory("SaveData");
+
+            if (name == "") name = DateTime.Now.ToString("yy_MM_dd_hh：mm") + ".save";
+
+            using (StreamWriter w = new StreamWriter(string.Format(@"SaveData\{0}", name)))
+            {
+                for (int i = 0; i < DataBase.MAP_MAX; i++)
+                {
+                    for (int j = 0; j < DataBase.MAP_MAX; j++)
+                    {
+                        Unit u = um.uMap.data[i + (j + 1) / 2, j];
+                        w.Write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\r\n", nMap.Data[i, j], (int)u.type, u.HP, u.LP, u.movePower, u.defcommand, u.command, u.defattack, u.attack, (int)u.enemyType, u.virusState);
+                    }
+                }
+            }
+        }
+        // セーブデータを読み込む(読み込めなければfalseを返す)
+        public bool ReadData(string name)
+        {
+            if (File.Exists(@"SaveData\" + name + ".save"))
+            {
+                using (StreamReader r = new StreamReader(@"SaveData\" + name + ".save"))
+                {
+                    string line;
+                    for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX * DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
+                    {
+                        string[] ss = line.Split(',');
+                        nMap.Data[i / DataBase.MAP_MAX, i % DataBase.MAP_MAX] = int.Parse(ss[0]);
+                        um.uMap.data[i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX] =
+                            new Unit((UnitType)int.Parse(ss[1]), int.Parse(ss[2]), int.Parse(ss[3]), int.Parse(ss[4]), bool.Parse(ss[5]), bool.Parse(ss[6]), bool.Parse(ss[7]), bool.Parse(ss[8]), (UnitType)int.Parse(ss[9]), int.Parse(ss[10]));
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// ゲーム画面の描画メソッド
         /// </summary>
@@ -256,8 +300,8 @@ namespace CommonPart {
             // Sキーが押されるとセッティングメニューを開く
             if (Input.GetKeyPressed(KeyID.Setting)) new SettingsScene(scenem);
             
-            // Xキーが押されると体温上昇
-            if (Input.GetKeyPressed(KeyID.Cancel)) BodyTemp += 1m;
+            // Xキーが押されるとセーブ
+            if (Input.GetKeyPressed(KeyID.Cancel)) new SaveConfScene(scenem, this);
 
             pturn = turn;
             pstate = state;

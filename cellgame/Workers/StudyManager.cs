@@ -12,7 +12,7 @@ namespace CommonPart
         // 現在行われている研究
         public static Study studying;
         // その研究が完了しているかどうか
-        static bool[] StudyState = {
+        public static bool[] StudyState = {
             false, false, false, false, false, false, false, false, false, false, false
         };
 
