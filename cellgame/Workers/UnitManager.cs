@@ -31,8 +31,8 @@ namespace CommonPart
         int[,] dijkMap = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
         List<PAIR> moveRoute = new List<PAIR>();
         // 移動した割合
-        int moveState;
-        const int maxMoveState = 30;
+        public int moveState;
+        public int maxMoveState = 30;
         PAIR movingUnit;
 
         public bool phase = false;
@@ -91,7 +91,7 @@ namespace CommonPart
                 Vector tpos = DataBase.WhereDisp(tx_index, ty_index, camera, scale);
                 d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
                 moveState++;
-                if(moveState == maxMoveState)
+                if(moveState >= maxMoveState)
                 {
                     moveState = 0;
                     movingUnit = moveRoute.Last();
@@ -566,10 +566,10 @@ namespace CommonPart
                 for (int i = 0; i < 6; i++)
                 {
                     int ni = tp.i + si[i], nj = tp.j + sj[i];
-                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0)
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
                         int nc = dijkMap[ni, nj];
-                        if (nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5))
+                        if (nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5))
                         {
                             ti = ni;
                             tj = nj;

@@ -26,6 +26,7 @@ namespace CommonPart
         RandomXS rand;
 
         int pause = 0;
+        int pauseTime = 30;
 
         // マップのすべての座標の点数
         int[,] scoreMap;
@@ -163,7 +164,7 @@ namespace CommonPart
         public override void SceneUpdate()
         {
             pause++;
-            if (pause >= 30 && moved && !um.moveAnimation)
+            if (pause >= pauseTime && moved && !um.moveAnimation)
             {
                 um.StartAttacking();
                 int tg = -1, mins = 1000;
@@ -195,7 +196,7 @@ namespace CommonPart
                 pause = 0;
             }
 
-            if (pause >= 30 && tmpUnit == um.enemyUnits.Count)
+            if (pause >= pauseTime && tmpUnit == um.enemyUnits.Count)
             {
                 if (PlayScene.BodyTemp > 42m)
                 {
@@ -227,9 +228,11 @@ namespace CommonPart
                 enemyTurn = false;
                 um.NextUnit();
                 Delete = true;
+                pauseTime = 30;
+                um.maxMoveState = 30;
                 return;
             }
-            else if(pause >= 30 && !um.moveAnimation)
+            else if(pause >= pauseTime && !um.moveAnimation)
             {
                 PAIR eu = um.enemyUnits[tmpUnit];
                 um.Select(eu.i - (eu.j + 1) / 2, eu.j);
@@ -261,6 +264,12 @@ namespace CommonPart
                 }
                 moved = true;
                 pause = 0;
+            }
+            if (Input.GetKeyPressed(KeyID.Select))
+            {
+                pauseTime = 0;
+                um.maxMoveState = 10;
+                um.moveState /= 3;
             }
             ps.UpdateByAI();
         }
