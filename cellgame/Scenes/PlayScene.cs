@@ -76,6 +76,8 @@ namespace CommonPart {
         public PlayScene(SceneManager s, int map_n, string dataName = "")
             : base(s)
         {
+            StudyManager.studying = Study.Kaku;
+            StudyManager.StudyPower = 0;
             pstate = Mouse.GetState();
             nMap = new Map();
             studyBar = new StudyBar();
