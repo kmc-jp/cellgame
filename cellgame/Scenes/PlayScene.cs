@@ -303,6 +303,13 @@ namespace CommonPart {
             // Xキーが押されるとセーブ
             if (Input.GetKeyPressed(KeyID.Cancel)) new SaveConfScene(scenem, this);
 
+            // Escキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Escape))
+            {
+                Delete = true;
+                new SaveConfScene(scenem, this);
+            }
+
             pturn = turn;
             pstate = state;
 

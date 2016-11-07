@@ -19,7 +19,7 @@ namespace CommonPart
         UnitManager um;
         PlayScene ps;
         int tmpUnit;
-        static int Gan_N = 0;
+        public static int Gan_N = 0;
 
         bool moved = false;
 
@@ -81,16 +81,23 @@ namespace CommonPart
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if(um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        }
                     }
                 }
                 else if (tp == UnitType.Gan)
                 {
-                    if (rand.NextInt(100) < Gan_N * 20)
+                    if (rand.NextInt(100) < Gan_N * 10)
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if (um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                            Gan_N++;
+                        }
                     }
                 }
             }

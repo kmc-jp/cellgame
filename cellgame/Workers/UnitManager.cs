@@ -70,6 +70,10 @@ namespace CommonPart
                     else if (uMap.GetType(i, j) < 0)
                     {
                         enemyUnits.Add(new PAIR(i + (j + 1) / 2, j));
+                        if(GetType(i, j) == UnitType.Gan)
+                        {
+                            AI.Gan_N++;
+                        }
                     }
                 }
             }
