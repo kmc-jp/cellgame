@@ -8,10 +8,10 @@ namespace CommonPart
 {
     class AI : Scene
     {
-        static int turnNum = 0;
+        public static int turnNum;
         public static bool enemyTurn = false;
         static int productPower = -50;
-        static List<UnitType> Products;
+        public static List<UnitType> Products;
         static readonly int[] need = {
             15, 15, 25, 1000, 50
         };
@@ -45,8 +45,7 @@ namespace CommonPart
             um = _um;
             ps = _ps;
             tmpUnit = 0;
-
-            Products = new List<UnitType>();
+            
 
             rand = new RandomXS();
 
@@ -203,7 +202,7 @@ namespace CommonPart
                 pause = 0;
             }
 
-            if (pause >= pauseTime && tmpUnit == um.enemyUnits.Count)
+            if (pause >= pauseTime && tmpUnit >= um.enemyUnits.Count)
             {
                 if (PlayScene.BodyTemp > 42m)
                 {
@@ -275,8 +274,8 @@ namespace CommonPart
             if (Input.GetKeyPressed(KeyID.Select))
             {
                 pauseTime = 0;
-                um.maxMoveState = 10;
-                um.moveState /= 3;
+                um.maxMoveState = 0;
+                um.moveState = 0;
             }
             ps.UpdateByAI();
         }

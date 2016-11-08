@@ -118,6 +118,7 @@ namespace CommonPart
             if (type != UnitType.Virus) return;
             virusState = 1;
             movePower = moveRange;
+            attack = defattack = true;
         }
         #endregion
     }// Unit end

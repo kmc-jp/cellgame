@@ -89,6 +89,9 @@ namespace CommonPart {
             um = new UnitManager(ref unitBox, _uMap);
             next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), Color.Black, "次のターンへ");
 
+            AI.turnNum = 0;
+            AI.Products = new List<UnitType>();
+
 
             changeTurn = false;
             studyPower = DataBase.DefaultStudyPower;

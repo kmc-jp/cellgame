@@ -130,7 +130,7 @@ namespace CommonPart {
         };
         // 必要研究力
         public static readonly int[] maxStudyPower = {
-            100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100
+            10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
         };
         // 研究力の初期値
         public static readonly int DefaultStudyPower = 10;

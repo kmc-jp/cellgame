@@ -93,7 +93,15 @@ namespace CommonPart
                 int tx_index = moveRoute.Last().i - (moveRoute.Last().j + 1) / 2, ty_index = moveRoute.Last().j;
                 Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
                 Vector tpos = DataBase.WhereDisp(tx_index, ty_index, camera, scale);
-                d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                UnitType ut = uMap.data[select_i, select_j].type;
+                if (ut == UnitType.Plasma)
+                {
+                    d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), DataBase.Plasma_tex[(int)uMap.data[select_i, select_j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+                else
+                {
+                    d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
                 moveState++;
                 if(moveState >= maxMoveState)
                 {
@@ -284,7 +292,7 @@ namespace CommonPart
         // スキップコマンド
         public void Skip()
         {
-            if (moving || attacking || select_i == -1) return;
+            if (moving || attacking || select_i < 0) return;
 
             uMap.data[select_i, select_j].command = false;
             NextUnit();
@@ -292,7 +300,7 @@ namespace CommonPart
         // 休眠コマンド
         public void Sleep()
         {
-            if (moving || attacking) return;
+            if (moving || attacking || select_i < 0) return;
 
             uMap.data[select_i, select_j].defcommand = uMap.data[select_i, select_j].command = false;
             NextUnit();
@@ -481,12 +489,13 @@ namespace CommonPart
                     res.Add(new PAIR(pi, pj));
                     costs.Add(pc);
                 }
+                if (pc == 5) continue;
                 for (int i = 0;i < 6; i++)
                 {
                     int ni = pi + si[i], nj = pj + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        int nc = pc + ((PlayScene.nMap.Data[pi - (pj + 1) / 2, pj] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5);
+                        int nc = ((PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? pc + 1 : 5);
                         if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
                         {
                             pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
@@ -498,6 +507,7 @@ namespace CommonPart
         // 移動のコマンドが実行されるための前処理
         public void StartMoving()
         {
+            if (select_i < 0) return;
             attacking = false;
             moving = true;
             producing = UnitType.NULL;
@@ -509,6 +519,7 @@ namespace CommonPart
         // 移動コマンド
         public void Move(int x_index, int y_index)
         {
+            if (select_i < 0) return;
             bool flag = true;
             foreach (PAIR pos in range)
             {
@@ -573,7 +584,7 @@ namespace CommonPart
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
                         int nc = dijkMap[ni, nj];
-                        if (nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5))
+                        if (nc != -1 && ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && nc == dijkMap[tp.i, tp.j] - 1)) || (PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] != 2 && nc >= 0 && nc < dijkMap[tp.i, tp.j]))
                         {
                             ti = ni;
                             tj = nj;
