@@ -62,7 +62,10 @@ namespace CommonPart
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if (um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        }
                     }
                 }
                 else if (tp == UnitType.Kabi)
@@ -71,12 +74,15 @@ namespace CommonPart
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if (um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        }
                     }
                 }
                 else if (tp == UnitType.Virus)
                 {
-                    if (um.uMap.data[um.enemyUnits[i].i, um.enemyUnits[i].j].virusState == 1 && rand.NextInt(100) < 50)
+                    if (um.uMap.data[um.enemyUnits[i].i, um.enemyUnits[i].j].virusState == 1 && rand.NextInt(100) < 30)
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
@@ -88,7 +94,7 @@ namespace CommonPart
                 }
                 else if (tp == UnitType.Gan)
                 {
-                    if (rand.NextInt(100) < Gan_N * 10)
+                    if (rand.NextInt(100) < 20)
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
