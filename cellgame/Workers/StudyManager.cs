@@ -60,12 +60,12 @@ namespace CommonPart
             switch (studying)
             {
                 case Study.Kaku:
-                    ProductScene.productable = 6;
+                    ProductScene.productable[5] = true;
                     PlayScene.productPower += 5;
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
                     break;
                 case Study.Saito:
-                    ProductScene.productable = 8;
+                    ProductScene.productable[7] = true;
                     PlayScene.productPower += 5;
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
                     DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
@@ -82,7 +82,7 @@ namespace CommonPart
                     PlayScene.productPower += 5;
                     break;
                 case Study.Cross:
-                    ProductScene.productable = 7;
+                    ProductScene.productable[6] = true;
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
                     DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
                     break;
@@ -99,13 +99,19 @@ namespace CommonPart
                     break;
                 case Study.Opuso:
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
-                    DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
-                    DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
+                    if (IsDone(Study.Chuwa))
+                    {
+                        DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
+                        DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
+                    }
                     break;
                 case Study.Chuwa:
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
-                    DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
-                    DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
+                    if (IsDone(Study.Opuso))
+                    {
+                        DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
+                        DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
+                    }
                     break;
                 case Study.Masuto:
                     DataBase.EnemyUnitStrength[(int)UnitType.Kiseichu + 5] = DataBase.EnemyUnitStrength[(int)UnitType.Kiseichu + 5] * 3 / 4;

@@ -81,7 +81,8 @@ namespace CommonPart
             {
                 studys[i].Draw(d);
             }
-            new TextAndFont("説明", Color.DarkGreen).Draw(d, DataBase.studyTreePos + new Vector2(20, 310), DepthID.Message);
+            new TextAndFont(DataBase.StudyName[select], Color.Green).Draw(d, DataBase.studyTreePos + new Vector2(90, 280), DepthID.Message);
+            new TextAndFont(string.Format("必要研究力：{1}", DataBase.StudyName[select], DataBase.maxStudyPower[select]), Color.Black).Draw(d, DataBase.studyTreePos + new Vector2(50, 310), DepthID.Message);
             new TextAndFont(DataBase.StudyExpl[select], Color.Black).Draw(d, DataBase.studyTreePos + new Vector2(50, 350), DepthID.Message);
         }
         public override void SceneUpdate()
