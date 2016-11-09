@@ -79,12 +79,12 @@ namespace CommonPart {
         };
         // ユニット各種類ごとの固有値
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
-        public static readonly int[] MyUnitMAX_LP = new[] { 15, 60, 20, 20, 30, 60, 60, 20, 40 };
-        public static int[] MyUnitStrength = new[] { 8, 5, 5, 5, 5, 4, 5, 4, 4 };
+        public static readonly int[] MyUnitMAX_LP = new[] { 7, 30, 10, 10, 20, 30, 30, 10, 20 };
+        public static int[] MyUnitStrength = new[] { 8, 5, 5, 5, 6, 4, 6, 4, 4 };
         public static readonly int[] MyUnitMoveRange = new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
-        public static readonly int[] EnemyUnitMAX_LP = new[] { 30, 30, 30, 10000, 60 };
+        public static readonly int[] EnemyUnitMAX_LP = new[] { 20, 20, 20, 10000, 30 };
         public static int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
         public static readonly int[] EnemyUnitMoveRange = new[] { 5, 5, 5, 0, 5 };
 
@@ -112,17 +112,17 @@ namespace CommonPart {
         };
         // 研究の説明
         public static readonly string[] StudyExpl = {
-            "ヘルパーT細胞、キラーT細胞が生産可能になる。",
-            "B細胞が生産可能になる。ヘルパーT細胞が味方ユニットを強化する効率が+100%される。",
-            "全ての研究項目で必要研究力が-20%される。",
-            "全てのユニットの生産時間が-1ターンされる。",
-            "キラーT細胞、NK細胞の生産時間が-2ターンされる。",
+            "ヘルパーT細胞が生産可能になる。\n生産力+5\nマクロファージの戦闘力+20%",
+            "B細胞が生産可能になる。ヘルパーT細胞が味方ユニットを強化する効率が+100%される。\n生産力+5\nマクロファージの戦闘力+20%\n樹状細胞の戦闘力+20%\n好酸球の戦闘力+20%",
+            "全ての研究項目で必要研究力が-20%される。\n生産力+5",
+            "全てのユニットの生産時間が-1ターンされる。\n生産力+5",
+            "キラーT細胞が生産可能になる。\nマクロファージの戦闘力+20%\n樹状細胞の戦闘力+20%",
             "キラーT細胞、NK細胞の戦闘力が+33%される。",
-            "プラズマ細胞が敵を弱体化する効率が+33%される。",
-            "B細胞の戦闘力が+100%される。",
-            "プラズマ細胞が弱体化しているユニットを攻撃する味方ユニットは反撃を受けない。\n（自分から攻撃した場合、敵ユニットのみがダメージを受ける）",
-            "プラズマ細胞によって弱体化されているユニットは自身の複製を行わない。",
-            "寄生虫の戦闘力が-25%される。"
+            "プラズマ細胞が敵を弱体化する効率が+33%される。\n生産力+5",
+            "B細胞の戦闘力が+100%される。\n生産力+5",
+            "プラズマ細胞が弱体化しているユニットを攻撃する味方ユニットは反撃を受けない。\n（自分から攻撃した場合、敵ユニットのみがダメージを受ける）\nマクロファージの戦闘力+20%\n樹状細胞の戦闘力+10%\n好酸球の戦闘力+10%",
+            "プラズマ細胞によって弱体化されているユニットは自身の複製を行わない。\nマクロファージの戦闘力+20%\n樹状細胞の戦闘力+10%\n好酸球の戦闘力+10%",
+            "寄生虫の戦闘力が-25%される。\n好酸球の戦闘力+20%"
         };
         // その研究をするために完了しておく必要のある研究
         public static readonly int[,] StudyParent = {
@@ -130,7 +130,7 @@ namespace CommonPart {
         };
         // 必要研究力
         public static readonly int[] maxStudyPower = {
-            10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10
+            100, 200, 320, 350, 360, 500, 300, 300, 520, 520, 480
         };
         // 研究力の初期値
         public static readonly int DefaultStudyPower = 10;
@@ -138,14 +138,14 @@ namespace CommonPart {
 
         #region Product
         // 生産力の初期値
-        public static readonly int DefaultProductPower = 25;
+        public static readonly int DefaultProductPower = 10;
         // それぞれの味方ユニットの一ターン毎に割り当てられる生産力の最大値
         public static readonly int[] maxProductPower = {
-            3, 5, 4, 4, 6, 6, 6, 5, -1
+            4, 4, 4, 4, 5, 5, 6, 5, -1
         };
         // それぞれの味方ユニットの生産するために必要な合計生産力
         public static int[] sumProductPower = {
-            9, 30, 16, 16, 36, 30, 30, 20, -1
+            12, 20, 16, 16, 25, 25, 20, 20, -1
         };
         #endregion
 
@@ -169,10 +169,10 @@ namespace CommonPart {
             }
 
             double r = a >= b ? (double)a / b : (double)b / a;
-            double s = Math.Min(Math.Max((Math.Pow(2.0, r + 1.0) + 3.0) / 7.0, 0.0625), 16.0);
+            double s = Math.Min(Math.Max((Math.Pow(2.0, r + 1.0) + 3.0) / 7.0, 0.01), 100.0);
 
-            Da = (int)(a >= b ? 10.0 / s : 10.0 * s);
-            Db = (int)(a >= b ? 12 * s : 12 / s);
+            Da = (int)(a >= b ? 20.0 / s : 20.0 * s);
+            Db = (int)(a >= b ? 30.0 * s : 30.0 / s);
         }
         // マップ上の位置から現在の画面上の座標を求める
         public static Vector WhereDisp(int x_index, int y_index, Vector camera, int scale)
