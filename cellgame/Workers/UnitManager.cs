@@ -482,7 +482,7 @@ namespace CommonPart
             {
                 int pi = pq.First().pos.i, pj = pq.First().pos.j, pc = pq.First().cost;
                 pq.Remove(pq.First());
-                if (dijkMap[pi, pj] > 0) continue;
+                if (dijkMap[pi, pj] >= 0) continue;
                 dijkMap[pi, pj] = pc;
                 if (pc != 0)
                 {
@@ -584,7 +584,7 @@ namespace CommonPart
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
                         int nc = dijkMap[ni, nj];
-                        if (nc != -1 && ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && nc == dijkMap[tp.i, tp.j] - 1)) || (PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] != 2 && nc >= 0 && nc < dijkMap[tp.i, tp.j]))
+                        if (nc != -1 && ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && nc == dijkMap[tp.i, tp.j] - 1)) || (PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] != 2 && nc >= 0 && nc < tc))
                         {
                             ti = ni;
                             tj = nj;
