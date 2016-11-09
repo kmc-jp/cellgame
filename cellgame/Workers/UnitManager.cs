@@ -406,7 +406,7 @@ namespace CommonPart
                 uMap.data[select_i, select_j].attack = true;
 
                 int da, db;
-                if(uMap.data[select_i, select_j].type == UnitType.Kosan && uMap.data[ai, aj].type == UnitType.Gan)
+                if(uMap.data[select_i, select_j].type == UnitType.Kosan && uMap.data[ai, aj].type == UnitType.Kiseichu)
                     DataBase.Battle(RealStrength(select_i, select_j) * 2, RealStrength(ai, aj), out da, out db);
                 else
                     DataBase.Battle(RealStrength(select_i, select_j), RealStrength(ai, aj), out da, out db);
