@@ -54,7 +54,7 @@ namespace CommonPart
             if (start.Clicked() && select != -1)
             {
                 Delete = true;
-                new PlayScene(scenem, 0, fileNames[select]);
+                new PlayScene(scenem, 0, false, fileNames[select]);
             }
             
             MouseState state = Mouse.GetState();

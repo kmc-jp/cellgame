@@ -73,7 +73,7 @@ namespace CommonPart {
 
         #region Method
         // コンストラクタ
-        public PlayScene(SceneManager s, int map_n, string dataName = "")
+        public PlayScene(SceneManager s, int map_n, bool _isUsers, string dataName = "")
             : base(s)
         {
             StudyManager.studying = Study.Kaku;
@@ -85,7 +85,8 @@ namespace CommonPart {
             minimapBox = new MinimapBox();
             statusBar = new StatusBar();
             proarrBar = new ProductArrangeBar();
-            UnitMap _uMap = ReadMap(map_n + 1);
+            UnitMap _uMap = new UnitMap();
+            if (dataName == "") _uMap = ReadMap(map_n + 1, _isUsers);
             um = new UnitManager(ref unitBox, _uMap);
             next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), Color.Black, "次のターンへ");
 
@@ -128,13 +129,12 @@ namespace CommonPart {
         }
         
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
-        public UnitMap ReadMap(int n)
+        public UnitMap ReadMap(int n, bool isUser)
         {
             UnitMap res = new UnitMap();
-            if (File.Exists(string.Format(@"MapData\MapData{0}.csv",n)))
+            if (isUser ? File.Exists(string.Format(@"MapData\MapData{0}.csv",n)) : File.Exists(string.Format(@"Content\MapData\MapData{0}.csv", n)))
             {
-
-                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
+                using (StreamReader r = (isUser ? new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)) : new StreamReader(string.Format(@"Content\MapData\MapData{0}.csv", n))))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
