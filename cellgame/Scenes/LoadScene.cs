@@ -37,7 +37,7 @@ namespace CommonPart
             start = new Button(new Vector2(700, 600), 160, new Color(255, 155, 79), new Color(255, 111, 0), "ゲームスタート");
             cancel = new Button(new Vector2(900, 600), 160, new Color(255, 155, 79), new Color(255, 111, 0), "キャンセル");
             prePage = new BlindButton(new Vector2(235, 250), new Vector2(15, 350));
-            nexPage = new BlindButton(new Vector2(608, 250), new Vector2(15, 350));
+            nexPage = new BlindButton(new Vector2(603, 250), new Vector2(15, 350));
             bf = new BoxFrame(new Vector2(348, 30), Color.Black);
             pstate = Mouse.GetState();
             fileNames = new List<string>();
@@ -75,9 +75,9 @@ namespace CommonPart
             }
 
             bool on = false;
-            for (int i = 0;i < fileNames.Count - Page * pageMax;i++)
+            for (int i = 0;i < Math.Min(fileNames.Count - Page * pageMax, pageMax);i++)
             {
-                if (state.X >= 250 && state.X <= 608 && state.Y >= 250 + i * 30 && state.Y <= 280 + i * 30)
+                if (state.X >= 250 && state.X <= 603 && state.Y >= 250 + i * 30 && state.Y <= 280 + i * 30)
                 {
                     on = true;
                     if(pstate.LeftButton == ButtonState.Released && state.LeftButton == ButtonState.Pressed)
@@ -113,7 +113,7 @@ namespace CommonPart
             }
             if (Page != Math.Max((fileNames.Count + pageMax - 1) / pageMax - 1, 0))
             {
-                d.Draw(new Vector2(608, 250), DataBase.minimapButton[1], DepthID.Message);
+                d.Draw(new Vector2(603, 250), DataBase.minimapButton[1], DepthID.Message);
             }
             start.Draw(d);
             cancel.Draw(d);

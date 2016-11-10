@@ -53,7 +53,7 @@ namespace CommonPart
             return StudyState[(int)st];
         }
         // 研究を終える
-        static void Do()
+        public static void Do()
         {
             StudyState[(int)studying] = true;
             
@@ -61,12 +61,12 @@ namespace CommonPart
             {
                 case Study.Kaku:
                     ProductScene.productable[5] = true;
-                    PlayScene.productPower += 5;
+                    PlayScene.maxProductPower += 5;
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
                     break;
                 case Study.Saito:
                     ProductScene.productable[7] = true;
-                    PlayScene.productPower += 5;
+                    PlayScene.maxProductPower += 5;
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
                     DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
                     DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
@@ -74,12 +74,12 @@ namespace CommonPart
                 case Study.Inter:
                     for (int i = 0; i < 11; i++)
                         DataBase.maxStudyPower[i] = DataBase.maxStudyPower[i] * 4 / 5;
-                    PlayScene.productPower += 5;
+                    PlayScene.maxProductPower += 5;
                     break;
                 case Study.Kemo:
                     for (int i = 0; i < 8; i++)
                         DataBase.sumProductPower[i] -= DataBase.maxProductPower[i];
-                    PlayScene.productPower += 5;
+                    PlayScene.maxProductPower += 5;
                     break;
                 case Study.Cross:
                     ProductScene.productable[6] = true;
@@ -91,11 +91,11 @@ namespace CommonPart
                     DataBase.MyUnitStrength[(int)UnitType.NK - 1] = DataBase.MyUnitStrength[(int)UnitType.NK - 1] * 4 / 3;
                     break;
                 case Study.Class:
-                    PlayScene.productPower += 5;
+                    PlayScene.maxProductPower += 5;
                     break;
                 case Study.Shinwa:
                     DataBase.MyUnitStrength[(int)UnitType.B - 1] *= 2;
-                    PlayScene.productPower += 5;
+                    PlayScene.maxProductPower += 5;
                     break;
                 case Study.Opuso:
                     DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;

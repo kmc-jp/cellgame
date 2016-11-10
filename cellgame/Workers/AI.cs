@@ -23,6 +23,7 @@ namespace CommonPart
         public static int Gan_turn = 0;
 
         bool moved = false;
+        bool attacked = false;
 
         RandomXS rand;
 
@@ -216,15 +217,11 @@ namespace CommonPart
                 {
                     um.CancelAttacking();
                 }
-                // ウイルスの定着
-                if(um.uMap.data[um.enemyUnits[tmpUnit].i ,um.enemyUnits[tmpUnit].j].type == UnitType.Virus && rand.NextInt(5) == 0)
-                {
-                    um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].Fix();
-                }
                 moved = false;
-                tmpUnit++;
+                attacked = true;
                 pause = 0;
             }
+
 
             // 敵のターン終了
             if (pause >= pauseTime && tmpUnit >= um.enemyUnits.Count)
@@ -263,6 +260,17 @@ namespace CommonPart
                 um.maxMoveState = 30;
                 um.maxAttackState = 15;
                 return;
+            }
+            else if (pause > um.maxAttackState && attacked && !um.attackAnimation)
+            {
+                // ウイルスの定着
+                if (um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].type == UnitType.Virus && rand.NextInt(5) == 0)
+                {
+                    um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].Fix();
+                }
+                attacked = false;
+                pause = 0;
+                tmpUnit++;
             }
             // ユニットの移動
             else if (pause >= pauseTime && !um.moveAnimation)

@@ -100,7 +100,11 @@ namespace CommonPart {
             BodyTemp = 36.0m;
             if (dataName != "")
             {
-                ReadData(dataName);
+                if (!ReadData(dataName))
+                {
+                    Delete = true;
+                    return;
+                }
             }
 
             SoundManager.Music.PlayBGM(BGMID.Normal, true);
@@ -165,6 +169,36 @@ namespace CommonPart {
                         w.Write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\r\n", nMap.Data[i, j], (int)u.type, u.HP, u.LP, u.movePower, u.defcommand, u.command, u.defattack, u.attack, (int)u.enemyType, u.virusState);
                     }
                 }
+                w.Write("{0}\r\n", studyPower);
+                w.Write("{0}\r\n", productPower);
+                w.Write("{0}\r\n", maxProductPower);
+                w.Write("{0}\r\n", BodyTemp);
+                w.Write("{0}\r\n", turn);
+
+                w.Write("{0}\r\n", AI.turnNum);
+                w.Write("{0}\r\n", AI.Gan_N);
+                w.Write("{0}\r\n", AI.Gan_turn);
+                w.Write("{0}", AI.Products.Count);
+                foreach (UnitType ut in AI.Products) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+
+                foreach (bool bl in StudyManager.StudyState) w.Write("{0}\r\n", bl);
+                w.Write("{0}\r\n", (int)StudyManager.studying);
+                w.Write("{0}\r\n", StudyManager.StudyPower);
+                
+                w.Write("{0}", proarrBar.arrangeBox.arrange.Count);
+                foreach (UnitType ut in proarrBar.arrangeBox.arrange) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+
+                w.Write("{0}", proarrBar.productBox.productQ.Count);
+                foreach (UnitType ut in proarrBar.productBox.productQ) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+                w.Write("{0}", proarrBar.productBox.productQ.Count);
+                foreach (UnitType ut in proarrBar.productBox.PP) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+                w.Write("{0}", proarrBar.productBox.productQ.Count);
+                foreach (UnitType ut in proarrBar.productBox.maxPP) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
             }
         }
         // セーブデータを読み込む(読み込めなければfalseを返す)
@@ -175,13 +209,69 @@ namespace CommonPart {
                 using (StreamReader r = new StreamReader(@"SaveData\" + name + ".save"))
                 {
                     string line;
-                    for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX * DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
+                    string[] ss;
+                    for (int i = 0; i < DataBase.MAP_MAX * DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
                     {
-                        string[] ss = line.Split(',');
+                        if ((line = r.ReadLine()) == null) return false;
+
+                        ss = line.Split(',');
                         nMap.Data[i / DataBase.MAP_MAX, i % DataBase.MAP_MAX] = int.Parse(ss[0]);
                         um.uMap.data[i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX] =
                             new Unit((UnitType)int.Parse(ss[1]), int.Parse(ss[2]), int.Parse(ss[3]), int.Parse(ss[4]), bool.Parse(ss[5]), bool.Parse(ss[6]), bool.Parse(ss[7]), bool.Parse(ss[8]), (UnitType)int.Parse(ss[9]), int.Parse(ss[10]));
+                        if (int.Parse(ss[1]) > 0)
+                        {
+                            um.myUnits.Add(new PAIR(i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX));
+                        }
+                        else if (int.Parse(ss[1]) < 0)
+                        {
+                            um.enemyUnits.Add(new PAIR(i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX));
+                        }
                     }
+                    if ((line = r.ReadLine()) == null) return false; studyPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; productPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; maxProductPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; BodyTemp = decimal.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; pturn = turn = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.turnNum = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.Gan_N = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.Gan_turn = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1;i < ss.Length;i++) AI.Products.Add((UnitType)int.Parse(ss[i]));
+
+                    for (int i = 0; i < StudyManager.StudyState.Length; i++)
+                    {
+                        if ((line = r.ReadLine()) == null) return false;
+                        if (bool.Parse(line))
+                        {
+                            StudyManager.studying = (Study)i;
+                            StudyManager.Do();
+                        }
+                    }
+                    if ((line = r.ReadLine()) == null) return false; StudyManager.studying = (Study)int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; StudyManager.StudyPower = int.Parse(line);
+
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.arrangeBox.arrange.Add((UnitType)int.Parse(ss[i]));
+                    }
+
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.productBox.productQ.Add((UnitType)int.Parse(ss[i]));
+                    }
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.productBox.PP.Add(int.Parse(ss[i]));
+                    }
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.productBox.maxPP.Add(int.Parse(ss[i]));
+                    }
+                    studyBar.gauge = new Gauge(new Vector(340, 20), Color.Blue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.SkyBlue);
                     return true;
                 }
             }
@@ -269,16 +359,14 @@ namespace CommonPart {
             minimapBox.Update(pstate, state);
             statusBar.Update();
             proarrBar.Update(pstate, state, um, this, scenem);
-            if(pturn < turn)
-            {
-                proarrBar.productBox.UpdateTurn();
-            }
 
 
             // ユニットの更新
             um.Update(pstate, state, this, false);
-            if (pturn < turn) {
+            if (pturn < turn)
+            {
                 int wl = um.UpdateTurn();
+                proarrBar.productBox.UpdateTurn();
                 if (wl == 1)
                 {
                     new GameClearScene(scenem);

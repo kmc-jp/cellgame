@@ -295,7 +295,7 @@ namespace CommonPart
         #region Variable
         public bool showing = false;
         int select = -1;
-        List<UnitType> arrange;
+        public List<UnitType> arrange;
         FilledBox fb;
         BoxFrame bf;
         const int pageMax = 14;
