@@ -20,6 +20,7 @@ namespace CommonPart
         PlayScene ps;
         int tmpUnit;
         public static int Gan_N = 0;
+        public static int Gan_turn = 0;
 
         bool moved = false;
 
@@ -105,6 +106,7 @@ namespace CommonPart
                         }
                     }
                 }
+                um.Unselect();
             }
             // ユニットの生産
             if (productPower > 80)
@@ -150,8 +152,8 @@ namespace CommonPart
                     Products.RemoveAt(Products.Count - 1);
                 }
             }
-            // ガン細胞のランダム発生
-            if (rand.NextInt(100) == 28)
+            // ガン細胞のランダム発生(30～70ターンに一回必ず出現)
+            if (Gan_turn == 0)
             {
                 bool flag = true;
                 int cnt = 0;
@@ -166,6 +168,11 @@ namespace CommonPart
                         Gan_N++;
                     }
                 } while (flag && cnt++ != 3);
+                Gan_turn = 30 + rand.NextInt(40);
+            }
+            else
+            {
+                Gan_turn--;
             }
         }
         public override void SceneDraw(Drawing d)
@@ -254,6 +261,7 @@ namespace CommonPart
                 Delete = true;
                 pauseTime = 30;
                 um.maxMoveState = 30;
+                um.maxAttackState = 15;
                 return;
             }
             // ユニットの移動
@@ -302,6 +310,8 @@ namespace CommonPart
                 pauseTime = 0;
                 um.maxMoveState = 0;
                 um.moveState = 0;
+                um.maxAttackState = -1;
+                um.attackState = 0;
             }
             ps.UpdateByAI();
         }

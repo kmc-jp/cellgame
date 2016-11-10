@@ -91,6 +91,7 @@ namespace CommonPart {
 
             AI.turnNum = 0;
             AI.Products = new List<UnitType>();
+            AI.Gan_turn = 30 + new RandomXS().NextInt(40);
 
 
             changeTurn = false;

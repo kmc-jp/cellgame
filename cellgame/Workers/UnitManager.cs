@@ -33,9 +33,16 @@ namespace CommonPart
         // 移動した割合
         public int moveState;
         public int maxMoveState = 30;
+        public int attackState;
+        public int maxAttackState = 15;
         PAIR movingUnit;
+        PAIR attackedUnit;
+
+        int Da, Db;
 
         public bool phase = false;
+
+        public bool nex = true;
 
         // ユニットボックス
         UnitBox ub;
@@ -96,11 +103,11 @@ namespace CommonPart
                 UnitType ut = uMap.data[select_i, select_j].type;
                 if (ut == UnitType.Plasma)
                 {
-                    d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), DataBase.Plasma_tex[(int)uMap.data[select_i, select_j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                    d.Draw(pos + ((tpos - pos) * moveState / Math.Max(maxMoveState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), DataBase.Plasma_tex[(int)uMap.data[select_i, select_j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
                 }
                 else
                 {
-                    d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                    d.Draw(pos + ((tpos - pos) * moveState / Math.Max(maxMoveState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
                 }
                 moveState++;
                 if(moveState >= maxMoveState)
@@ -132,7 +139,30 @@ namespace CommonPart
             }
             else if (attackAnimation)
             {
-
+                Vector pos = DataBase.WhereDisp(select_i - (select_j + 1) / 2, select_j, camera, scale);
+                Vector tpos = DataBase.WhereDisp(attackedUnit.i - (attackedUnit.j + 1) / 2, attackedUnit.j, camera, scale);
+                UnitType ut = uMap.data[select_i, select_j].type;
+                if (ut == UnitType.Plasma)
+                {
+                    d.Draw(pos + ((tpos - pos) * Math.Min(attackState, maxAttackState / 3 * 4 - attackState) / Math.Max(maxAttackState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), DataBase.Plasma_tex[(int)uMap.data[select_i, select_j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+                else
+                {
+                    d.Draw(pos + ((tpos - pos) * Math.Min(attackState, maxAttackState / 3 * 4 - attackState) / Math.Max(maxAttackState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+                attackState++;
+                if(attackState > maxAttackState / 3 * 4)
+                {
+                    attackState = 0;
+                    attackAnimation = false;
+                    uMap.data[select_i, select_j].HP -= Da;
+                    uMap.data[attackedUnit.i, attackedUnit.j].HP -= Db;
+                    if (nex && uMap.data[select_i, select_j].movePower == 0)
+                    {
+                        uMap.data[select_i, select_j].command = false;
+                        NextUnit();
+                    }
+                }
             }
             else if (moving || attacking || producing != UnitType.NULL)
             {
@@ -386,9 +416,10 @@ namespace CommonPart
             }
         }
         // 攻撃コマンド
-        public void Attack(int x_index, int y_index, bool nex = true)
+        public void Attack(int x_index, int y_index, bool _nex = true)
         {
             bool flag = true;
+            nex = _nex;
             foreach (PAIR pos in range)
             {
                 if (x_index == pos.i - (pos.j + 1) / 2 && y_index == pos.j)
@@ -404,16 +435,14 @@ namespace CommonPart
             if (!uMap.data[select_i, select_j].attack)
             {
                 uMap.data[select_i, select_j].attack = true;
-
-                int da, db;
+                
                 if(uMap.data[select_i, select_j].type == UnitType.Kosan && uMap.data[ai, aj].type == UnitType.Kiseichu)
-                    DataBase.Battle(RealStrength(select_i, select_j) * 2, RealStrength(ai, aj), out da, out db);
+                    DataBase.Battle(RealStrength(select_i, select_j) * 2, RealStrength(ai, aj), out Da, out Db);
                 else
-                    DataBase.Battle(RealStrength(select_i, select_j), RealStrength(ai, aj), out da, out db);
+                    DataBase.Battle(RealStrength(select_i, select_j), RealStrength(ai, aj), out Da, out Db);
 
-                if(!StudyManager.IsDone(Study.Opuso) || !IsWeakened(ai, aj))
-                    uMap.data[select_i, select_j].HP -= da;
-                uMap.data[ai, aj].HP -= db;
+                if(StudyManager.IsDone(Study.Opuso) && IsWeakened(ai, aj))
+                    Da = 0;
 
                 // ユニットを倒したとき
                 if (uMap.data[ai, aj].HP == 0)
@@ -436,11 +465,9 @@ namespace CommonPart
             }
             attacking = false;
             uMap.data[select_i, select_j].defcommand = true;
-            if (nex && uMap.data[select_i, select_j].movePower == 0)
-            {
-                uMap.data[select_i, select_j].command = false;
-                NextUnit();
-            }
+            attackState = 0;
+            attackAnimation = true;
+            attackedUnit = new PAIR(ai, aj);
         }
         // 攻撃コマンド中止
         public void CancelAttacking()
