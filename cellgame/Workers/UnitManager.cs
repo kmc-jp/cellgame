@@ -523,7 +523,7 @@ namespace CommonPart
                     int ni = pi + si[i], nj = pj + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        int nc = ((PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? pc + 1 : 5);
+                        int nc = ((PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? pc + 1 : Math.Max(pc + 1, pow_2));
                         if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
                         {
                             pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
