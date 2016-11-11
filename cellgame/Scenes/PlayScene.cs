@@ -157,7 +157,7 @@ namespace CommonPart {
         {
             if (!Directory.Exists("SaveData")) Directory.CreateDirectory("SaveData");
 
-            if (name == "") name = DateTime.Now.ToString("yy_MM_dd_hh：mm") + ".save";
+            if (name == "") name = DateTime.Now.ToString("yy_MM_dd_HH：mm") + ".save";
 
             using (StreamWriter w = new StreamWriter(string.Format(@"SaveData\{0}", name)))
             {
