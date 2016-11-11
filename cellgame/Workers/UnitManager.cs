@@ -357,6 +357,7 @@ namespace CommonPart
         // 生産コマンドが実行されるための前処理
         public void StartProducing(UnitType ut)
         {
+            if (moveAnimation || attackAnimation) return;
             producing = ut;
             moving = false;
             attacking = false;
