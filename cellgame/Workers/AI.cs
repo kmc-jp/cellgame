@@ -264,7 +264,7 @@ namespace CommonPart
             else if (pause > um.maxAttackState && attacked && !um.attackAnimation)
             {
                 // ウイルスの定着
-                if (um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].type == UnitType.Virus && rand.NextInt(5) == 0)
+                if (um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].type == UnitType.Virus && rand.NextInt(100) < 5)
                 {
                     um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].Fix();
                 }
