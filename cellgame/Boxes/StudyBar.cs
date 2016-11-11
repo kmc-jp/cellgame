@@ -13,7 +13,7 @@ namespace CommonPart {
         public Gauge gauge;
 
         BlindButton button;
-        TextAndFont nameTex;
+        public TextAndFont nameTex;
 
         
         #endregion

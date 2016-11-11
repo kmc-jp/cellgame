@@ -272,6 +272,7 @@ namespace CommonPart {
                         proarrBar.productBox.maxPP.Add(int.Parse(ss[i]));
                     }
                     studyBar.gauge = new Gauge(new Vector(340, 20), Color.Blue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.SkyBlue);
+                    studyBar.nameTex = new TextAndFont(DataBase.StudyName[(int)StudyManager.studying], Color.Black);
                     return true;
                 }
             }
