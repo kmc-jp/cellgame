@@ -157,6 +157,25 @@ namespace CommonPart
                     attackAnimation = false;
                     uMap.data[select_i, select_j].HP -= Da;
                     uMap.data[attackedUnit.i, attackedUnit.j].HP -= Db;
+                    // ユニットを倒したとき
+                    if (uMap.data[attackedUnit.i, attackedUnit.j].HP == 0)
+                    {
+                        // マクロファージか樹状細胞なら研究力を加算
+                        if (uMap.data[select_i, select_j].type == UnitType.Macro)
+                        {
+                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength / 2;
+                        }
+                        else if (uMap.data[select_i, select_j].type == UnitType.Jujo)
+                        {
+                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength;
+                        }
+                        // B細胞ならプラズマ細胞に進化
+                        else if (uMap.data[select_i, select_j].type == UnitType.B)
+                        {
+                            uMap.data[select_i, select_j].Evolve(uMap.data[attackedUnit.i, attackedUnit.j].type);
+                        }
+                    }
+
                     if (nex && uMap.data[select_i, select_j].movePower == 0)
                     {
                         uMap.data[select_i, select_j].command = false;
@@ -444,24 +463,6 @@ namespace CommonPart
                 if(StudyManager.IsDone(Study.Opuso) && IsWeakened(ai, aj))
                     Da = 0;
 
-                // ユニットを倒したとき
-                if (uMap.data[ai, aj].HP == 0)
-                {
-                    // マクロファージか樹状細胞なら研究力を加算
-                    if(uMap.data[select_i, select_j].type == UnitType.Macro)
-                    {
-                        PlayScene.studyPower += uMap.data[ai, aj].Strength / 2;
-                    }
-                    else if(uMap.data[select_i, select_j].type == UnitType.Jujo)
-                    {
-                        PlayScene.studyPower += uMap.data[ai, aj].Strength;
-                    }
-                    // B細胞ならプラズマ細胞に進化
-                    else if (uMap.data[select_i, select_j].type == UnitType.B)
-                    {
-                        uMap.data[select_i, select_j].Evolve(uMap.data[ai, aj].type);
-                    }
-                }
             }
             attacking = false;
             uMap.data[select_i, select_j].defcommand = true;
