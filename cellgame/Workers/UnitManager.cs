@@ -175,6 +175,19 @@ namespace CommonPart
                             uMap.data[select_i, select_j].Evolve(uMap.data[attackedUnit.i, attackedUnit.j].type);
                         }
                     }
+                    // ユニットが倒されたとき
+                    if (uMap.data[select_i, select_j].HP == 0)
+                    {
+                        // マクロファージか樹状細胞なら研究力を加算
+                        if (uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.Macro)
+                        {
+                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength / 2;
+                        }
+                        else if (uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.Jujo)
+                        {
+                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength;
+                        }
+                    }
 
                     if (nex && uMap.data[select_i, select_j].movePower == 0)
                     {

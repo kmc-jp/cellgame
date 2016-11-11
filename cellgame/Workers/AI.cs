@@ -42,7 +42,7 @@ namespace CommonPart
         {
             enemyTurn = true;
             turnNum++;
-            productPower += 32;
+            productPower += turnNum > 50 ? 48 : 32;
             nMap = _nMap;
             um = _um;
             ps = _ps;
@@ -110,7 +110,7 @@ namespace CommonPart
                 um.Unselect();
             }
             // ユニットの生産
-            if (productPower > 80)
+            if (productPower > (turnNum > 50 ? 60 : 80))
             {
                 if(productPower >= need[(int)UnitType.Kiseichu + 5] && um.myUnits.Count - um.enemyUnits.Count >= 5 && um.enemyUnits.Count <= 5)
                 {
