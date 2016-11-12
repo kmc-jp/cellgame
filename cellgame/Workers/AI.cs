@@ -8,10 +8,10 @@ namespace CommonPart
 {
     class AI : Scene
     {
-        static int turnNum = 0;
+        public static int turnNum;
         public static bool enemyTurn = false;
         static int productPower = -50;
-        static List<UnitType> Products;
+        public static List<UnitType> Products;
         static readonly int[] need = {
             15, 15, 25, 1000, 50
         };
@@ -19,13 +19,16 @@ namespace CommonPart
         UnitManager um;
         PlayScene ps;
         int tmpUnit;
-        static int Gan_N = 0;
+        public static int Gan_N = 0;
+        public static int Gan_turn = 0;
 
         bool moved = false;
+        bool attacked = false;
 
         RandomXS rand;
 
         int pause = 0;
+        int pauseTime = 30;
 
         // マップのすべての座標の点数
         int[,] scoreMap;
@@ -39,13 +42,12 @@ namespace CommonPart
         {
             enemyTurn = true;
             turnNum++;
-            productPower += 25;
+            productPower += turnNum > 50 ? 48 : 32;
             nMap = _nMap;
             um = _um;
             ps = _ps;
             tmpUnit = 0;
-
-            Products = new List<UnitType>();
+            
 
             rand = new RandomXS();
 
@@ -62,7 +64,10 @@ namespace CommonPart
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if (um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        }
                     }
                 }
                 else if (tp == UnitType.Kabi)
@@ -71,31 +76,47 @@ namespace CommonPart
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if (um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        }
                     }
                 }
                 else if (tp == UnitType.Virus)
                 {
-                    if (um.uMap.data[um.enemyUnits[i].i, um.enemyUnits[i].j].virusState == 1 && rand.NextInt(100) < 50)
+                    if (um.uMap.data[um.enemyUnits[i].i, um.enemyUnits[i].j].virusState == 1 && rand.NextInt(100) < 30)
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if(um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        }
                     }
                 }
                 else if (tp == UnitType.Gan)
                 {
-                    if (rand.NextInt(100) < Gan_N * 20)
+                    if (rand.NextInt(100) < 20)
                     {
                         um.Select(um.enemyUnits[i].i - (um.enemyUnits[i].j + 1) / 2, um.enemyUnits[i].j);
                         um.StartDoubling();
-                        um.Double(um.range[rand.NextInt(um.range.Count)]);
+                        if (um.range.Count != 0)
+                        {
+                            um.Double(um.range[rand.NextInt(um.range.Count)]);
+                            Gan_N++;
+                        }
                     }
                 }
+                um.Unselect();
             }
             // ユニットの生産
-            if (productPower >= 50)
+            if (productPower > (turnNum > 50 ? 60 : 80))
             {
+                if(productPower >= need[(int)UnitType.Kiseichu + 5] && um.myUnits.Count - um.enemyUnits.Count >= 5 && um.enemyUnits.Count <= 5)
+                {
+                    productPower -= need[(int)UnitType.Kiseichu + 5];
+                    Products.Insert(0, UnitType.Kiseichu);
+                }
                 while (true)
                 {
                     int rr = rand.NextInt(100);
@@ -132,8 +153,8 @@ namespace CommonPart
                     Products.RemoveAt(Products.Count - 1);
                 }
             }
-            // ガン細胞のランダム発生
-            if (rand.NextInt(100) == 28)
+            // ガン細胞のランダム発生(30～70ターンに一回必ず出現)
+            if (Gan_turn == 0)
             {
                 bool flag = true;
                 int cnt = 0;
@@ -148,6 +169,11 @@ namespace CommonPart
                         Gan_N++;
                     }
                 } while (flag && cnt++ != 3);
+                Gan_turn = 30 + rand.NextInt(40);
+            }
+            else
+            {
+                Gan_turn--;
             }
         }
         public override void SceneDraw(Drawing d)
@@ -159,43 +185,46 @@ namespace CommonPart
 
             base.SceneDraw(d);
         }
-        // ユニットの移動
         public override void SceneUpdate()
         {
             pause++;
-            if (pause >= 30 && moved && !um.moveAnimation)
+            // ユニットの攻撃
+            if (pause >= pauseTime && moved && !um.moveAnimation)
             {
                 um.StartAttacking();
-                int tg = -1, mins = 1000;
+                int mins = 1000;
+                List<int> kouho = new List<int>();
                 for (int i = 0; i < um.range.Count; i++)
                 {
                     int rs = um.RealStrength(um.range[i].i, um.range[i].j);
                     if (rs < mins)
                     {
-                        tg = i;
+                        kouho.Clear();
+                        kouho.Add(i);
                         mins = rs;
                     }
+                    else if(rs == mins)
+                    {
+                        kouho.Add(i);
+                    }
                 }
-                if (tg != -1)
+                if (kouho.Count != 0)
                 {
-                    PAIR p = um.range[tg];
+                    PAIR p = um.range[kouho[rand.NextInt(kouho.Count)]];
                     um.Attack(p.i - (p.j + 1) / 2, p.j, false);
                 }
                 else
                 {
                     um.CancelAttacking();
                 }
-                // ウイルスの定着
-                if(um.uMap.data[um.enemyUnits[tmpUnit].i ,um.enemyUnits[tmpUnit].j].type == UnitType.Virus && rand.NextInt(5) == 0)
-                {
-                    um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].Fix();
-                }
                 moved = false;
-                tmpUnit++;
+                attacked = true;
                 pause = 0;
             }
 
-            if (pause >= 30 && tmpUnit == um.enemyUnits.Count)
+
+            // 敵のターン終了
+            if (pause >= pauseTime && tmpUnit >= um.enemyUnits.Count)
             {
                 if (PlayScene.BodyTemp > 42m)
                 {
@@ -227,29 +256,51 @@ namespace CommonPart
                 enemyTurn = false;
                 um.NextUnit();
                 Delete = true;
+                pauseTime = 30;
+                um.maxMoveState = 30;
+                um.maxAttackState = 15;
                 return;
             }
-            else if(pause >= 30 && !um.moveAnimation)
+            else if (pause > um.maxAttackState && attacked && !um.attackAnimation)
+            {
+                // ウイルスの定着
+                if (um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].type == UnitType.Virus && rand.NextInt(100) < 5)
+                {
+                    um.uMap.data[um.enemyUnits[tmpUnit].i, um.enemyUnits[tmpUnit].j].Fix();
+                }
+                attacked = false;
+                pause = 0;
+                tmpUnit++;
+            }
+            // ユニットの移動
+            else if (pause >= pauseTime && !um.moveAnimation)
             {
                 PAIR eu = um.enemyUnits[tmpUnit];
                 um.Select(eu.i - (eu.j + 1) / 2, eu.j);
                 um.StartMoving();
-                if (rand.NextInt(100) < 10 && um.range.Count != 0)
+                if (rand.NextInt(100) < 1 && um.range.Count != 0)
                 {
                     eu = um.range[rand.NextInt(um.range.Count)];
                 }
                 else
                 {
                     int score = scoreMap[eu.i, eu.j];
+                    List<int> kouho = new List<int>();
                     for (int j = 0; j < um.range.Count; j++)
                     {
                         PAIR p = um.range[j];
-                        if (scoreMap[p.i, p.j] >= score)
+                        if (scoreMap[p.i, p.j] > score)
                         {
                             score = scoreMap[p.i, p.j];
-                            eu = p;
+                            kouho.Clear();
+                            kouho.Add(j);
+                        }
+                        else if (scoreMap[p.i, p.j] == score)
+                        {
+                            kouho.Add(j);
                         }
                     }
+                    if (kouho.Count != 0) eu = um.range[kouho[rand.NextInt(kouho.Count)]];
                 }
                 if (eu != um.enemyUnits[tmpUnit])
                 {
@@ -262,6 +313,14 @@ namespace CommonPart
                 moved = true;
                 pause = 0;
             }
+            if (Input.GetKeyPressed(KeyID.Select))
+            {
+                pauseTime = 0;
+                um.maxMoveState = 0;
+                um.moveState = 0;
+                um.maxAttackState = -1;
+                um.attackState = 0;
+            }
             ps.UpdateByAI();
         }
         // スコアマップを初期化
@@ -272,7 +331,56 @@ namespace CommonPart
             {
                 for (int j = 0; j < DataBase.MAP_MAX; j++)
                 {
-                    scoreMap[i + (j + 1) / 2, j] = nMap.Data[i, j] == 4 ? 2 : nMap.Data[i, j] == 3 ? -1 : nMap.Data[i, j] == 2 ? 1 : 0;
+                    if (nMap.Data[i, j] == 3)
+                    {
+                        scoreMap[i + (j + 1) / 2, j] = -5;
+                        int[,] dijkMap = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
+                        for (int ii = 0; ii < DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2; ii++)
+                        {
+                            for (int jj = 0; jj < DataBase.MAP_MAX; jj++)
+                            {
+                                dijkMap[ii, jj] = -1;
+                            }
+                        }
+                        SortedSet<UnitManager.DijkstraNode> pq = new SortedSet<UnitManager.DijkstraNode>(new UnitManager.CompareDijkstraNode());
+                        pq.Add(new UnitManager.DijkstraNode(0, new PAIR(i + (j + 1) / 2, j)));
+                        while (pq.Count != 0)
+                        {
+                            int pi = pq.First().pos.i, pj = pq.First().pos.j, pc = pq.First().cost;
+                            pq.Remove(pq.First());
+                            if (dijkMap[pi, pj] >= 0) continue;
+                            dijkMap[pi, pj] = pc;
+                            if (um.uMap.data[pi, pj].type > 0)
+                            {
+                                if (pc < 10)
+                                {
+                                    scoreMap[i + (j + 1) / 2, j] += 8;
+                                }
+                                else
+                                {
+                                    scoreMap[i + (j + 1) / 2, j] += 5;
+                                    break;
+                                }
+                            }
+                            if (pc == 5) continue;
+                            for (int ii = 0; ii < 6; ii++)
+                            {
+                                int ni = pi + si[ii], nj = pj + sj[ii];
+                                if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
+                                {
+                                    int nc = pc + ((PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5);
+                                    if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && pc < 10 && um.uMap.data[ni, nj].type >= 0)
+                                    {
+                                        pq.Add(new UnitManager.DijkstraNode(nc, new PAIR(ni, nj)));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        scoreMap[i + (j + 1) / 2, j] = nMap.Data[i, j] == 4 ? 2 : 0;
+                    }
                 }
             }
             for (int ii = 0; ii < um.myUnits.Count; ii++)
@@ -283,7 +391,7 @@ namespace CommonPart
                     int ni = pi + si[i], nj = pj + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        scoreMap[ni, nj] += 10;
+                        scoreMap[ni, nj] += 5;
                     }
                 }
             }
@@ -295,7 +403,7 @@ namespace CommonPart
                 {
                     for (int j = 0; j < DataBase.MAP_MAX; j++)
                     {
-                        dijkMap[i, j] = -1;
+                        dijkMap[i, j] = -3;
                     }
                 }
                 SortedSet<UnitManager.DijkstraNode> pq = new SortedSet<UnitManager.DijkstraNode>(new UnitManager.CompareDijkstraNode());

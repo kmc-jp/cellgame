@@ -51,16 +51,18 @@ namespace CommonPart
                 if(u.type == UnitType.Plasma)
                 {
                     d.Draw(windowPosition + new Vector(20, 20), DataBase.Plasma_tex[(int)u.enemyType + 5], DepthID.Message);
+                    new TextAndFont(u.Name + string.Format("\n({0})", DataBase.EnemyUnitName[(int)u.enemyType + 5]), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
                 }
-                if (u.type == UnitType.Virus)
+                else if (u.type == UnitType.Virus)
                 {
                     d.Draw(windowPosition + new Vector(20, 20), DataBase.Virus_tex[u.virusState], DepthID.Message);
+                    new TextAndFont(u.Name + (u.virusState == 0 ? "" : "\n(定着状態)"), FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
                 }
                 else
                 {
                     d.Draw(windowPosition + new Vector(20, 20), u.type > 0 ? DataBase.myUnit_tex[(int)u.type - 1] : DataBase.enemyUnit_tex[(int)u.type + 5], DepthID.Message);
+                    new TextAndFont(u.Name, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
                 }
-                new TextAndFont(u.Name, FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(180, 80), DepthID.Message);
 
                 new TextAndFont("HP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 160), DepthID.Message);
                 new TextAndFont("LP", FontID.Medium, Color.Black).Draw(d, windowPosition + new Vector(20, 180), DepthID.Message);
@@ -105,7 +107,7 @@ namespace CommonPart
         {
             for(int i = 0;i < command_N; i++)
             {
-                commandButton[i].Update(pstate, state, u.type > 0);
+                commandButton[i].Update(pstate, state, x_index != -1 && u.type > 0);
             }
 
             if (u.type <= 0 || PlayScene.um.moveAnimation || PlayScene.um.attackAnimation) return;

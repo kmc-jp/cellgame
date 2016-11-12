@@ -27,7 +27,7 @@ namespace CommonPart
             d.Draw(windowPosition + new Vector(450, 0), DataBase.temperIcon, DepthID.Message);
             new TextAndFont(string.Format("{0}",PlayScene.studyPower), Color.Black).Draw(d, windowPosition + new Vector(130, 20), DepthID.Message);
             new TextAndFont(string.Format("{0}/{1}", PlayScene.productPower, PlayScene.maxProductPower), Color.Black).Draw(d, windowPosition + new Vector(330, 20), DepthID.Message);
-            new TextAndFont(string.Format("{0}", (decimal)((int)(PlayScene.BodyTemp * 10)) / 10), Color.Black).Draw(d, windowPosition + new Vector(530, 20), DepthID.Message);
+            new TextAndFont(string.Format("{0}" + ((int)(PlayScene.BodyTemp * 10) % 10 == 0 ? ".0" : ""), (decimal)((int)(PlayScene.BodyTemp * 10)) / 10), Color.Black).Draw(d, windowPosition + new Vector(530, 20), DepthID.Message);
         }
         #endregion
     }// class end

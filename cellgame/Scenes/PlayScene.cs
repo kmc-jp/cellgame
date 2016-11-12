@@ -65,7 +65,7 @@ namespace CommonPart {
         int pturn = 0;
         public int turn = 0;
 
-        public static bool changeTurn = false;
+        public static bool changeTurn;
 
         AI ai;
 
@@ -73,9 +73,11 @@ namespace CommonPart {
 
         #region Method
         // コンストラクタ
-        public PlayScene(SceneManager s, int map_n, string dataName = "")
+        public PlayScene(SceneManager s, int map_n, bool _isUsers, string dataName = "")
             : base(s)
         {
+            StudyManager.studying = Study.Kaku;
+            StudyManager.StudyPower = 0;
             pstate = Mouse.GetState();
             nMap = new Map();
             studyBar = new StudyBar();
@@ -83,18 +85,27 @@ namespace CommonPart {
             minimapBox = new MinimapBox();
             statusBar = new StatusBar();
             proarrBar = new ProductArrangeBar();
-            UnitMap _uMap = ReadMap(map_n + 1);
+            UnitMap _uMap = new UnitMap();
+            if (dataName == "") _uMap = ReadMap(map_n + 1, _isUsers);
             um = new UnitManager(ref unitBox, _uMap);
             next = new Button(new Vector(1120, 912), 160, new Color(255, 162, 0), Color.Black, "次のターンへ");
 
+            AI.turnNum = 0;
+            AI.Products = new List<UnitType>();
+            AI.Gan_turn = 30 + new RandomXS().NextInt(40);
 
 
+            changeTurn = false;
             studyPower = DataBase.DefaultStudyPower;
             productPower = maxProductPower = DataBase.DefaultProductPower;
             BodyTemp = 36.0m;
             if (dataName != "")
             {
-                ReadData(dataName);
+                if (!ReadData(dataName))
+                {
+                    Delete = true;
+                    return;
+                }
             }
 
             SoundManager.Music.PlayBGM(BGMID.Normal, true);
@@ -118,13 +129,12 @@ namespace CommonPart {
         }
         
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
-        public UnitMap ReadMap(int n)
+        public UnitMap ReadMap(int n, bool isUser)
         {
             UnitMap res = new UnitMap();
-            if (File.Exists(string.Format(@"MapData\MapData{0}.csv",n)))
+            if (isUser ? File.Exists(string.Format(@"MapData\MapData{0}.csv",n)) : File.Exists(string.Format(@"Content\MapData\MapData{0}.csv", n)))
             {
-
-                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
+                using (StreamReader r = (isUser ? new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)) : new StreamReader(string.Format(@"Content\MapData\MapData{0}.csv", n))))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
@@ -147,7 +157,7 @@ namespace CommonPart {
         {
             if (!Directory.Exists("SaveData")) Directory.CreateDirectory("SaveData");
 
-            if (name == "") name = DateTime.Now.ToString("yy_MM_dd_hh：mm") + ".save";
+            if (name == "") name = DateTime.Now.ToString("yy_MM_dd_HH：mm") + ".save";
 
             using (StreamWriter w = new StreamWriter(string.Format(@"SaveData\{0}", name)))
             {
@@ -159,6 +169,36 @@ namespace CommonPart {
                         w.Write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10}\r\n", nMap.Data[i, j], (int)u.type, u.HP, u.LP, u.movePower, u.defcommand, u.command, u.defattack, u.attack, (int)u.enemyType, u.virusState);
                     }
                 }
+                w.Write("{0}\r\n", studyPower);
+                w.Write("{0}\r\n", productPower);
+                w.Write("{0}\r\n", maxProductPower);
+                w.Write("{0}\r\n", BodyTemp);
+                w.Write("{0}\r\n", turn);
+
+                w.Write("{0}\r\n", AI.turnNum);
+                w.Write("{0}\r\n", AI.Gan_N);
+                w.Write("{0}\r\n", AI.Gan_turn);
+                w.Write("{0}", AI.Products.Count);
+                foreach (UnitType ut in AI.Products) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+
+                foreach (bool bl in StudyManager.StudyState) w.Write("{0}\r\n", bl);
+                w.Write("{0}\r\n", (int)StudyManager.studying);
+                w.Write("{0}\r\n", StudyManager.StudyPower);
+                
+                w.Write("{0}", proarrBar.arrangeBox.arrange.Count);
+                foreach (UnitType ut in proarrBar.arrangeBox.arrange) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+
+                w.Write("{0}", proarrBar.productBox.productQ.Count);
+                foreach (UnitType ut in proarrBar.productBox.productQ) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+                w.Write("{0}", proarrBar.productBox.productQ.Count);
+                foreach (UnitType ut in proarrBar.productBox.PP) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
+                w.Write("{0}", proarrBar.productBox.productQ.Count);
+                foreach (UnitType ut in proarrBar.productBox.maxPP) w.Write(",{0}", (int)ut);
+                w.Write("\r\n");
             }
         }
         // セーブデータを読み込む(読み込めなければfalseを返す)
@@ -169,13 +209,70 @@ namespace CommonPart {
                 using (StreamReader r = new StreamReader(@"SaveData\" + name + ".save"))
                 {
                     string line;
-                    for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX * DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
+                    string[] ss;
+                    for (int i = 0; i < DataBase.MAP_MAX * DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
                     {
-                        string[] ss = line.Split(',');
+                        if ((line = r.ReadLine()) == null) return false;
+
+                        ss = line.Split(',');
                         nMap.Data[i / DataBase.MAP_MAX, i % DataBase.MAP_MAX] = int.Parse(ss[0]);
                         um.uMap.data[i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX] =
                             new Unit((UnitType)int.Parse(ss[1]), int.Parse(ss[2]), int.Parse(ss[3]), int.Parse(ss[4]), bool.Parse(ss[5]), bool.Parse(ss[6]), bool.Parse(ss[7]), bool.Parse(ss[8]), (UnitType)int.Parse(ss[9]), int.Parse(ss[10]));
+                        if (int.Parse(ss[1]) > 0)
+                        {
+                            um.myUnits.Add(new PAIR(i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX));
+                        }
+                        else if (int.Parse(ss[1]) < 0)
+                        {
+                            um.enemyUnits.Add(new PAIR(i / DataBase.MAP_MAX + (i % DataBase.MAP_MAX + 1) / 2, i % DataBase.MAP_MAX));
+                        }
                     }
+                    if ((line = r.ReadLine()) == null) return false; studyPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; productPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; maxProductPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; BodyTemp = decimal.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; pturn = turn = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.turnNum = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.Gan_N = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.Gan_turn = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1;i < ss.Length;i++) AI.Products.Add((UnitType)int.Parse(ss[i]));
+
+                    for (int i = 0; i < StudyManager.StudyState.Length; i++)
+                    {
+                        if ((line = r.ReadLine()) == null) return false;
+                        if (bool.Parse(line))
+                        {
+                            StudyManager.studying = (Study)i;
+                            StudyManager.Do();
+                        }
+                    }
+                    if ((line = r.ReadLine()) == null) return false; StudyManager.studying = (Study)int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; StudyManager.StudyPower = int.Parse(line);
+
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.arrangeBox.arrange.Add((UnitType)int.Parse(ss[i]));
+                    }
+
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.productBox.productQ.Add((UnitType)int.Parse(ss[i]));
+                    }
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.productBox.PP.Add(int.Parse(ss[i]));
+                    }
+                    if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
+                    for (int i = 1; i < ss.Length; i++)
+                    {
+                        proarrBar.productBox.maxPP.Add(int.Parse(ss[i]));
+                    }
+                    studyBar.gauge = new Gauge(new Vector(340, 20), Color.Blue, 0, StudyManager.MaxStudyPower, StudyManager.StudyPower, Color.SkyBlue);
+                    studyBar.nameTex = new TextAndFont(DataBase.StudyName[(int)StudyManager.studying], Color.Black);
                     return true;
                 }
             }
@@ -263,16 +360,14 @@ namespace CommonPart {
             minimapBox.Update(pstate, state);
             statusBar.Update();
             proarrBar.Update(pstate, state, um, this, scenem);
-            if(pturn < turn)
-            {
-                proarrBar.productBox.UpdateTurn();
-            }
 
 
             // ユニットの更新
             um.Update(pstate, state, this, false);
-            if (pturn < turn) {
+            if (pturn < turn)
+            {
                 int wl = um.UpdateTurn();
+                proarrBar.productBox.UpdateTurn();
                 if (wl == 1)
                 {
                     new GameClearScene(scenem);
@@ -302,6 +397,13 @@ namespace CommonPart {
             
             // Xキーが押されるとセーブ
             if (Input.GetKeyPressed(KeyID.Cancel)) new SaveConfScene(scenem, this);
+
+            // Escキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Escape))
+            {
+                Delete = true;
+                new SaveConfScene(scenem, this);
+            }
 
             pturn = turn;
             pstate = state;

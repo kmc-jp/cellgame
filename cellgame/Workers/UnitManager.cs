@@ -31,11 +31,18 @@ namespace CommonPart
         int[,] dijkMap = new int[DataBase.MAP_MAX + (DataBase.MAP_MAX + 1) / 2, DataBase.MAP_MAX];
         List<PAIR> moveRoute = new List<PAIR>();
         // 移動した割合
-        int moveState;
-        const int maxMoveState = 30;
+        public int moveState;
+        public int maxMoveState = 30;
+        public int attackState;
+        public int maxAttackState = 15;
         PAIR movingUnit;
+        PAIR attackedUnit;
+
+        int Da, Db;
 
         public bool phase = false;
+
+        public bool nex = true;
 
         // ユニットボックス
         UnitBox ub;
@@ -70,6 +77,10 @@ namespace CommonPart
                     else if (uMap.GetType(i, j) < 0)
                     {
                         enemyUnits.Add(new PAIR(i + (j + 1) / 2, j));
+                        if(GetType(i, j) == UnitType.Gan)
+                        {
+                            AI.Gan_N++;
+                        }
                     }
                 }
             }
@@ -89,9 +100,17 @@ namespace CommonPart
                 int tx_index = moveRoute.Last().i - (moveRoute.Last().j + 1) / 2, ty_index = moveRoute.Last().j;
                 Vector pos = DataBase.WhereDisp(x_index, y_index, camera, scale);
                 Vector tpos = DataBase.WhereDisp(tx_index, ty_index, camera, scale);
-                d.Draw(pos + ((tpos - pos) * moveState / maxMoveState) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                UnitType ut = uMap.data[select_i, select_j].type;
+                if (ut == UnitType.Plasma)
+                {
+                    d.Draw(pos + ((tpos - pos) * moveState / Math.Max(maxMoveState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), DataBase.Plasma_tex[(int)uMap.data[select_i, select_j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+                else
+                {
+                    d.Draw(pos + ((tpos - pos) * moveState / Math.Max(maxMoveState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
                 moveState++;
-                if(moveState == maxMoveState)
+                if(moveState >= maxMoveState)
                 {
                     moveState = 0;
                     movingUnit = moveRoute.Last();
@@ -120,7 +139,67 @@ namespace CommonPart
             }
             else if (attackAnimation)
             {
+                Vector pos = DataBase.WhereDisp(select_i - (select_j + 1) / 2, select_j, camera, scale);
+                Vector tpos = DataBase.WhereDisp(attackedUnit.i - (attackedUnit.j + 1) / 2, attackedUnit.j, camera, scale);
+                UnitType ut = uMap.data[select_i, select_j].type;
+                if (ut == UnitType.Plasma)
+                {
+                    d.Draw(pos + ((tpos - pos) * Math.Min(attackState, maxAttackState / 3 * 4 - attackState) / Math.Max(maxAttackState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), DataBase.Plasma_tex[(int)uMap.data[select_i, select_j].enemyType + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+                else
+                {
+                    d.Draw(pos + ((tpos - pos) * Math.Min(attackState, maxAttackState / 3 * 4 - attackState) / Math.Max(maxAttackState, 1)) + new Vector(26 * DataBase.MapScale[scale], 36 * DataBase.MapScale[scale]), uMap.data[select_i, select_j].type > 0 ? DataBase.myUnit_tex[(int)uMap.data[select_i, select_j].type - 1] : DataBase.enemyUnit_tex[(int)uMap.data[select_i, select_j].type + 5], DepthID.Player, (float)DataBase.MapScale[scale]);
+                }
+                attackState++;
+                if(attackState > maxAttackState / 3 * 4)
+                {
+                    attackState = 0;
+                    attackAnimation = false;
+                    uMap.data[select_i, select_j].HP -= Da;
+                    uMap.data[attackedUnit.i, attackedUnit.j].HP -= Db;
+                    // ユニットを倒したとき
+                    if (uMap.data[attackedUnit.i, attackedUnit.j].HP == 0)
+                    {
+                        // マクロファージか樹状細胞なら研究力を加算
+                        if (uMap.data[select_i, select_j].type == UnitType.Macro)
+                        {
+                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength / 2;
+                        }
+                        else if (uMap.data[select_i, select_j].type == UnitType.Jujo)
+                        {
+                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength;
+                        }
+                        // B細胞ならプラズマ細胞に進化
+                        else if (uMap.data[select_i, select_j].HP != 0 && uMap.data[select_i, select_j].type == UnitType.B)
+                        {
+                            uMap.data[select_i, select_j].Evolve(uMap.data[attackedUnit.i, attackedUnit.j].type);
+                        }
+                    }
+                    // ユニットが倒されたとき
+                    if (uMap.data[select_i, select_j].HP == 0)
+                    {
+                        // マクロファージか樹状細胞なら研究力を加算
+                        if (uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.Macro)
+                        {
+                            PlayScene.studyPower += uMap.data[select_i, select_j].Strength / 2;
+                        }
+                        else if (uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.Jujo)
+                        {
+                            PlayScene.studyPower += uMap.data[select_i, select_j].Strength;
+                        }
+                        // B細胞ならプラズマ細胞に進化
+                        else if (uMap.data[attackedUnit.i, attackedUnit.j].HP != 0 && uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.B)
+                        {
+                            uMap.data[attackedUnit.i, attackedUnit.j].Evolve(uMap.data[select_i, select_j].type);
+                        }
+                    }
 
+                    if (nex && uMap.data[select_i, select_j].movePower == 0)
+                    {
+                        uMap.data[select_i, select_j].command = false;
+                        NextUnit();
+                    }
+                }
             }
             else if (moving || attacking || producing != UnitType.NULL)
             {
@@ -280,7 +359,7 @@ namespace CommonPart
         // スキップコマンド
         public void Skip()
         {
-            if (moving || attacking || select_i == -1) return;
+            if (moving || attacking || select_i < 0) return;
 
             uMap.data[select_i, select_j].command = false;
             NextUnit();
@@ -288,7 +367,7 @@ namespace CommonPart
         // 休眠コマンド
         public void Sleep()
         {
-            if (moving || attacking) return;
+            if (moving || attacking || select_i < 0) return;
 
             uMap.data[select_i, select_j].defcommand = uMap.data[select_i, select_j].command = false;
             NextUnit();
@@ -296,6 +375,7 @@ namespace CommonPart
         // 生産コマンドが実行されるための前処理
         public void StartProducing(UnitType ut)
         {
+            if (moveAnimation || attackAnimation) return;
             producing = ut;
             moving = false;
             attacking = false;
@@ -374,9 +454,10 @@ namespace CommonPart
             }
         }
         // 攻撃コマンド
-        public void Attack(int x_index, int y_index, bool nex = true)
+        public void Attack(int x_index, int y_index, bool _nex = true)
         {
             bool flag = true;
+            nex = _nex;
             foreach (PAIR pos in range)
             {
                 if (x_index == pos.i - (pos.j + 1) / 2 && y_index == pos.j)
@@ -392,43 +473,21 @@ namespace CommonPart
             if (!uMap.data[select_i, select_j].attack)
             {
                 uMap.data[select_i, select_j].attack = true;
-
-                int da, db;
-                if(uMap.data[select_i, select_j].type == UnitType.Kosan)
-                    DataBase.Battle(RealStrength(select_i, select_j) * 2, RealStrength(ai, aj), out da, out db);
+                
+                if(uMap.data[select_i, select_j].type == UnitType.Kosan && uMap.data[ai, aj].type == UnitType.Kiseichu)
+                    DataBase.Battle(RealStrength(select_i, select_j) * 2, RealStrength(ai, aj), out Da, out Db);
                 else
-                    DataBase.Battle(RealStrength(select_i, select_j), RealStrength(ai, aj), out da, out db);
+                    DataBase.Battle(RealStrength(select_i, select_j), RealStrength(ai, aj), out Da, out Db);
 
-                if(!StudyManager.IsDone(Study.Opuso) || !IsWeakened(ai, aj))
-                    uMap.data[select_i, select_j].HP -= da;
-                uMap.data[ai, aj].HP -= db;
+                if(StudyManager.IsDone(Study.Opuso) && IsWeakened(ai, aj))
+                    Da = 0;
 
-                // ユニットを倒したとき
-                if (uMap.data[ai, aj].HP == 0)
-                {
-                    // マクロファージか樹状細胞なら研究力を加算
-                    if(uMap.data[select_i, select_j].type == UnitType.Macro)
-                    {
-                        PlayScene.studyPower += uMap.data[ai, aj].Strength / 2;
-                    }
-                    else if(uMap.data[select_i, select_j].type == UnitType.Jujo)
-                    {
-                        PlayScene.studyPower += uMap.data[ai, aj].Strength;
-                    }
-                    // B細胞ならプラズマ細胞に進化
-                    else if (uMap.data[select_i, select_j].type == UnitType.B)
-                    {
-                        uMap.data[select_i, select_j].Evolve(uMap.data[ai, aj].type);
-                    }
-                }
             }
             attacking = false;
             uMap.data[select_i, select_j].defcommand = true;
-            if (nex && uMap.data[select_i, select_j].movePower == 0)
-            {
-                uMap.data[select_i, select_j].command = false;
-                NextUnit();
-            }
+            attackState = 0;
+            attackAnimation = true;
+            attackedUnit = new PAIR(ai, aj);
         }
         // 攻撃コマンド中止
         public void CancelAttacking()
@@ -470,19 +529,20 @@ namespace CommonPart
             {
                 int pi = pq.First().pos.i, pj = pq.First().pos.j, pc = pq.First().cost;
                 pq.Remove(pq.First());
-                if (dijkMap[pi, pj] > 0) continue;
+                if (dijkMap[pi, pj] >= 0) continue;
                 dijkMap[pi, pj] = pc;
                 if (pc != 0)
                 {
                     res.Add(new PAIR(pi, pj));
                     costs.Add(pc);
                 }
+                if (pc == 5) continue;
                 for (int i = 0;i < 6; i++)
                 {
                     int ni = pi + si[i], nj = pj + sj[i];
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
-                        int nc = pc + ((PlayScene.nMap.Data[pi - (pj + 1) / 2, pj] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5);
+                        int nc = ((PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? pc + 1 : Math.Max(pc + 1, pow_2));
                         if (PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] != 0 && nc <= pow_2 && uMap.data[ni, nj].type == UnitType.NULL)
                         {
                             pq.Add(new DijkstraNode(nc, new PAIR(ni, nj)));
@@ -494,6 +554,7 @@ namespace CommonPart
         // 移動のコマンドが実行されるための前処理
         public void StartMoving()
         {
+            if (select_i < 0) return;
             attacking = false;
             moving = true;
             producing = UnitType.NULL;
@@ -505,6 +566,7 @@ namespace CommonPart
         // 移動コマンド
         public void Move(int x_index, int y_index)
         {
+            if (select_i < 0) return;
             bool flag = true;
             foreach (PAIR pos in range)
             {
@@ -566,10 +628,10 @@ namespace CommonPart
                 for (int i = 0; i < 6; i++)
                 {
                     int ni = tp.i + si[i], nj = tp.j + sj[i];
-                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0)
+                    if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX && nj >= 0 && nj < DataBase.MAP_MAX)
                     {
                         int nc = dijkMap[ni, nj];
-                        if (nj < DataBase.MAP_MAX && nc != -1 && nc == dijkMap[tp.i, tp.j] - ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && PlayScene.nMap.Data[ni - (nj + 1) / 2, nj] == 2) ? 1 : 5))
+                        if (nc != -1 && ((PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] == 2 && nc == dijkMap[tp.i, tp.j] - 1)) || (PlayScene.nMap.Data[tp.i - (tp.j + 1) / 2, tp.j] != 2 && nc >= 0 && nc < tc))
                         {
                             ti = ni;
                             tj = nj;

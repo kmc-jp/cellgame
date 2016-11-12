@@ -13,8 +13,6 @@ namespace CommonPart
         #region Variable
         // 背景の枠
         WindowBar backGround;
-        // 必要なPlayScene内の変数
-        StudyBar sb;
 
         MouseState pstate;
 

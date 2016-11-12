@@ -10,10 +10,10 @@ namespace CommonPart {
     class StudyBar : WindowBar {
         #region Variable
         // ゲージオブジェクト
-        Gauge gauge;
+        public Gauge gauge;
 
         BlindButton button;
-        TextAndFont nameTex;
+        public TextAndFont nameTex;
 
         
         #endregion

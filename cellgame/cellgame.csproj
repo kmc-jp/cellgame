@@ -67,14 +67,17 @@
     <Compile Include="Scenes\ConfirmationScene.cs" />
     <Compile Include="Scenes\DeleteUnit.cs" />
     <Compile Include="Scenes\EditorScene.cs" />
+    <Compile Include="Scenes\EndConfirm.cs" />
     <Compile Include="Scenes\GameClearScene.cs" />
     <Compile Include="Scenes\GameOverScene.cs" />
     <Compile Include="Scenes\LoadScene.cs" />
+    <Compile Include="Scenes\MapErrorScene.cs" />
     <Compile Include="Scenes\NewGameScene.cs" />
     <Compile Include="Scenes\PlayScene.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
     <Compile Include="Scenes\PadTestScene.cs" />
     <Compile Include="Scenes\ProductScene.cs" />
+    <Compile Include="Scenes\SaveConfirm.cs" />
     <Compile Include="Scenes\SaveConfScene.cs" />
     <Compile Include="Scenes\Scene.cs" />
     <Compile Include="Scenes\SceneManager.cs" />
@@ -204,7 +207,7 @@
     <Content Include="Content\sounds\pinch.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\sounds\title.mp3">
+    <Content Include="Content\sounds\title.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\unit\enemyUnit0.png">
@@ -308,6 +311,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Content\MapData\MapData1.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MapData\MapData2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\MapData\MapData3.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\medium.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

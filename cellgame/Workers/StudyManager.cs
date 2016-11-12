@@ -53,39 +53,69 @@ namespace CommonPart
             return StudyState[(int)st];
         }
         // 研究を終える
-        static void Do()
+        public static void Do()
         {
             StudyState[(int)studying] = true;
             
             switch (studying)
             {
                 case Study.Kaku:
-                    ProductScene.productable = 7;
+                    ProductScene.productable[5] = true;
+                    PlayScene.maxProductPower += 5;
+                    DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
                     break;
                 case Study.Saito:
-                    ProductScene.productable = 8;
+                    ProductScene.productable[7] = true;
+                    PlayScene.maxProductPower += 5;
+                    DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
+                    DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
+                    DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
                     break;
                 case Study.Inter:
                     for (int i = 0; i < 11; i++)
                         DataBase.maxStudyPower[i] = DataBase.maxStudyPower[i] * 4 / 5;
+                    PlayScene.maxProductPower += 5;
                     break;
                 case Study.Kemo:
                     for (int i = 0; i < 8; i++)
                         DataBase.sumProductPower[i] -= DataBase.maxProductPower[i];
+                    PlayScene.maxProductPower += 5;
                     break;
                 case Study.Cross:
-                    DataBase.sumProductPower[(int)UnitType.KillerT - 1] -= DataBase.maxProductPower[(int)UnitType.KillerT - 1] * 2;
-                    DataBase.sumProductPower[(int)UnitType.NK - 1] -= DataBase.maxProductPower[(int)UnitType.NK - 1] * 2;
+                    ProductScene.productable[6] = true;
+                    DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
+                    DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
                     break;
                 case Study.Kou:
                     DataBase.MyUnitStrength[(int)UnitType.KillerT - 1] = DataBase.MyUnitStrength[(int)UnitType.KillerT - 1] * 4 / 3;
                     DataBase.MyUnitStrength[(int)UnitType.NK - 1] = DataBase.MyUnitStrength[(int)UnitType.NK - 1] * 4 / 3;
                     break;
+                case Study.Class:
+                    PlayScene.maxProductPower += 5;
+                    break;
                 case Study.Shinwa:
                     DataBase.MyUnitStrength[(int)UnitType.B - 1] *= 2;
+                    PlayScene.maxProductPower += 5;
+                    break;
+                case Study.Opuso:
+                    DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
+                    if (IsDone(Study.Chuwa))
+                    {
+                        DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
+                        DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
+                    }
+                    break;
+                case Study.Chuwa:
+                    DataBase.MyUnitStrength[(int)UnitType.Macro - 1]++;
+                    if (IsDone(Study.Opuso))
+                    {
+                        DataBase.MyUnitStrength[(int)UnitType.Jujo - 1]++;
+                        DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
+                    }
                     break;
                 case Study.Masuto:
                     DataBase.EnemyUnitStrength[(int)UnitType.Kiseichu + 5] = DataBase.EnemyUnitStrength[(int)UnitType.Kiseichu + 5] * 3 / 4;
+                    DataBase.MyUnitStrength[(int)UnitType.Kosan - 1]++;
                     break;
                 default:
                     break;
