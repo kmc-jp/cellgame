@@ -166,14 +166,14 @@ namespace CommonPart
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + ((Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) ? -1 : 1)) % DataBase.hex_tex.Count);
+                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + ((Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) ? DataBase.hex_tex.Count - 1 : 1)) % DataBase.hex_tex.Count);
             }
             // 右クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値を変更
             if (pstate.RightButton != ButtonState.Pressed && state.RightButton == ButtonState.Pressed &&
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0)　um.ChangeType(p.i, p.j, um.GetType(p.i, p.j) != UnitType.NK ? (UnitType)((int)um.GetType(p.i, p.j) + ((Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) ? -1 : 1)) : UnitType.Kin);
+                if (p.i >= 0 && p.j >= 0)　um.ChangeType(p.i, p.j, (UnitType)(((((int)um.GetType(p.i, p.j) + 5) + (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift) ? 10 : 1)) % 11) - 5));
             }
             
             pstate = state;
