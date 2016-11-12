@@ -39,7 +39,7 @@ namespace CommonPart
             backGround.Draw(d);
             base.Draw(d);
 
-            new TextAndFont("セーブしますか？", Color.Black).Draw(d, backGround.windowPosition + new Vector(40, 60), DepthID.Message);
+            new TextAndFont("終了します。セーブしますか？", Color.Black).Draw(d, backGround.windowPosition + new Vector(40, 60), DepthID.Message);
 
             cancel.Draw(d);
             ok.Draw(d);

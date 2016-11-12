@@ -113,12 +113,11 @@ namespace CommonPart
         }
 
         // マップデータを実行可能ファイルのあるフォルダから見て /MapData/MapData.csv から読み込む（ファイルがなければ何もしない）
-        public void ReadMap(int n)
+        public void ReadMap(int n, bool isUser)
         {
-            if (File.Exists(string.Format(@"MapData\MapData{0}.csv", n)))
+            if (isUser ? File.Exists(string.Format(@"MapData\MapData{0}.csv", n)) : File.Exists(string.Format(@"Content\MapData\MapData{0}.csv", n)))
             {
-
-                using (StreamReader r = new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)))
+                using (StreamReader r = (isUser ? new StreamReader(string.Format(@"MapData\MapData{0}.csv", n)) : new StreamReader(string.Format(@"Content\MapData\MapData{0}.csv", n))))
                 {
                     string line;
                     for (int i = 0; (line = r.ReadLine()) != null && i < DataBase.MAP_MAX; i++) // 1行ずつ読み出し。
@@ -162,39 +161,68 @@ namespace CommonPart
             CameraY = CameraY + Game1._WindowSizeY / DataBase.MapScale[ps] / 2 - Game1._WindowSizeY / DataBase.MapScale[Scale] / 2;
 
 
-            // 左クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値をインクリメント
+            // 左クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値を変更
             if (pstate.LeftButton != ButtonState.Pressed && state.LeftButton == ButtonState.Pressed &&
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + 1) % DataBase.hex_tex.Count);
+                if (p.i >= 0 && p.j >= 0) nMap.ChangeState(p.i, p.j, (nMap.GetState(p.i, p.j) + ((Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) ? -1 : 1)) % DataBase.hex_tex.Count);
             }
-            // 右クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値をデクリメント
+            // 右クリックされたときにその座標がウィンドウ上であり、バーの上でなくかつどれかのへクスの上であればそのへクスの値を変更
             if (pstate.RightButton != ButtonState.Pressed && state.RightButton == ButtonState.Pressed &&
                 state.X >= 0 && state.X <= Game1._WindowSizeX && state.Y >= 0 && state.Y <= Game1._WindowSizeY)
             {
                 PAIR p = WhichHex(state.X, state.Y);
-                if (p.i >= 0 && p.j >= 0)　um.ChangeType(p.i, p.j, um.GetType(p.i, p.j) != UnitType.NK ? (UnitType)((int)um.GetType(p.i, p.j) + 1) : UnitType.Kin);
+                if (p.i >= 0 && p.j >= 0)　um.ChangeType(p.i, p.j, um.GetType(p.i, p.j) != UnitType.NK ? (UnitType)((int)um.GetType(p.i, p.j) + ((Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) ? -1 : 1)) : UnitType.Kin);
             }
             
             pstate = state;
-            // シフト＋数字キーが押されるとマップデータの保存
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+            // Ctrl＋数字キーが押されるとマップデータの保存
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftControl) || Keyboard.GetState().IsKeyDown(Keys.RightControl))
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1)) SaveMap(1);
-                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2)) SaveMap(2);
-                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3)) SaveMap(3);
+                bool f1 = true, f2 = false, f3 = false;
+                for (int i = 0;i < DataBase.MAP_MAX;i++)
+                {
+                    for (int j = 0;j < DataBase.MAP_MAX;j++)
+                    {
+                        if (nMap.Data[i, j] == 0 && um.data[i + (j + 1) / 2, j].type != UnitType.NULL) f1 = false;
+                        if (nMap.Data[i, j] == 3 && um.data[i + (j + 1) / 2, j].type <= UnitType.NULL) f2 = true;
+                        if (nMap.Data[i, j] == 4 && um.data[i + (j + 1) / 2, j].type >= UnitType.NULL) f3 = true;
+                    }
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1))
+                {
+                    if(f1 && f2 && f3) new SaveConfirm(scenem, this, 1);
+                    else new MapErrorScene(scenem);
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2))
+                {
+                    if (f1 && f2 && f3) new SaveConfirm(scenem, this, 2);
+                    else new MapErrorScene(scenem);
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3))
+                {
+                    if (f1 && f2 && f3) new SaveConfirm(scenem, this, 3);
+                    else new MapErrorScene(scenem);
+                }
             }
-            // 数字キーのみが押されるとマップデータ読み込み
+            // Shift+数字キーが押されるとデフォルトマップデータ読み込み
+            else if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1)) ReadMap(1, false);
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2)) ReadMap(2, false);
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3)) ReadMap(3, false);
+            }
+            // 数字キーのみが押されるとユーザーマップデータ読み込み
             else
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1))　ReadMap(1);
-                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2))　ReadMap(2);
-                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3))　ReadMap(3);
+                if (Keyboard.GetState().IsKeyDown(Keys.D1) || Keyboard.GetState().IsKeyDown(Keys.NumPad1))　ReadMap(1, true);
+                if (Keyboard.GetState().IsKeyDown(Keys.D2) || Keyboard.GetState().IsKeyDown(Keys.NumPad2))　ReadMap(2, true);
+                if (Keyboard.GetState().IsKeyDown(Keys.D3) || Keyboard.GetState().IsKeyDown(Keys.NumPad3))　ReadMap(3, true);
             }
 
-            // Zキーが押されると終了
-            if (Input.GetKeyPressed(KeyID.Select))　Delete = true;
+            // Escキーが押されると終了
+            if (Input.GetKeyPressed(KeyID.Escape))　new EndConfirm(scenem, this);
         }
         #endregion
     }// class end
