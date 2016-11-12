@@ -170,7 +170,7 @@ namespace CommonPart
                             PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength;
                         }
                         // B細胞ならプラズマ細胞に進化
-                        else if (uMap.data[select_i, select_j].type == UnitType.B)
+                        else if (uMap.data[select_i, select_j].HP != 0 && uMap.data[select_i, select_j].type == UnitType.B)
                         {
                             uMap.data[select_i, select_j].Evolve(uMap.data[attackedUnit.i, attackedUnit.j].type);
                         }
@@ -181,11 +181,16 @@ namespace CommonPart
                         // マクロファージか樹状細胞なら研究力を加算
                         if (uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.Macro)
                         {
-                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength / 2;
+                            PlayScene.studyPower += uMap.data[select_i, select_j].Strength / 2;
                         }
                         else if (uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.Jujo)
                         {
-                            PlayScene.studyPower += uMap.data[attackedUnit.i, attackedUnit.j].Strength;
+                            PlayScene.studyPower += uMap.data[select_i, select_j].Strength;
+                        }
+                        // B細胞ならプラズマ細胞に進化
+                        else if (uMap.data[attackedUnit.i, attackedUnit.j].HP != 0 && uMap.data[attackedUnit.i, attackedUnit.j].type == UnitType.B)
+                        {
+                            uMap.data[attackedUnit.i, attackedUnit.j].Evolve(uMap.data[select_i, select_j].type);
                         }
                     }
 
