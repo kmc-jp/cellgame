@@ -724,7 +724,7 @@ namespace CommonPart
         // ユニットの現在の実際の戦闘力
         public int RealStrength(int _i, int _j)
         {
-            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return 0;
+            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) / 2 >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return 0;
             if (uMap.data[_i, _j].type == UnitType.NULL) return 0;
 
             int[] di = { 1, 1, 0, -1, -1, 0 };
@@ -782,7 +782,7 @@ namespace CommonPart
         }
         public bool IsWeakened(int _i, int _j)
         {
-            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return false;
+            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) / 2>= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return false;
             if (uMap.data[_i, _j].type >= 0) return false;
 
             int[] di = { 1, 1, 0, -1, -1, 0 };
