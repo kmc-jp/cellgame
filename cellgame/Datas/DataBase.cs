@@ -99,11 +99,13 @@ namespace CommonPart {
             "強力なユニットです。好酸球などのアンチユニットを利用しなければ倒すことは難しいでしょう。"
         };
         // ユニット各種類ごとの固有値
+        public static int[] defMyUnitStrength = new[] { 8, 5, 5, 5, 6, 4, 6, 4, 4 };
         public static readonly int[] MyUnitMAX_HP = new[] { 100, 100, 100, 100, 100, 100, 100, 100 ,100 };
         public static readonly int[] MyUnitMAX_LP = new[] { 7, 30, 10, 10, 20, 30, 30, 10, 20 };
         public static int[] MyUnitStrength = new[] { 8, 5, 5, 5, 6, 4, 6, 4, 4 };
         public static readonly int[] MyUnitMoveRange = new[] { 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
+        public static int[] defEnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
         public static readonly int[] EnemyUnitMAX_HP = new[] { 100, 100, 100, 100, 100 };
         public static readonly int[] EnemyUnitMAX_LP = new[] { 20, 20, 20, 10000, 30 };
         public static int[] EnemyUnitStrength = new[] { 5, 5, 4, 5, 15 };
@@ -150,7 +152,10 @@ namespace CommonPart {
             { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, -1 }, { 0, -1 }, { 2, 4 }, { 1, -1 }, { 1, -1 }, { 6, 7 }, { 6, 7 }, { 6, -1 }
         };
         // 必要研究力
-        public static readonly int[] maxStudyPower = {
+        public static readonly int[] defmaxStudyPower = {
+            100, 200, 320, 350, 360, 500, 300, 300, 520, 520, 480
+        };
+        public static int[] maxStudyPower = {
             100, 200, 320, 350, 360, 500, 300, 300, 520, 520, 480
         };
         // 研究力の初期値
@@ -165,6 +170,9 @@ namespace CommonPart {
             4, 4, 4, 4, 5, 5, 6, 5, -1
         };
         // それぞれの味方ユニットの生産するために必要な合計生産力
+        public static readonly int[] defsumProductPower = {
+            12, 20, 16, 16, 25, 25, 20, 20, -1
+        };
         public static int[] sumProductPower = {
             12, 20, 16, 16, 25, 25, 20, 20, -1
         };

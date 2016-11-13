@@ -428,7 +428,7 @@ namespace CommonPart
         // 攻撃コマンドが実行されるための前処理
         public void StartAttacking()
         {
-            if (uMap.data[select_i, select_j].attack) return;
+            if (select_i < 0 || uMap.data[select_i, select_j].attack) return;
 
             moving = false;
             attacking = true;
@@ -699,6 +699,8 @@ namespace CommonPart
         // 削除コマンド
         public void Delete()
         {
+            if (select_i < 0) return;
+
             myUnits.Remove(new PAIR(select_i, select_j));
             enemyUnits.Remove(new PAIR(select_i, select_j));
 

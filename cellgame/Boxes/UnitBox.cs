@@ -98,6 +98,7 @@ namespace CommonPart
         {
             x_index = -1;
             y_index = 0;
+            u = new Unit(UnitType.NULL);
         }
         public override bool IsOn(int x, int y)
         {

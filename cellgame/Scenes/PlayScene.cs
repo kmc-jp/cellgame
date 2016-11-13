@@ -76,6 +76,22 @@ namespace CommonPart {
         public PlayScene(SceneManager s, int map_n, bool _isUsers, string dataName = "")
             : base(s)
         {
+            for (int i = 0;i < 9;i++)
+            {
+                DataBase.MyUnitStrength[i] = DataBase.defMyUnitStrength[i];
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                DataBase.EnemyUnitStrength[i] = DataBase.defEnemyUnitStrength[i];
+            }
+            for (int i = 0; i < 11; i++)
+            {
+                DataBase.maxStudyPower[i] = DataBase.defmaxStudyPower[i];
+            }
+            for (int i = 0; i < 9; i++)
+            {
+                DataBase.sumProductPower[i] = DataBase.defsumProductPower[i];
+            }
             StudyManager.studying = Study.Kaku;
             StudyManager.StudyPower = 0;
             pstate = Mouse.GetState();
