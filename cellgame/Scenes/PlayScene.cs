@@ -245,7 +245,7 @@ namespace CommonPart {
                     }
                     if ((line = r.ReadLine()) == null) return false; studyPower = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; productPower = int.Parse(line);
-                    if ((line = r.ReadLine()) == null) return false; maxProductPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; int mpp = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; BodyTemp = decimal.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; pturn = turn = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; AI.turnNum = int.Parse(line);
@@ -263,6 +263,7 @@ namespace CommonPart {
                             StudyManager.Do();
                         }
                     }
+                    maxProductPower = mpp;
                     if ((line = r.ReadLine()) == null) return false; StudyManager.studying = (Study)int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; StudyManager.StudyPower = int.Parse(line);
 
