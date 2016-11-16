@@ -73,6 +73,8 @@ namespace CommonPart
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            DataBase.logo = Content.Load<Texture2D>("logo.png");
+
             // へクス画像の読み込み
             DataBase.mini_hex_tex = new List<Texture2D>();
             DataBase.hex_tex = new List<Texture2D>();

@@ -17,6 +17,7 @@ namespace CommonPart {
         public static readonly int WindowDefaultSizeY = Game1.WindowSizeY; // 960
         // 16：9にした時のウィンドウの縦のサイズ
         public static readonly int WindowSlimSizeY = 720;
+        public static Texture2D logo;
         #endregion
 
         #region Map
