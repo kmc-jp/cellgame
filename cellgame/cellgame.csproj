@@ -67,6 +67,7 @@
     <Compile Include="Scenes\ConfirmationScene.cs" />
     <Compile Include="Scenes\DeleteUnit.cs" />
     <Compile Include="Scenes\EditorScene.cs" />
+    <Compile Include="Scenes\EndAndSaveConfScene.cs" />
     <Compile Include="Scenes\EndConfirm.cs" />
     <Compile Include="Scenes\GameClearScene.cs" />
     <Compile Include="Scenes\GameOverScene.cs" />

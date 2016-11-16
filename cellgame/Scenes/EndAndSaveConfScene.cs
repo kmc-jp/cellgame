@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace CommonPart
 {
-    class SaveConfScene : Scene
+    class EndAndSaveConfScene : Scene
     {
         #region Variable
         // 背景の枠
@@ -19,12 +19,12 @@ namespace CommonPart
         MouseState pstate;
 
         Button ok;
-        Button cancel;
+        Button no;
         PlayScene ps;
         #endregion
 
         #region Method
-        public SaveConfScene(SceneManager s, PlayScene _ps) : base(s)
+        public EndAndSaveConfScene(SceneManager s, PlayScene _ps) : base(s)
         {
             ps = _ps;
             s.BackSceneNumber++;
@@ -32,30 +32,30 @@ namespace CommonPart
             pstate = Mouse.GetState();
 
             ok = new Button(backGround.windowPosition + new Vector(315, 160), 120, new Color(255, 162, 0), new Color(200, 120, 0), "はい");
-            cancel = new Button(backGround.windowPosition + new Vector(465, 160), 120, new Color(255, 162, 0), new Color(200, 120, 0), "いいえ");
+            no = new Button(backGround.windowPosition + new Vector(465, 160), 120, new Color(255, 162, 0), new Color(200, 120, 0), "いいえ");
         }
         public override void SceneDraw(Drawing d)
         {
             backGround.Draw(d);
             base.Draw(d);
 
-            new TextAndFont("セーブしますか？", Color.Black).Draw(d, backGround.windowPosition + new Vector(40, 60), DepthID.Message);
-
-            cancel.Draw(d);
+            new TextAndFont("終了しますか？", Color.Black).Draw(d, backGround.windowPosition + new Vector(40, 60), DepthID.Message);
+            
             ok.Draw(d);
+            no.Draw(d);
         }
         public override void SceneUpdate()
         {
             MouseState state = Mouse.GetState();
             ok.Update(pstate, state);
-            cancel.Update(pstate, state);
+            no.Update(pstate, state);
 
             if (ok.Clicked())
             {
-                ps.SaveData();
+                ps.Delete = true;
                 Delete = true;
             }
-            if (cancel.Clicked())
+            if (no.Clicked())
             {
                 Delete = true;
             }

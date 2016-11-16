@@ -92,6 +92,10 @@ namespace CommonPart {
             {
                 DataBase.sumProductPower[i] = DataBase.defsumProductPower[i];
             }
+            for (int i = 0; i < 11; i++)
+            {
+                StudyManager.StudyState[i] = false;
+            }
             StudyManager.studying = Study.Kaku;
             StudyManager.StudyPower = 0;
             pstate = Mouse.GetState();
@@ -418,8 +422,7 @@ namespace CommonPart {
             // Escキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Escape))
             {
-                Delete = true;
-                new SaveConfScene(scenem, this);
+                new EndAndSaveConfScene(scenem, this);
             }
 
             pturn = turn;
