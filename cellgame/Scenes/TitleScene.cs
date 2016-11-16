@@ -72,6 +72,7 @@ namespace CommonPart {
             base.SceneUpdate();
         }
         public override void SceneDraw(Drawing d) {
+            d.Draw(new Vector(0, 0), DataBase.logo, DepthID.BackGroundFloor);
             for(int i = 0;i < button.Count; i++)
             {
                 button[i].Draw(d);

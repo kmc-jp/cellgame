@@ -76,6 +76,26 @@ namespace CommonPart {
         public PlayScene(SceneManager s, int map_n, bool _isUsers, string dataName = "")
             : base(s)
         {
+            for (int i = 0;i < 9;i++)
+            {
+                DataBase.MyUnitStrength[i] = DataBase.defMyUnitStrength[i];
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                DataBase.EnemyUnitStrength[i] = DataBase.defEnemyUnitStrength[i];
+            }
+            for (int i = 0; i < 11; i++)
+            {
+                DataBase.maxStudyPower[i] = DataBase.defmaxStudyPower[i];
+            }
+            for (int i = 0; i < 9; i++)
+            {
+                DataBase.sumProductPower[i] = DataBase.defsumProductPower[i];
+            }
+            for (int i = 0; i < 11; i++)
+            {
+                StudyManager.StudyState[i] = false;
+            }
             StudyManager.studying = Study.Kaku;
             StudyManager.StudyPower = 0;
             pstate = Mouse.GetState();
@@ -229,7 +249,7 @@ namespace CommonPart {
                     }
                     if ((line = r.ReadLine()) == null) return false; studyPower = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; productPower = int.Parse(line);
-                    if ((line = r.ReadLine()) == null) return false; maxProductPower = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; int mpp = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; BodyTemp = decimal.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; pturn = turn = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; AI.turnNum = int.Parse(line);
@@ -247,6 +267,7 @@ namespace CommonPart {
                             StudyManager.Do();
                         }
                     }
+                    maxProductPower = mpp;
                     if ((line = r.ReadLine()) == null) return false; StudyManager.studying = (Study)int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; StudyManager.StudyPower = int.Parse(line);
 
@@ -401,8 +422,7 @@ namespace CommonPart {
             // Escキーが押されると終了
             if (Input.GetKeyPressed(KeyID.Escape))
             {
-                Delete = true;
-                new SaveConfScene(scenem, this);
+                new EndAndSaveConfScene(scenem, this);
             }
 
             pturn = turn;

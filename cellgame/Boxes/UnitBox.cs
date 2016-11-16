@@ -98,6 +98,7 @@ namespace CommonPart
         {
             x_index = -1;
             y_index = 0;
+            u = new Unit(UnitType.NULL);
         }
         public override bool IsOn(int x, int y)
         {
@@ -110,7 +111,7 @@ namespace CommonPart
                 commandButton[i].Update(pstate, state, x_index != -1 && u.type > 0);
             }
 
-            if (u.type <= 0 || PlayScene.um.moveAnimation || PlayScene.um.attackAnimation) return;
+            if (x_index == -1 || u.type <= 0 || PlayScene.um.moveAnimation || PlayScene.um.attackAnimation) return;
 
             if (commandButton[(int)Commands.Move].Clicked())
             {

@@ -428,7 +428,7 @@ namespace CommonPart
         // 攻撃コマンドが実行されるための前処理
         public void StartAttacking()
         {
-            if (uMap.data[select_i, select_j].attack) return;
+            if (select_i < 0 || uMap.data[select_i, select_j].attack) return;
 
             moving = false;
             attacking = true;
@@ -699,6 +699,8 @@ namespace CommonPart
         // 削除コマンド
         public void Delete()
         {
+            if (select_i < 0) return;
+
             myUnits.Remove(new PAIR(select_i, select_j));
             enemyUnits.Remove(new PAIR(select_i, select_j));
 
@@ -724,7 +726,7 @@ namespace CommonPart
         // ユニットの現在の実際の戦闘力
         public int RealStrength(int _i, int _j)
         {
-            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return 0;
+            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) / 2 >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return 0;
             if (uMap.data[_i, _j].type == UnitType.NULL) return 0;
 
             int[] di = { 1, 1, 0, -1, -1, 0 };
@@ -782,7 +784,7 @@ namespace CommonPart
         }
         public bool IsWeakened(int _i, int _j)
         {
-            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) >= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return false;
+            if (_i - (_j + 1) / 2 < 0 || _i - (_j + 1) / 2>= DataBase.MAP_MAX || _j < 0 || _j >= DataBase.MAP_MAX) return false;
             if (uMap.data[_i, _j].type >= 0) return false;
 
             int[] di = { 1, 1, 0, -1, -1, 0 };

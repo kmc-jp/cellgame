@@ -67,6 +67,7 @@
     <Compile Include="Scenes\ConfirmationScene.cs" />
     <Compile Include="Scenes\DeleteUnit.cs" />
     <Compile Include="Scenes\EditorScene.cs" />
+    <Compile Include="Scenes\EndAndSaveConfScene.cs" />
     <Compile Include="Scenes\EndConfirm.cs" />
     <Compile Include="Scenes\GameClearScene.cs" />
     <Compile Include="Scenes\GameOverScene.cs" />
@@ -199,6 +200,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\icon\temperature.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\sounds\normal.wav">
