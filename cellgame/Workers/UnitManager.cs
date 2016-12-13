@@ -814,7 +814,7 @@ namespace CommonPart
                     if (ni - (nj + 1) / 2 >= 0 && ni - (nj + 1) / 2 < DataBase.MAP_MAX &&
                         nj >= 0 && nj < DataBase.MAP_MAX && used[ni - (nj + 1) / 2, nj] == -1)
                     {
-                        used[ni - (nj + 1), nj] = used[p.i - (p.j + 1) / 2, p.j] + 1;
+                        used[ni - (nj + 1) / 2, nj] = used[p.i - (p.j + 1) / 2, p.j] + 1;
                         Q.Enqueue(new PAIR(ni, nj));
                         if (uMap.data[_i, _j].type == uMap.data[ni, nj].enemyType)
                         {
