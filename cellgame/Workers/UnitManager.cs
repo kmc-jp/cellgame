@@ -466,7 +466,11 @@ namespace CommonPart
                     break;
                 }
             }
-            if (flag) return;
+            if (flag)
+            {
+                CancelAttacking();
+                return;
+            }
 
             int ai = x_index + (y_index + 1) / 2, aj = y_index;
 
@@ -576,7 +580,11 @@ namespace CommonPart
                     break;
                 }
             }
-            if (flag) return;
+            if (flag)
+            {
+                CancelMoving();
+                return;
+            }
 
             int n = 0;
             for(int k = 0; k < range.Count; k++)
