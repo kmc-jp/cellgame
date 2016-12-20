@@ -181,7 +181,7 @@ namespace CommonPart {
 
         #region Button
         // ユニットボックスのコマンドボタン画像のリスト
-        public static List<Texture2D> command_tex;
+        public static List<List<Texture2D>> command_tex;
         #endregion
 
         #region Method

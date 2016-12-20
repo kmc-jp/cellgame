@@ -244,6 +244,16 @@ namespace CommonPart
                             }
                         }
                     }
+                    else if (p.i == 0 && p.j == -1) {
+                        if (moving)
+                        {
+                            CancelMoving();
+                        }
+                        else if (attacking)
+                        {
+                            CancelAttacking();
+                        }
+                    }
                 }
             }
             if(ub.x_index != -1)

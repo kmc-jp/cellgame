@@ -87,9 +87,18 @@ namespace CommonPart
             DataBase.select_tex = Content.Load<Texture2D>("hex/select.png");
 
             // ユニットボックスのコマンドボタン画像の読み込み
-            DataBase.command_tex = new List<Texture2D>();
+            DataBase.command_tex = new List<List<Texture2D>>();
             for (int i = 0; i < 5; i++)
-                DataBase.command_tex.Add(Content.Load<Texture2D>(string.Format("button/command{0}.png", i)));
+            {
+                List<Texture2D> tmp = new List<Texture2D>();
+                tmp.Add(Content.Load<Texture2D>(string.Format("button/command{0}_{1}.png", i, 0)));
+                tmp.Add(Content.Load<Texture2D>(string.Format("button/command{0}_{1}.png", i, 1)));
+                if (i < 2)
+                {
+                   tmp.Add(Content.Load<Texture2D>(string.Format("button/command{0}_{1}.png", i, 2)));
+                }
+                DataBase.command_tex.Add(tmp);
+            }
 
             // バーの画像読み込み
             DataBase.bar_frame_tex = new List<Texture2D>();
