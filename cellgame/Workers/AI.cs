@@ -10,7 +10,7 @@ namespace CommonPart
     {
         public static int turnNum;
         public static bool enemyTurn = false;
-        static int productPower = -50;
+        public static int productPower = -50;
         public static List<UnitType> Products;
         static readonly int[] need = {
             15, 15, 25, 1000, 50

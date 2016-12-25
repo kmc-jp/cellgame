@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
 
 namespace CommonPart
 {
@@ -42,6 +43,7 @@ namespace CommonPart
             pstate = Mouse.GetState();
             fileNames = new List<string>();
 
+            if (!Directory.Exists(@"SaveData")) return;
             var x = new System.IO.DirectoryInfo(@"SaveData");
             foreach(string fn in x.GetFiles("*.save").Select(fileinfo => fileinfo.Name.Remove(fileinfo.Name.Length - 5, 5)))
             {

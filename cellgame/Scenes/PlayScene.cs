@@ -113,7 +113,7 @@ namespace CommonPart {
             AI.turnNum = 0;
             AI.Products = new List<UnitType>();
             AI.Gan_turn = 30 + new RandomXS().NextInt(40);
-
+            AI.productPower = -50;
 
             changeTurn = false;
             studyPower = DataBase.DefaultStudyPower;
@@ -198,6 +198,7 @@ namespace CommonPart {
                 w.Write("{0}\r\n", AI.turnNum);
                 w.Write("{0}\r\n", AI.Gan_N);
                 w.Write("{0}\r\n", AI.Gan_turn);
+                w.Write("{0}\r\n", AI.productPower);
                 w.Write("{0}", AI.Products.Count);
                 foreach (UnitType ut in AI.Products) w.Write(",{0}", (int)ut);
                 w.Write("\r\n");
@@ -255,6 +256,7 @@ namespace CommonPart {
                     if ((line = r.ReadLine()) == null) return false; AI.turnNum = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; AI.Gan_N = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; AI.Gan_turn = int.Parse(line);
+                    if ((line = r.ReadLine()) == null) return false; AI.productPower = int.Parse(line);
                     if ((line = r.ReadLine()) == null) return false; ss = line.Split(',');
                     for (int i = 1;i < ss.Length;i++) AI.Products.Add((UnitType)int.Parse(ss[i]));
 
