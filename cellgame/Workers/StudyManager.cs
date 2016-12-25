@@ -77,7 +77,7 @@ namespace CommonPart
                     PlayScene.maxProductPower += 5;
                     break;
                 case Study.Kemo:
-                    for (int i = 0; i < 8; i++)
+                    for (int i = 1; i < 8; i++)
                         DataBase.sumProductPower[i] -= DataBase.maxProductPower[i];
                     PlayScene.maxProductPower += 5;
                     break;

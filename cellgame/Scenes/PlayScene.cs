@@ -357,14 +357,7 @@ namespace CommonPart {
                         break;
                     }
                 }
-                if (flag)
-                {
-                    changeTurn = true;
-                }
-                else
-                {
-                    new ConfirmationScene(scenem);
-                }
+                new ConfirmationScene(scenem, !flag, StudyManager.StudyPower == StudyManager.MaxStudyPower, productPower > 0);
             }
 
             if (changeTurn)
