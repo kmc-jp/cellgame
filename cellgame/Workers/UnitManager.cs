@@ -301,7 +301,7 @@ namespace CommonPart
             NextUnit();
 
             // 体温の更新
-            PlayScene.BodyTemp += (enemyUnits.Count - myUnits.Count) / 100m + 0.08m;
+            PlayScene.BodyTemp += (enemyUnits.Count - myUnits.Count) / 160m + 0.05m;
 
             if (PlayScene.BodyTemp > 42m) return -1;
             bool flag = true;
