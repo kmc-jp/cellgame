@@ -244,6 +244,16 @@ namespace CommonPart
                             }
                         }
                     }
+                    else if (p.i == 0 && p.j == -1) {
+                        if (moving)
+                        {
+                            CancelMoving();
+                        }
+                        else if (attacking)
+                        {
+                            CancelAttacking();
+                        }
+                    }
                 }
             }
             if(ub.x_index != -1)
@@ -291,7 +301,7 @@ namespace CommonPart
             NextUnit();
 
             // 体温の更新
-            PlayScene.BodyTemp += (enemyUnits.Count - myUnits.Count) / 100m + 0.08m;
+            PlayScene.BodyTemp += (enemyUnits.Count - myUnits.Count) / 160m + 0.05m;
 
             if (PlayScene.BodyTemp > 42m) return -1;
             bool flag = true;
@@ -466,7 +476,11 @@ namespace CommonPart
                     break;
                 }
             }
-            if (flag) return;
+            if (flag)
+            {
+                CancelAttacking();
+                return;
+            }
 
             int ai = x_index + (y_index + 1) / 2, aj = y_index;
 
@@ -576,7 +590,11 @@ namespace CommonPart
                     break;
                 }
             }
-            if (flag) return;
+            if (flag)
+            {
+                CancelMoving();
+                return;
+            }
 
             int n = 0;
             for(int k = 0; k < range.Count; k++)

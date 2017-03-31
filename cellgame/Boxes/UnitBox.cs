@@ -42,10 +42,11 @@ namespace CommonPart
                 // コマンドボタン表示
                 if(u.type > 0)
                 {
-                    for (int i = 0; i < command_N; i++)
-                    {
-                        d.Draw(windowPosition + new Vector(10 + 50 * i, 240), DataBase.command_tex[i], DepthID.Message);
-                    }
+                    d.Draw(windowPosition + new Vector(10 + 50 * 0, 240), DataBase.command_tex[(int)Commands.Move][u.movePower == 0 ? 2 : PlayScene.um.moving ? 1 : 0], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(10 + 50 * 1, 240), DataBase.command_tex[(int)Commands.Attack][u.type == UnitType.HelperT || u.type == UnitType.Plasma || u.attack ? 2 : PlayScene.um.attacking ? 1 : 0], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(10 + 50 * 2, 240), DataBase.command_tex[(int)Commands.Skip][0], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(10 + 50 * 3, 240), DataBase.command_tex[(int)Commands.Sleep][0], DepthID.Message);
+                    d.Draw(windowPosition + new Vector(10 + 50 * 4, 240), DataBase.command_tex[(int)Commands.Delete][0], DepthID.Message);
                 }
 
                 if(u.type == UnitType.Plasma)
